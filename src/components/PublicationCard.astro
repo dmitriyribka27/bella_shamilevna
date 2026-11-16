@@ -1,0 +1,4 @@
+---
+const { title, image, href = '/publications/' } = Astro.props;
+---
+<a class="publication-card" href={href}><img src={image} alt="" width="270" height="203" loading="lazy" /><span>{title}</span></a>
