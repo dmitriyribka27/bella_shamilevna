@@ -14,3 +14,6 @@ Actual post-change browser screenshot needed. Wave crop, paper texture, exact ty
 
 ## Next
 Inspect updated Cloudflare deployment at 1536px viewport and compare to approved image; then refine wave, typography and icons. Do not touch mobile or CMS until approved.
+
+## Deployment reconnect check — 2026-11-16
+GitHub App repository permission was restored by project owner. This documentation commit triggers a fresh Cloudflare Pages production build from main. Confirm deployment in Cloudflare dashboard before claiming site is updated.
