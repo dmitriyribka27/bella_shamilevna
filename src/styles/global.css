@@ -15,3 +15,26 @@
 .home-lower{grid-template-columns:385px minmax(0,1fr);gap:56px;margin-top:14px;margin-bottom:30px}
 .publication-grid{gap:9.4%}
 }
+
+/* Desktop composition refinement — 2026-11-16.
+   The reference is 1536px wide; these overrides intentionally change
+   visible proportions rather than only moving elements by a few pixels. */
+@media (min-width:1080px) {
+  .hero { height: 455px; }
+  .hero-content { top: 158px; left: 4%; }
+  .hero h1 { font-size: clamp(83px, 7.45vw, 114px); line-height: .94; }
+  .hero-content p { font-size: 21px; margin-top: 21px; }
+  .hero-portrait { height: 442px; right: 11.5%; top: 8px; }
+  .hero-circle { width: 420px; left: 40.5%; top: 190px; }
+  .hero-side { top: 187px; right: 3.1%; }
+  .hero-side>span:first-child { font-size: 48px; }
+  .wave-wrap { height: 30px; margin-top: -3px; }
+  .wave-wrap img { top: -35%; }
+  .home-lower { grid-template-columns: 27% minmax(0,1fr); gap: 4%; margin-top: 18px; margin-bottom: 28px; min-height: 0; }
+  .home-lower h2 { font-size: 48px; margin-bottom: 24px; }
+  .home-about { padding-right: 28px; }
+  .home-about p { font-size: 19px; margin-top: 26px; }
+  .home-about>a { margin-top: 28px; }
+  .publication-grid { gap: 7%; margin-top: -8px; }
+  .publication-card { font-size: 17px; }
+}
