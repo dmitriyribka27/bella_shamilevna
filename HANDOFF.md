@@ -1,19 +1,16 @@
 # BELLA SITE — HANDOFF
 
 ## Status
-Desktop homepage draft; not approved. GitHub repo: dmitriyribka27/bella_shamilevna. Cloudflare/D1/R2 not configured. Mobile explicitly postponed.
+Cloudflare Pages preview: https://bella-shamilevna.pages.dev/ (user confirmed deployed and browser screenshots). GitHub: dmitriyribka27/bella_shamilevna. Desktop homepage in visual refinement; not approved as final. No CMS/D1/R2. No mobile implementation.
 
-## Sources
-2026-11-16 technical brief and approved 1536x1024 BELLA_HOMEPAGE.png. No visual redesign without approval.
+## Source of truth
+Approved homepage PNG at 1536×1024 and technical brief dated 2026-11-16. Do not redesign without approval.
 
-## Stack
-Astro static HTML; home page, shared components and placeholder publications/about routes. Temporary publication data. No hosting configured. Astro site URL is still a placeholder.
+## Changes
+Adjusted desktop alignment to reference coordinates: hero full-width, title offset, portrait and decorative graphics, header grid. Normal vertical scrolling is intended; no artificial one-screen height constraint.
 
-## Assets
-Verified all 8 files at public/assets/images and public/assets/graphics. Group.svg = green circle; Group-1.svg = halftone; Group-2.svg = black strokes. Corrected their placement in homepage draft.
-
-## Open issues
-No build or browser screenshot QA yet. Paper texture and final fonts not implemented. Header/footer icons and contact links are provisional. Legal links require approved pages. Article cards currently link to catalog rather than actual article pages. Footer Adyghe phrase needs checking against the approved original.
+## Outstanding
+Actual post-change browser screenshot needed. Wave crop, paper texture, exact typography, header/footer icons and verified contact links remain incomplete. Publication titles/content are temporary design data. Build/visual test for this commit not independently confirmed.
 
 ## Next
-Run Astro build, compare at 1536x1024 against approved PNG, adjust geometry and assets, then request approval. Do not deploy or begin mobile work yet.
+Inspect updated Cloudflare deployment at 1536px viewport and compare to approved image; then refine wave, typography and icons. Do not touch mobile or CMS until approved.
