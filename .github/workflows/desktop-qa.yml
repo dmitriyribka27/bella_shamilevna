@@ -14,9 +14,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-          cache-dependency-path: package-lock.json
-        # npm cache is optional until a lockfile is committed
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Build static Astro site
