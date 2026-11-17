@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteText, sitePrefix, type SiteLanguage } from '../i18n/site';
+interface Props { lang: SiteLanguage }
+const { lang } = Astro.props;
+const t = siteText[lang];
+const prefix = sitePrefix(lang);
+---
+<BaseLayout lang={lang} title={t.homeTitle} description={t.homeDescription}>
+<section class="hero" aria-labelledby="hero-title">
+<img class="hero-strokes" src="/assets/graphics/Group-2.svg" alt="" />
+<img class="hero-halftone" src="/assets/graphics/Group-1.svg" alt="" />
+<div class="hero-content"><h1 id="hero-title"><span class="hero-title-first">{t.heroFirst}</span><span class="hero-title-second">{t.heroSecond}</span></h1><p>{t.heroTagline}</p></div>
+<img class="hero-circle" src="/assets/graphics/Group.svg" alt="" />
+<img class="hero-portrait" src="/assets/images/home-portrait.png" alt={t.portraitAlt} fetchpriority="high" />
+<div class="hero-side"><span>ПСЭ</span><span class="hero-side-rule"></span><small>{t.soul}</small></div>
+</section>
+<div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">{t.river}</span></div>
+<section class="home-lower">
+<div class="home-about"><h2>{t.aboutHeading}</h2><p>{t.homeAbout}</p><a href={`${prefix}/about/`}>{t.readMore}</a></div>
+<div class="home-publications"><div class="section-heading"><h2>{t.publications}</h2><a href={`${prefix}/publications/`}>{t.viewAll}</a></div><p class="publications-coming-soon">{t.soon}</p></div>
+</section>
+</BaseLayout>
