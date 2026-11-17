@@ -22,10 +22,10 @@ const icon = {
     <a href={`${prefix}/about/`}>{en ? 'ABOUT ME' : 'ОБО МНЕ'}</a>
   </nav>
   <div class="header-right">
-    <div class="header-socials" aria-label="Социальные сети и почта">
+    <div class="header-socials" aria-label={en ? 'Social media and email' : 'Социальные сети и почта'}>
       {Object.entries(icon).map(([name, svg]) => contacts[name]
-        ? <a href={contacts[name]} target="_blank" rel="noopener noreferrer" aria-label={name === 'telegram' ? 'Telegram' : name === 'instagram' ? 'Instagram' : 'Написать письмо через Gmail'} set:html={svg} />
-        : <span class="social-unlinked" title="Ссылка будет добавлена после подтверждения контакта" aria-label={name === 'telegram' ? 'Telegram — ссылка пока не указана' : name === 'instagram' ? 'Instagram — ссылка пока не указана' : 'Почта — адрес пока не указан'} set:html={svg} />
+        ? <a href={contacts[name]} target="_blank" rel="noopener noreferrer" aria-label={name === 'telegram' ? 'Telegram' : name === 'instagram' ? 'Instagram' : (en ? 'Compose email in Gmail' : 'Написать письмо через Gmail')} set:html={svg} />
+        : <span class="social-unlinked" title="Ссылка будет добавлена после подтверждения контакта" aria-label={name === 'telegram' ? (en ? 'Telegram — link not provided' : 'Telegram — ссылка пока не указана') : name === 'instagram' ? (en ? 'Instagram — link not provided' : 'Instagram — ссылка пока не указана') : (en ? 'Email — address not provided' : 'Почта — адрес пока не указан')} set:html={svg} />
       )}
     </div>
     <div class="language-switcher" data-language-switcher>
@@ -46,7 +46,7 @@ const icon = {
   if (switcher) {
     const trigger = switcher.querySelector<HTMLButtonElement>('.language-trigger')!;
     const menu = switcher.querySelector<HTMLElement>('.language-menu')!;
-    const current = switcher.querySelector<HTMLElement>('[data-current-language]')!;
+    const options = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-language]'));
     const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
     const routeFor = (language: string) => {
       const path = window.location.pathname;
