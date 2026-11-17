@@ -178,3 +178,11 @@ main,.site-footer{position:relative;z-index:1}
   z-index:-1;
   pointer-events:none;
 }
+
+/* Desktop hero finishing: shift portrait and river together; tighten whitespace
+   before the about/publications section without crowding the divider. */
+@media(min-width:1080px){
+  .hero-portrait{top:-25px;right:11.1%}
+  .wave-wrap{margin-top:-21px;height:99px}
+  .home-lower{margin-top:14px}
+}
