@@ -9,6 +9,47 @@
  document.getElementById('archive-article-form')?.addEventListener('submit',event=>{
   if(!confirm('Переместить всю статью со всеми языковыми версиями в корзину? Её можно будет восстановить.'))event.preventDefault();
  });
+
+ // Automatically crop cover images to a centered landscape 4:3 rectangle.
+ const coverForm=document.getElementById('cover-upload-form');
+ const coverInput=document.getElementById('cover-file');
+ if(coverForm&&coverInput){
+  let busy=false;
+  coverForm.addEventListener('submit',async event=>{
+   event.preventDefault();
+   if(busy)return;
+   const file=coverInput.files?.[0];
+   if(!file)return;
+   const submit=coverForm.querySelector('button[type="submit"]');
+   busy=true;if(submit)submit.disabled=true;
+   try{
+    const bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
+    try{
+     const ratio=4/3;
+     const sourceWidth=bitmap.width,sourceHeight=bitmap.height;
+     const cropWidth=Math.min(sourceWidth,sourceHeight*ratio);
+     const cropHeight=cropWidth/ratio;
+     const left=(sourceWidth-cropWidth)/2,top=(sourceHeight-cropHeight)/2;
+     const width=Math.min(1600,Math.round(cropWidth));
+     const height=Math.round(width*3/4);
+     const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+     const ctx=canvas.getContext('2d');
+     if(!ctx)throw new Error('Не удалось обработать фотографию.');
+     ctx.drawImage(bitmap,left,top,cropWidth,cropHeight,0,0,width,height);
+     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.88));
+     if(!blob)throw new Error('Не удалось подготовить фотографию.');
+     const data=new FormData(coverForm);
+     data.set('image',new File([blob],'cover.jpg',{type:'image/jpeg'}));
+     const response=await fetch(coverForm.action,{method:'POST',body:data,credentials:'same-origin',redirect:'follow'});
+     if(!response.ok)throw new Error('Не удалось загрузить обложку ('+response.status+').');
+     window.location.assign(response.url);
+    }finally{bitmap.close()}
+   }catch(err){
+    alert(err instanceof Error?err.message:'Не удалось загрузить обложку.');
+    busy=false;if(submit)submit.disabled=false;
+   }
+  });
+ }
  const allowed=['P','H2','H3','BLOCKQUOTE','UL','OL','LI','STRONG','EM','A','BR'];
  function cleanNode(node,depth=0){
   if(depth>25)return null;
