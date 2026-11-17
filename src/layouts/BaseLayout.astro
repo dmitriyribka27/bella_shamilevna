@@ -22,7 +22,7 @@ const { title = 'Белла Шамилевна Рыбка', description = 'Пс�
     initialSelectors.forEach((selector, index) => {
       document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
         element.classList.add('motion-enter');
-        element.style.setProperty('--motion-delay', `${Math.min(index % 7, 5) * 65}ms`);
+        element.style.setProperty('--motion-delay', `${Math.min(index % 7, 5) * 115}ms`);
       });
     });
 
