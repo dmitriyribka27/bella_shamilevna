@@ -25,7 +25,7 @@ const profile = {
       description: 'Mon parcours universitaire s’est interrompu, mais mon engagement intellectuel envers la psychologie demeure. Je prévois de poursuivre mes études à l’étranger.'
     }
   ],
-  additionalFormation: [
+  additionalEducation: [
     {
       id: 'body',
       program: 'Psychothérapie à médiation corporelle',
@@ -71,7 +71,7 @@ const profile = {
         </div>
         <h2 class="about-extra-title">FORMATION COMPLÉMENTAIRE</h2>
         <div class="about-education-list">
-          {profile.additionalFormation.map(item => <div class="about-education-item">
+          {profile.additionalEducation.map(item => <div class="about-education-item">
             <p class="about-education-name">{item.program}</p>
             <p>{item.description}</p>
           </div>)}
