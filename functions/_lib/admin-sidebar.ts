@@ -2,7 +2,7 @@
 export function adminSidebar(view:'all'|'trash'|'new'='all'):string {
  const active=(key:string)=>view===key?' class="active" aria-current="page"':'';
  return `<aside class="side admin-sidebar">
- <div class="brand"><img class="admin-brand-icon" src="/admin-icons/admin-icon-192.png" width="32" height="32" alt="" aria-hidden="true" decoding="async"><span class="admin-brand-text">Белла Рыбка<small>Админ-панель</small></span></div>
+ <div class="brand"><span class="admin-brand-icon" aria-hidden="true">Б</span><span class="admin-brand-text">Белла Рыбка<small>Админ-панель</small></span></div>
  <nav aria-label="Разделы">
   <a${active('all')} href="/admin/">Все публикации</a>
   <a${active('new')} class="side-create${view==='new'?' active':''}" href="/admin/edit?new=1&amp;lang=ru">Новая публикация</a>
@@ -16,7 +16,7 @@ export function adminSidebar(view:'all'|'trash'|'new'='all'):string {
 }
 export const adminSidebarCss=`
 .admin-sidebar .brand{display:flex;align-items:center;gap:10px}
-.admin-sidebar .admin-brand-icon{display:block;flex:none;width:32px;height:32px;object-fit:cover;border-radius:8px}
+.admin-sidebar .admin-brand-icon{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:8px;background:#f0e7d7 url('/admin-icons/admin-icon-192.png') center/cover no-repeat;color:#284b79;font-size:17px;font-weight:700;line-height:1}
 .admin-sidebar .admin-brand-text{display:block;min-width:0}
 
 @media(min-width:701px){.shell{grid-template-columns:230px minmax(0,1fr)}}
