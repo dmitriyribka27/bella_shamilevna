@@ -2,7 +2,7 @@
 export function adminSidebar(view:'all'|'trash'|'new'='all'):string {
  const active=(key:string)=>view===key?' class="active" aria-current="page"':'';
  return `<aside class="side admin-sidebar">
- <div class="brand"><span class="admin-brand-icon" aria-hidden="true">Б</span><span class="admin-brand-text">Белла Рыбка<small>Админ-панель</small></span></div>
+ <div class="brand"><span class="admin-brand-icon" aria-hidden="true"></span><span class="admin-brand-text">Админ-панель</span></div>
  <nav aria-label="Разделы">
   <a${active('all')} href="/admin/">Все публикации</a>
   <a${active('new')} class="side-create${view==='new'?' active':''}" href="/admin/edit?new=1&amp;lang=ru">Новая публикация</a>
@@ -21,7 +21,7 @@ export const adminSidebarCss=`
 
 @media(min-width:701px){.shell{grid-template-columns:230px minmax(0,1fr)}}
 .admin-sidebar{box-sizing:border-box;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;min-height:100vh;width:100%;min-width:0;padding:32px 18px;background:#fbfaf8;border-right:1px solid #e3e3e1;color:#25313d;font:15px/1.55 system-ui,-apple-system,sans-serif}
-.admin-sidebar .brand{display:block;margin:0 12px 48px;font-size:21px;font-weight:700;line-height:1.55;letter-spacing:normal;color:#25313d}
+.admin-sidebar .brand{display:flex;align-items:center;gap:10px;margin:0 12px 48px;font-size:21px;font-weight:700;line-height:1.55;letter-spacing:normal;color:#25313d}
 .admin-sidebar .brand small{display:block;margin:0;font-size:12px;font-weight:400;letter-spacing:normal;color:#7c8793}
 .admin-sidebar nav{display:flex;flex-direction:column;align-items:stretch;gap:0;overflow:visible}
 .admin-sidebar nav form{display:block;width:100%;margin:0}
