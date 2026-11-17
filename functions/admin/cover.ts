@@ -12,7 +12,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(Number(request.headers.get('Content-Length')||0)>6_000_000)return new Response('Image too large',{status:413,headers});
  const form=await request.formData().catch(()=>null);
  const id=form?.get('id'),alt=form?.get('alt'),image=form?.get('image');
- if(typeof id!=='string'||!id||id.length>100||typeof alt!=='string'||alt.length>200||!(image instanceof File)||image.size<1||image.size>5_000_000)return new Response('Invalid image',{status:400,headers});
+ if(typeof id!=='string'||!id||id.length>100||!(image instanceof File)||image.size<1||image.size>5_000_000)return new Response('Invalid image',{status:400,headers});
  const type=image.type;
  if(!['image/jpeg','image/png','image/webp'].includes(type))return new Response('Unsupported image type',{status:415,headers});
  const bytes=new Uint8Array(await image.arrayBuffer());
@@ -26,7 +26,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  const key=crypto.randomUUID()+'.'+ext;
  try{
   await env.BELLA_IMAGES.put(key,bytes,{httpMetadata:{contentType:type,cacheControl:'public,max-age=31536000,immutable'}});
-  await env.DB.prepare("UPDATE articles SET cover_key=?,cover_alt=?,updated_at=datetime('now') WHERE id=?").bind(key,alt,id).run();
+  await env.DB.prepare("UPDATE articles SET cover_key=?,cover_alt=?,updated_at=datetime('now') WHERE id=?").bind(key,typeof alt==='string'?alt.slice(0,200):'',id).run();
   // Old image remains in R2 to avoid breaking cached URLs; periodic orphan cleanup can remove it.
  }catch(e){console.error('Cover upload failed',e);return new Response('Image upload failed',{status:500,headers})}
  return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang=ru&saved=1');
