@@ -38,15 +38,15 @@ export async function onRequest(context:Context):Promise<Response>{
  if(!info&&!homeLang)return context.next();
  if(homeLang&&env.DB){
   try{
-   const results=(await env.DB.prepare(`SELECT a.slug,t.title,t.published_at FROM articles a JOIN article_translations t ON t.article_id=a.id LEFT JOIN admin_archived_articles ar ON ar.article_id=a.id WHERE t.lang=? AND t.status='published' AND ar.article_id IS NULL ORDER BY COALESCE(t.published_at,a.created_at) DESC LIMIT 3`).bind(homeLang).all<{slug:string;title:string;published_at:string|null}>()).results||[];
+   const results=(await env.DB.prepare(`SELECT a.slug,a.cover_key,t.title,t.published_at FROM articles a JOIN article_translations t ON t.article_id=a.id LEFT JOIN admin_archived_articles ar ON ar.article_id=a.id WHERE t.lang=? AND t.status='published' AND ar.article_id IS NULL ORDER BY COALESCE(t.published_at,a.created_at) DESC LIMIT 3`).bind(homeLang).all<{slug:string;cover_key:string|null;title:string;published_at:string|null}>()).results||[];
    if(results.length){
     const base=await context.next();
     if(!base.ok)return base;
     let html=await base.text();
     const prefix=homeLang==='ru'?'':'/'+homeLang;
-    const list=results.map(x=>`<article class="d1-home-entry"><a href="${prefix}/publications/${encodeURIComponent(x.slug)}/">${esc(x.title)}</a><time>${esc(date(x.published_at))}</time></article>`).join('');
-    html=html.replace(/<p class="publications-coming-soon">[\s\S]*?<\/p>/,`<div class="d1-home-list">${list}</div>`);
-    html=html.replace('</head>','<style>.d1-home-entry{padding:16px 0;border-bottom:1px solid #dce1e5}.d1-home-entry a{display:block;color:inherit;text-decoration:none;font-size:19px}.d1-home-entry time{display:block;font-size:12px;color:#718198;margin-top:6px}</style></head>');
+    const list=results.map(x=>`<a class="publication-card" href="${prefix}/publications/${encodeURIComponent(x.slug)}/">${x.cover_key?`<img src="/publication-images/${encodeURIComponent(x.cover_key)}" alt="" loading="lazy" width="320" height="240">`:''}<span>${esc(x.title)}</span><time class="home-publication-date" datetime="${esc(x.published_at?.slice(0,10)||'')}">${esc(date(x.published_at))}</time></a>`).join('');
+    html=html.replace(/<p class="publications-coming-soon">[\s\S]*?<\/p>/,`<div class="publication-grid">${list}</div>`);
+    html=html.replace('</head>','<style>.home-publication-date{display:block;margin-top:7px;font-size:13px;color:#718198}.publication-grid .publication-card{min-width:0}.publication-grid .publication-card span{overflow-wrap:anywhere}</style></head>');
     return new Response(html,{status:base.status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public,max-age=0,must-revalidate'}});
    }
   }catch(e){console.error('Home publications query failed',e)}
