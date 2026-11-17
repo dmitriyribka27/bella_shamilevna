@@ -16,11 +16,14 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   const article=await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
   if(!article)return new Response('Article not found',{status:404,headers});
   const versions=await env.DB.prepare('SELECT lang FROM article_translations WHERE article_id=? UNION SELECT lang FROM article_working_versions WHERE article_id=?').bind(id,id).all<{lang:string}>();
+  if(!(versions.results||[]).some(v=>v.lang===lang))return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang=ru');
   if((versions.results||[]).length<=1)return new Response('Нельзя удалить последнюю языковую версию. Используйте корзину для всей статьи.',{status:409,headers});
   // Only remove the selected translation and its working version. The article and other languages survive.
   await env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=? AND lang=?').bind(id,lang).run();
   await env.DB.prepare('DELETE FROM article_translations WHERE article_id=? AND lang=?').bind(id,lang).run();
   await env.DB.prepare("UPDATE articles SET updated_at=datetime('now') WHERE id=?").bind(id).run();
  }catch(e){console.error('Delete article language failed',e);return new Response('Could not delete language',{status:500,headers});}
- return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang='+encodeURIComponent(String(lang))+'&removed=1');
+ const remaining=(await env.DB.prepare('SELECT lang FROM article_translations WHERE article_id=? UNION SELECT lang FROM article_working_versions WHERE article_id=?').bind(id,id).all<{lang:string}>()).results||[];
+ const next=['ru','en','fr'].find(l=>remaining.some(v=>v.lang===l))||'ru';
+ return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang='+next+'&removed=1');
 }
