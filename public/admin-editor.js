@@ -32,8 +32,23 @@
   if(cmd==='createLink'){const href=prompt('Адрес ссылки (https://)');if(href){try{const u=new URL(href);if(['http:','https:'].includes(u.protocol))document.execCommand(cmd,false,u.href)}catch{alert('Укажите полный адрес https://…')}}}
   else document.execCommand(cmd,false,button.dataset.value||null);
  }));
+ const titleField=document.getElementById('title'),seoTitle=document.getElementById('seo-title'),seoDescription=document.getElementById('seo-description');
+ const titleManual=document.getElementById('seo-title-manual'),descriptionManual=document.getElementById('seo-description-manual');
+ const plainText=()=>editor.textContent.replace(/\s+/g,' ').trim();
+ function refreshSeo(){
+  if(seoTitle&&titleManual?.value!=='1')seoTitle.value=(titleField.value.trim()?titleField.value.trim()+' — Белла Рыбка':'');
+  if(seoDescription&&descriptionManual?.value!=='1')seoDescription.value=plainText().slice(0,160);
+ }
+ seoTitle?.addEventListener('input',()=>{titleManual.value='1'});
+ seoDescription?.addEventListener('input',()=>{descriptionManual.value='1'});
+ titleField?.addEventListener('input',refreshSeo);
+ editor.addEventListener('input',refreshSeo);
+ document.querySelectorAll('.languages a').forEach(a=>a.addEventListener('click',e=>{if(form.dataset.dirty==='1'&&!confirm('Есть несохранённые изменения. Перейти без сохранения?'))e.preventDefault()}));
+ form.addEventListener('input',()=>{form.dataset.dirty='1'});
+ window.addEventListener('beforeunload',e=>{if(form.dataset.dirty==='1'){e.preventDefault();e.returnValue=''}});
+ refreshSeo();
  function serialize(){return JSON.stringify({type:'doc',html:safeHtml(editor.innerHTML)})}
- form.addEventListener('submit',event=>{if(error.textContent){event.preventDefault();return}hidden.value=serialize();if(hidden.value.length>100000){event.preventDefault();error.textContent='Статья слишком длинная для этой версии редактора.'}});
+ form.addEventListener('submit',event=>{if(error.textContent){event.preventDefault();return}hidden.value=serialize();form.dataset.dirty='0';if(hidden.value.length>100000){event.preventDefault();error.textContent='Статья слишком длинная для этой версии редактора.'}});
  document.getElementById('preview-button').addEventListener('click',()=>{
   preview.hidden=false;
   preview.replaceChildren();
