@@ -25,3 +25,17 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 **Known visual differences:** only three original cover PNGs are currently stored in the repository; fourth cover and lower-row artwork from supplied ZIP have not been imported, so existing cover images are temporarily reused. The four lower-row titles are placeholders because the supplied specification does not establish their actual article titles. These eight cards are mockups, not real published articles.
 
 **QA:** GitHub changes committed. Cloudflare build, browser console, actual 1536px screenshot comparison, and Safari were not executed in this session. Confirm successful deployment before approving the page.
+
+
+## Universal article detail — 2026-11-17
+- Added `src/components/DemoArticle008.astro`: complete demonstration text for archive #008, with semantic headings, paragraphs, emphasis, lists, and quote. This is a demo fixture, not an authenticated Bella publication.
+- Replaced `src/pages/publications/[slug].astro` placeholder with a shared Astro static article template. All currently published demo fixtures receive a generated route. Other demo posts show "Материал готовится" rather than fabricated articles.
+- Article template uses the same `post.image` source as archive and homepage previews, includes date, 4:3 cover, SEO, copy-link, previous/next navigation in chronological order (draft/hidden excluded), and shared header/footer.
+- Extended `src/data/publications.ts` with demo 008 content selector, SEO description and stable chronological ordering. Demo #008 date set to 2026-11-17 as provided; #009 set to 2026-11-16. Fixture changes are temporary.
+- Added desktop article CSS to `src/styles/global.css` at fixed 1536px composition; existing pages' styles intentionally unchanged.
+- Set Astro `site` to production pages.dev URL for canonical/OG.
+- **Incomplete:** user-provided transparent PNG star has NOT been uploaded to GitHub; the template temporarily references the already-present distressed-star SVG. Replace with supplied `bella_article_star_transparent(1).png` at `public/assets/graphics/article-end-star.png` and update src when binary upload is possible.
+- **CMS not implemented:** no editor, Word paste sanitation, database, upload endpoint, draft management, or automatic rebuild/SSR publishing. The single cover reference is shared in code now; future CMS must persist it in one publication record.
+- **QA not completed:** no local Astro build, browser screenshot comparison, Cloudflare deployment verification, iPhone/Safari test, or copy-to-clipboard interaction test performed in this session. New commits on main should trigger Cloudflare Pages build, subject to project configuration.
+- **Security:** demo article content is authored trusted Astro markup. Do not render future CMS HTML with `set:html` until server-side sanitization/allowlist is implemented.
+- **Mobile:** not implemented; 1536px desktop composition is intentionally locked pending a separately approved mobile stage.
