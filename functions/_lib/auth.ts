@@ -39,7 +39,7 @@ function cookieValue(request: Request): string | null {
 export async function authenticated(request: Request, env: Env): Promise<boolean> {
   const token = cookieValue(request);
   if (!token || !env.DB || !env.ADMIN_PASSWORD_HASH) return false;
-  const row = await env.DB.prepare("SELECT token_hash FROM admin_sessions WHERE token_hash = ? AND revoked_at IS NULL AND expires_at > datetime('now')").bind(await digest(token)).first<SessionRow>();
+  const row = await env.DB.prepare("SELECT token_hash FROM admin_sessions WHERE token_hash = ? AND revoked_at IS NULL AND datetime(expires_at) > datetime('now')").bind(await digest(token)).first<SessionRow>();
   return !!row;
 }
 export async function startSession(env: Env): Promise<{cookie:string}> {
