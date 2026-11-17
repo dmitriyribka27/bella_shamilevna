@@ -6,6 +6,6 @@ function page(content:string, csrfCookie:string):Response {
 }
 export async function onRequestGet({request,env}:Context):Promise<Response> {
   const csrf = issueCsrf();
-  if(await authenticated(request,env)) return page('<h1>Редактор публикаций</h1><p>Вход выполнен. Редактор статей будет подключён на следующем этапе.</p><form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="${csrf.token}"><button type="submit">Выйти</button></form>`,csrf.cookie);
+  if(await authenticated(request,env)) return page(`<h1>Редактор публикаций</h1><p>Вход выполнен. Редактор статей будет подключён на следующем этапе.</p><form method="post" action="/admin/logout"><input type="hidden" name="csrf" value="${csrf.token}"><button type="submit">Выйти</button></form>`,csrf.cookie);
   return page(`<h1>Вход в редактор</h1><form method="post" action="/admin/login"><input type="hidden" name="csrf" value="${csrf.token}"><label for="password">Пароль</label><input id="password" name="password" type="password" autocomplete="current-password" required minlength="12"><button type="submit">Войти</button></form><p>Доступ только для автора сайта.</p>`,csrf.cookie);
 }
