@@ -15,6 +15,6 @@ import { previewPublications } from '../../data/publications';
 <div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">р. Четук</span></div>
 <section class="home-lower">
 <div class="home-about"><h2>ABOUT ME</h2><p>On psychology, human nature and the contradictions that make us human. Here you can find my research, publications, professional interests and personal reflections.</p><a href="/en/about/">READ MORE</a></div>
-<div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/en/publications/">VIEW ALL</a></div><div class="publication-grid">{previewPublications.map((p) => <PublicationCard {...p} href={`/en/publications/${p.slug}/`} />)}</div></div>
+<div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/en/publications/">VIEW ALL</a></div><div class="publication-grid" lang="ru">{previewPublications.map((p) => <PublicationCard {...p} href={`/en/publications/${p.slug}/`} />)}</div></div>
 </section>
 </BaseLayout>
