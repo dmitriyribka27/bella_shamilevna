@@ -5,18 +5,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 // Never publish unverified qualifications from the visual mockup.
 const profile = {
   name: 'БЕЛЛА ШАМИЛЕВНА РЫБКА',
-  subtitle: 'ПСИХОЛОГИЯ, ИССЛЕДОВАНИЯ, АВТОРСТВО',
+  subtitle: 'ПСИХОЛОГИЯ, ЭКЗИСТЕНЦИАЛЬНОЕ КОНСУЛЬТИРОВАНИЕ, АВТОРСТВО',
   paragraphs: [
-    'Изучаю психологию, человеческие отношения и эмоциональный опыт.',
-    'Здесь будут опубликованы согласованные Беллой сведения о её профессиональном пути, интересах и авторской работе.'
+    'Психолог, исследователь в области межличностных отношений, телесности и эмоционального опыта.',
+    'Окончила факультет психологии МГУ, имею дополнительное образование в области телесно-ориентированной и гуманистической психотерапии.',
+    'Работаю с индивидуальными запросами, провожу исследования и публикую аналитические материалы.'
   ],
   education: [
-    { id: 'mgtu', institution: 'Майкопский государственный технологический университет', period: '2022–2023', program: 'Оператор ЭВМ' },
-    { id: 'kubsu', institution: 'Кубанский государственный университет', period: '2023–2026', program: 'Психолого-педагогическое образование, профиль «Психология образования»', description: 'Высшее образование не завершено' }
+    {
+      id: 'mgtu',
+      institution: 'Майкопский государственный технологический университет',
+      program: 'Оператор ЭВМ, СПО',
+      description: 'Диплом с отличием'
+    },
+    {
+      id: 'kubsu',
+      institution: 'Кубанский государственный университет',
+      program: 'Психология образования · незавершённое высшее.',
+      description: 'Академический развод состоялся. Интеллектуальная верность психологии сохранилась. Продолжение образования — за рубежом.'
+    }
   ],
   additionalEducation: [
-    { id: 'body', program: 'Телесно-ориентированная психотерапия', period: '2025', description: 'Сведения о программе уточняются' },
-    { id: 'existential', program: 'Экзистенциальная психология и методы экзистенциального консультирования', period: '2026', description: 'Сведения о программе уточняются' }
+    {
+      id: 'body',
+      program: 'Телесно-ориентированная психотерапия',
+      description: '280 академических часов · Диплом с отличием'
+    },
+    {
+      id: 'existential',
+      program: 'Экзистенциальная психология и методы экзистенциального консультирования',
+      description: '1056 академических часов · Диплом с отличием'
+    }
   ]
 };
 ---
@@ -45,7 +64,7 @@ const profile = {
         <div class="about-education-list">
           {profile.education.map(item => <div class="about-education-item">
             <p class="about-education-name">{item.institution}</p>
-            <p>{item.period}</p>
+            
             <p>{item.program}</p>
             {item.description && <p>{item.description}</p>}
           </div>)}
@@ -54,7 +73,7 @@ const profile = {
         <div class="about-education-list">
           {profile.additionalEducation.map(item => <div class="about-education-item">
             <p class="about-education-name">{item.program}</p>
-            <p>{item.period} · {item.description}</p>
+            <p>{item.description}</p>
           </div>)}
         </div>
       </section>
