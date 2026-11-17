@@ -20,6 +20,8 @@
    if(busy)return;
    const file=coverInput.files?.[0];
    if(!file)return;
+   if(!['image/jpeg','image/png','image/webp'].includes(file.type)){alert('Выберите JPEG, PNG или WebP.');return}
+   if(file.size>2_000_000){alert('Исходная фотография должна быть не больше 2 МБ.');return}
    const submit=coverForm.querySelector('button[type="submit"]');
    busy=true;if(submit)submit.disabled=true;
    try{
@@ -30,14 +32,18 @@
      const cropWidth=Math.min(sourceWidth,sourceHeight*ratio);
      const cropHeight=cropWidth/ratio;
      const left=(sourceWidth-cropWidth)/2,top=(sourceHeight-cropHeight)/2;
-     const width=Math.min(1600,Math.round(cropWidth));
-     const height=Math.round(width*3/4);
+     const width=Math.min(1600,Math.max(320,Math.floor(cropWidth/4)*4));
+     const height=width*3/4;
      const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
      const ctx=canvas.getContext('2d');
      if(!ctx)throw new Error('Не удалось обработать фотографию.');
      ctx.drawImage(bitmap,left,top,cropWidth,cropHeight,0,0,width,height);
-     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.88));
-     if(!blob)throw new Error('Не удалось подготовить фотографию.');
+     let blob=null;
+     for(const quality of [0.93,0.9,0.86,0.82,0.78]){
+      blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+      if(blob&&blob.size<=2_000_000)break;
+     }
+     if(!blob||blob.size>2_000_000)throw new Error('Не удалось сжать обложку до 2 МБ.');
      const data=new FormData(coverForm);
      data.set('image',new File([blob],'cover.jpg',{type:'image/jpeg'}));
      const response=await fetch(coverForm.action,{method:'POST',body:data,credentials:'same-origin',redirect:'follow'});
