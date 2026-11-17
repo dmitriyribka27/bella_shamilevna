@@ -86,6 +86,15 @@ input,textarea,.languages a{border-radius:14px}
 .side-bottom .logout button{display:block;width:100%;text-align:left;padding:12px 14px;border:1px solid #d8e0e8;border-radius:16px;background:white;color:#284b79;font-size:16px;font-weight:400}
 .side-bottom .logout button:hover{background:#eef3f8}
 @media(max-width:760px){.shell{display:block}.side{position:static;height:auto;min-height:0;padding:16px;border-right:0;border-bottom:1px solid #ddd}.side .brand{margin:0 0 10px}.side nav{display:flex;gap:4px;overflow-x:auto}.side nav a,.side nav .side-create{white-space:nowrap;margin:0;padding:10px}.side-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0 0;margin-top:12px}.side-bottom .site-link{margin:0}.side-bottom .logout button{width:auto}}
+/* Sidebar geometry and typography aligned with the publications catalog. */
+.shell{grid-template-columns:230px minmax(0,1fr)}
+.side{padding:32px 18px;background:#fbfaf8;border-color:#e3e3e1}
+.side .brand{font-size:21px;font-weight:700;letter-spacing:normal;margin:0 12px 48px;line-height:1.55}
+.side .brand small{font-size:12px;color:#7c8793}
+.side nav a.active{font-weight:400}
+.side nav a,.side nav .side-create{font-size:16px;font-weight:400}
+.side-bottom .site-link,.side-bottom .logout button{font-size:16px}
+@media(max-width:760px){.shell{display:block}.side{padding:16px}.side .brand{margin:0 0 10px}}
 /* Match the catalog sidebar exactly, regardless of legacy editor styles. */
 .side{width:100%;min-width:0}
 .side nav{display:flex;flex-direction:column;align-items:stretch;gap:0;overflow:visible}
