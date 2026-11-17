@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { aboutContent } from '../i18n/about';
+import type { SiteLanguage } from '../i18n/site';
+interface Props { lang: SiteLanguage }
+const { lang } = Astro.props;
+const t = aboutContent[lang];
+const profile = t.profile;
+---
+<BaseLayout lang={lang} title={t.title} description={t.description}>
+  <section class="about-page" aria-labelledby="about-title">
+    <div class="about-hero">
+      <div class="about-title-block">
+        <p class="about-kicker">{t.heading}</p>
+        <h1 id="about-title">{t.heading}</h1>
+      </div>
+      <img class="about-cloud" src="/assets/graphics/halftone-cloud.svg" alt="" aria-hidden="true" width="952" height="321" />
+    </div>
+    <div class="about-information">
+      <div class="about-photo-column">
+        <img class="about-portrait" src="/assets/images/about-portrait.png" width="378" height="460" alt={t.alt} />
+      </div>
+      <section class="about-biography" aria-label={t.bio}>
+        <h2>{profile.name}</h2>
+        <p class="about-subtitle">{profile.subtitle}</p>
+        <div class="about-paragraphs">
+          {profile.paragraphs.map(paragraph => <p>{paragraph}</p>)}
+        </div>
+      </section>
+      <section class="about-education" aria-label={t.education}>
+        <h2>{t.eduTitle}</h2>
+        <div class="about-education-list">
+          {profile.education.map(item => <div class="about-education-item">
+            <p class="about-education-name">{item.institution}</p>
+            <p>{item.program}</p>
+            {item.description && <p>{item.description}</p>}
+          </div>)}
+        </div>
+        <h2 class="about-extra-title">{t.additional}</h2>
+        <div class="about-education-list">
+          {profile.additionalEducation.map(item => <div class="about-education-item">
+            <p class="about-education-name">{item.program}</p>
+            <p>{item.description}</p>
+          </div>)}
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
