@@ -8,10 +8,12 @@ export type Publication = {
   publishedAt: string;
   status: 'published' | 'draft' | 'hidden';
   demo?: boolean;
+  contentKey?: 'demo-008';
+  seoDescription?: string;
 };
 export const demoPublications: Publication[] = [
-  { archiveNumber: 9, slug: 'testovaya-statya', title: 'Тестовая статья', image: '/assets/images/cover-01.png', publishedAt: '2026-11-09', status: 'published', demo: true },
-  { archiveNumber: 8, slug: 'odinochestvo-resurs-ili-defitsit', title: 'Одиночество: ресурс или дефицит?', image: '/assets/images/cover-01.png', publishedAt: '2026-11-08', status: 'published', demo: true },
+  { archiveNumber: 9, slug: 'testovaya-statya', title: 'Тестовая статья', image: '/assets/images/cover-01.png', publishedAt: '2026-11-16', status: 'published', demo: true },
+  { archiveNumber: 8, slug: 'odinochestvo-resurs-ili-defitsit', title: 'Одиночество: ресурс или дефицит?', image: '/assets/images/cover-01.png', publishedAt: '2026-11-17', status: 'published', demo: true, contentKey: 'demo-008', seoDescription: 'Об одиночестве и уединении: когда время наедине с собой становится ресурсом, а когда переживается как недостаток близости.' },
   { archiveNumber: 7, slug: 'kak-formiruetsya-blizost', title: 'Как формируется близость', image: '/assets/images/cover-02.png', publishedAt: '2026-11-07', status: 'published', demo: true },
   { archiveNumber: 6, slug: 'telo-i-perezhivanie', title: 'Тело и переживание', image: '/assets/images/cover-03.png', publishedAt: '2026-11-06', status: 'published', demo: true },
   { archiveNumber: 5, slug: 'granitsy-i-otnosheniya', title: 'Границы и отношения', image: '/assets/images/cover-02.png', publishedAt: '2026-11-05', status: 'published', demo: true },
@@ -25,3 +27,5 @@ export const allPublications: Publication[] = demoPublications;
 export const publishedPublications = allPublications.filter(p => p.status === 'published')
   .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || b.archiveNumber - a.archiveNumber);
 export const previewPublications = publishedPublications.slice(0, 3);
+// Ascending chronological order for previous/next; independent of archive grid ordering.
+export const chronologicalPublications = [...publishedPublications].sort((a, b) => a.publishedAt.localeCompare(b.publishedAt) || a.archiveNumber - b.archiveNumber);
