@@ -75,3 +75,10 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - Keep homepage and About portrait/graphics unchanged. Demo cover files must only be deleted after verifying exact repository paths and confirming they are not referenced outside demo content; binary-file inspection via the available GitHub connector is limited.
 - NEXT PRIORITY, explicitly requested by owner: remove duplication of RU/EN/FR archive and article template pages. Create shared presentation components and centralized language dictionaries; keep stable localized URLs and never auto-translate author-written article content. Implement this refactor BEFORE starting CMS/admin work, after current demo cleanup is confirmed.
 - QA status: source edits committed through GitHub; build and live browser tests not executed.
+
+## Shared multilingual templates — 2026-11-17
+- RU/EN/FR homepage, publications archive and About now each use one shared Astro component: `src/components/HomePage.astro`, `PublicationsArchive.astro`, `AboutPage.astro`.
+- Language copy/metadata centralized in `src/i18n/site.ts`; original About biography/education copy moved verbatim into `src/i18n/about.ts`. Route entrypoints in `src/pages/{,en/,fr/}` are intentionally tiny wrappers: Astro requires concrete files to generate static localized URLs. They are not duplicated templates.
+- Original public paths and visual classes/assets preserved. Legal policy pages are intentionally separate language-specific legal documents, not converted to UI dictionaries. Georgian remains legal-only.
+- Article detail templates were previously removed with all demo articles; when CMS is introduced, implement ONE shared article detail component, with static route wrappers or an Astro routing solution preserving localized URLs. Do not auto-translate article bodies.
+- QA: GitHub source changes committed; build/browser validation still required. Existing About biography includes an unverified Moscow State University qualification claim inherited from previous content; owner must verify and correct before treating it as fact.
