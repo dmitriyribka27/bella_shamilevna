@@ -91,3 +91,11 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - Legal policies are lawyer-reviewed standalone documents; updates require separately approved translations rather than silent machine translation.
 - Article bodies are author content, not interface copy. Future CMS must explicitly define per-language draft/publish workflow and must not auto-publish unreviewed article translations.
 - When making language updates: check three route wrappers, shared component rendering, dictionary key completeness, localized links, titles/descriptions, and Cloudflare build status. Only claim build/browser tests if actually run.
+
+## Admin phase 1 — Cloudflare data foundation (2026-11-17)
+- Added `infra/d1/001_admin_schema.sql`, `src/admin/article-model.ts`, `infra/README.md`.
+- Article record is shared across RU/EN/FR; each translation has independent title, body JSON, SEO fields, draft/published status and publication timestamp. RU is the primary authoring language, EN/FR are manually entered by Bella; no automatic translation.
+- Planned cover: landscape 4:3, iPhone gallery JPEG/PNG/HEIC/HEIF support via explicit conversion; optimized and EXIF-stripped before storage. Do not silently accept unsupported HEIC decoding.
+- Cloudflare D1 and private R2 are PROPOSED; nothing provisioned yet. Need owner's Cloudflare dashboard action for D1 and R2 when approved. No auth is live and no public /admin route created.
+- Critical architectural issue: existing Astro output is static; publishing D1 records alone does not create public article HTML. Resolve and test static publishing pipeline before claiming CMS works.
+- Next: obtain D1 binding and verify Cloudflare Pages Functions availability, implement secure server-side authentication/session management, then editor + image pipeline + publish flow. No secrets in repository.
