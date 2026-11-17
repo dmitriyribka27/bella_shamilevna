@@ -57,9 +57,8 @@ const icon = {
     const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
     const routeFor = (language: string) => {
       const path = window.location.pathname;
-      const base = path.replace(/^\/(en|fr)(?=\/)/, '');
-      // Legal translations will be published from lawyer-approved documents separately.
-      if (base.startsWith('/privacy-policy/') || base.startsWith('/personal-data-policy/')) return base;
+      const base = path.replace(/^\/(en|fr|ka)(?=\/)/, '');
+      // Georgian is only a document translation, never a global interface language.
       return language === 'ru' ? base : `/${language}${base}`;
     };
     trigger.addEventListener('click', () => {
