@@ -117,5 +117,5 @@
   .hero-title-first{font-size:clamp(85px,7.8125vw,150px)}
   .hero-title-second{font-size:clamp(91px,8.333333vw,160px)}
   .hero-portrait{height:clamp(410px,33.0078vw,634px);right:10.4%;top:8px;z-index:2}
-  .hero-circle{filter:brightness(.52) saturate(1.65);opacity:1}
+  .hero-circle{filter:none;opacity:1}
 }
