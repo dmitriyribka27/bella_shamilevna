@@ -36,7 +36,7 @@
   if(cmd==='createLink'){const href=prompt('Адрес ссылки (https://)');if(href){try{const u=new URL(href);if(['http:','https:'].includes(u.protocol))document.execCommand(cmd,false,u.href)}catch{alert('Укажите полный адрес https://…')}}}
   else document.execCommand(cmd,false,button.dataset.value||null);
  }));
- const titleField=document.getElementById('title'),seoTitle=document.getElementById('seo-title'),seoDescription=document.getElementById('seo-description');
+ const titleField=document.getElementById('title'),counter=document.getElementById('title-counter'),seoTitle=document.getElementById('seo-title'),seoDescription=document.getElementById('seo-description');
  const titleManual=document.getElementById('seo-title-manual'),descriptionManual=document.getElementById('seo-description-manual');
  const plainText=()=>editor.textContent.replace(/\s+/g,' ').trim();
  function refreshSeo(){
@@ -45,7 +45,9 @@
  }
  seoTitle?.addEventListener('input',()=>{titleManual.value='1'});
  seoDescription?.addEventListener('input',()=>{descriptionManual.value='1'});
- titleField?.addEventListener('input',refreshSeo);
+ function refreshCount(){if(counter)counter.textContent=String(titleField.value.length)+' / 50'}
+ titleField?.addEventListener('input',()=>{refreshCount();refreshSeo()});
+ refreshCount();
  editor.addEventListener('input',refreshSeo);
  document.querySelectorAll('.languages a').forEach(a=>a.addEventListener('click',e=>{if(form.dataset.dirty==='1'&&!confirm('Есть несохранённые изменения. Перейти без сохранения?'))e.preventDefault()}));
  form.addEventListener('input',()=>{form.dataset.dirty='1'});
