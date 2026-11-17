@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteText, type SiteLanguage } from '../i18n/site';
+interface Props { lang: SiteLanguage }
+const { lang } = Astro.props;
+const t = siteText[lang];
+---
+<BaseLayout lang={lang} title={t.archiveTitle} description={t.archiveDescription}>
+  <section class="archive-page" aria-labelledby="archive-title">
+    <div class="archive-intro">
+      <div class="archive-intro-text"><p class="archive-kicker">{t.archive}</p><h1 id="archive-title">{t.publications}</h1></div>
+      <img class="archive-star" src="/assets/graphics/03-vector-distressed-star.svg" alt="" aria-hidden="true" width="549" height="214" />
+    </div>
+    <p class="archive-empty publications-coming-soon">{t.soon}</p>
+  </section>
+</BaseLayout>
