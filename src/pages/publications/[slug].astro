@@ -14,7 +14,7 @@ const next = index < chronologicalPublications.length - 1 ? chronologicalPublica
 const dateText = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(post.publishedAt + 'T12:00:00Z'));
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
 ---
-<BaseLayout title={`${post.title} — Белла Шамилевна Рыбка`} description={post.seoDescription ?? post.title}>
+<BaseLayout title={`${post.title} - Белла Рыбка`} description={post.seoDescription ?? post.title}>
   <link slot="head" rel="canonical" href={canonical} />
   <meta slot="head" property="og:type" content="article" />
   <meta slot="head" property="og:title" content={post.title} />
