@@ -476,3 +476,10 @@ main { width: 1536px; max-width: none; margin-inline: auto; }
 .legal-page a:focus-visible{outline:2px solid #026430;outline-offset:4px}
 @media(max-width:700px){.legal-page{width:calc(100% - 40px);padding:42px 0 72px}.legal-heading{margin-bottom:28px}.legal-content{font-size:16px;line-height:1.6}.legal-content h2{font-size:22px;margin-top:34px}}
 @media(prefers-reduced-motion:reduce){.legal-page *{scroll-behavior:auto}}
+
+/* English localization keeps the established desktop composition. */
+html[lang="en"] .brand{font-size:clamp(17px,1.45vw,23px)}
+html[lang="en"] .hero h1{font-size:clamp(74px,7.1vw,109px)}
+html[lang="en"] .hero-content p{font-size:clamp(16px,1.35vw,22px)}
+html[lang="en"] .home-lower h2{font-size:clamp(38px,3.3vw,52px)}
+.article-language-note{font-size:14px;line-height:1.5;margin:18px 0 8px;max-width:760px}
