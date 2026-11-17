@@ -163,3 +163,18 @@ main,.site-footer{position:relative;z-index:1}
   position:sticky;top:0;z-index:100;
   background:var(--paper);
 }
+
+/* The sticky header has inset content, but its opaque backdrop must cover
+   the full viewport width so hero artwork cannot peek through side gutters. */
+.site-header::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:100vw;
+  transform:translateX(-50%);
+  background:var(--paper);
+  z-index:-1;
+  pointer-events:none;
+}
