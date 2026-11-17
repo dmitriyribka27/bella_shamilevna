@@ -5,7 +5,7 @@ export function adminSidebar(view:'all'|'trash'='all'):string {
  <div class="brand">Белла Рыбка<small>Админ-панель</small></div>
  <nav aria-label="Разделы">
   <a${active('all')} href="/admin/">Все публикации</a>
-  <form method="post" action="/admin/create"><button type="submit" class="side-create">Новая публикация</button></form>
+  <a class="side-create" href="/admin/edit?new=1&amp;lang=ru">Новая публикация</a>
   <a${active('trash')} href="/admin/?view=trash">Корзина</a>
  </nav>
  <div class="side-bottom">
