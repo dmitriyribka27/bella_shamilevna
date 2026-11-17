@@ -19,8 +19,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(!doc||typeof doc!=='object'||(doc as any).type!=='doc'||typeof (doc as any).html!=='string'||(doc as any).html.length>100000)return new Response('Invalid article document',{status:400,headers});
  const existing=await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
  if(!existing)return new Response('Article not found',{status:404,headers});
- const status=action==='publish'?'published':'draft';
- try{
+  try{
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS article_working_versions (
    article_id TEXT NOT NULL,lang TEXT NOT NULL,title TEXT NOT NULL DEFAULT '',
    body_json TEXT NOT NULL DEFAULT '{"type":"doc","html":""}',excerpt TEXT NOT NULL DEFAULT '',
@@ -29,7 +28,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY(article_id,lang))`).run();
   const old=await env.DB.prepare('SELECT status FROM article_translations WHERE article_id=? AND lang=?').bind(id,lang).first<{status:string}>();
-  const plain=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\\s+/g,' ').trim();
+  const plain=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
   const autoTitle=title.trim()+' — Белла Рыбка';
   const autoDescription=plain.slice(0,160);
   const manualTitle=get('seo_title_manual')==='1',manualDescription=get('seo_description_manual')==='1';
