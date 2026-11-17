@@ -127,7 +127,7 @@
 @media(min-width:1080px){
   .wave-wrap{
     height:125px;
-    margin-top:12px;
+    margin-top:-13px;
     overflow:visible;
     z-index:5;
     pointer-events:none;
@@ -147,3 +147,6 @@
     margin-top:20px;
   }
 }
+
+/* Portrait and river aligned to the desktop reference. */
+@media(min-width:1080px){.hero-portrait{top:-17px}.river-label{position:absolute;right:5.2%;top:27px;z-index:6;font:italic 14px Arial,Helvetica,sans-serif;transform:rotate(-12.5deg);white-space:nowrap;color:#101010}}
