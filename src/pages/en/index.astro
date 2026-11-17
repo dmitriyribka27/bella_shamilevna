@@ -1,7 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PublicationCard from '../../components/PublicationCard.astro';
-import { previewPublications } from '../../data/publications';
 ---
 <BaseLayout lang="en" title="Rybka Bella Shamilevna — Psychology, Counselling, Writing" description="Psychology, research and writing by Rybka Bella Shamilevna.">
 <section class="hero" aria-labelledby="hero-title">
@@ -15,6 +13,6 @@ import { previewPublications } from '../../data/publications';
 <div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">Chetuk River</span></div>
 <section class="home-lower">
 <div class="home-about"><h2>ABOUT ME</h2><p>On psychology, human nature and the contradictions that make us human. Here you can find my research, publications, professional interests and personal reflections.</p><a href="/en/about/">READ MORE</a></div>
-<div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/en/publications/">VIEW ALL</a></div><div class="publication-grid" lang="ru">{previewPublications.map((p) => <PublicationCard {...p} href={`/en/publications/${p.slug}/`} />)}</div></div>
+<div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/en/publications/">VIEW ALL</a></div><p class="publications-coming-soon">COMING SOON</p></div>
 </section>
 </BaseLayout>
