@@ -31,10 +31,10 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY(article_id,lang))`).run();
   if(isNew){
-   const plainNew=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\\s+/g,' ').trim();
+   const plainNew=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
    if(!title.trim()||!plainNew)return new Response('Для первого сохранения заполните название и текст',{status:400,headers});
    const translit:Record<string,string>={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'yo',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};
-   const base=Array.from(title.trim().toLowerCase()).map(c=>translit[c]??c).join('').normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,85).replace(/-+$/,'')||'article';
+   const base=Array.from(title.trim().toLowerCase()).map(c=>translit[c]??c).join('').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,85).replace(/-+$/,'')||'article';
    articleId=crypto.randomUUID();
    const slug=base+'-'+articleId.slice(0,8);
    await env.DB.batch([
