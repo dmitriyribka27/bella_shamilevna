@@ -59,7 +59,7 @@ export async function onRequest(context:Context):Promise<Response>{
   const columns=(await env.DB.prepare('PRAGMA table_info(articles)').all<{name:string}>()).results||[];
   const coverColumn=columns.some(c=>c.name==='cover_key')?'a.cover_key':'NULL AS cover_key';
   const sql=`SELECT a.id,a.slug,t.title,t.body_json,t.seo_title,t.seo_description,t.published_at,a.cover_alt,
-    a.cover_key,n.number archive_number FROM articles a
+    ${coverColumn},n.number archive_number FROM articles a
     JOIN article_translations t ON t.article_id=a.id
     LEFT JOIN admin_article_numbers n ON n.article_id=a.id
     LEFT JOIN admin_archived_articles ar ON ar.article_id=a.id
