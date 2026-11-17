@@ -70,7 +70,7 @@ export async function issueCsrf(env: Env): Promise<string> {
 export async function validCsrf(request: Request, form: FormData, env: Env): Promise<boolean> {
   const token = form.get('csrf');
   if(typeof token !== 'string') return false;
-  const match = /^(\\d{13})\\.([a-f0-9]{32})\\.([a-f0-9]{64})$/.exec(token);
+  const match = /^(\d{13})\.([a-f0-9]{32})\.([a-f0-9]{64})$/.exec(token);
   if(!match || !env.ADMIN_PASSWORD_HASH) return false;
   const age = Date.now()-Number(match[1]);
   if(age < -60000 || age > 60*60*1000) return false;
