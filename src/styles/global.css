@@ -1,6 +1,6 @@
 :root{--paper:#f5f3f0;--ink:#101010;--line:#8d8d8d}*{box-sizing:border-box}html{background:var(--paper)}body{margin:0;color:var(--ink);background:var(--paper);font-family:Arial,Helvetica,sans-serif;min-width:1080px}a{color:inherit}a:focus-visible{outline:3px solid #147b45;outline-offset:4px}main{overflow:hidden}.site-header{height:67px;margin:0 3.6%;border-bottom:1px solid var(--line);display:grid;grid-template-columns:32% 43% 25%;align-items:center;gap:0}.brand{font-size:24px;font-weight:750;text-decoration:none;white-space:nowrap}.site-header nav{display:flex;justify-content:space-evenly;gap:18px;white-space:nowrap}.site-header nav a{text-decoration:none;font-size:18px;font-weight:700}.site-header nav a:hover{text-decoration:underline;text-underline-offset:5px}.header-right{display:flex;justify-content:flex-end;align-items:center;gap:55px}.hero{height:463px;position:relative;margin:0 3.6%;isolation:isolate}.hero-content{position:absolute;left:5px;top:163px;z-index:3;white-space:nowrap}.hero h1{font-size:clamp(86px,7.8vw,120px);line-height:.93;letter-spacing:-.046em;font-weight:800;margin:0}.hero-content p{font-size:23px;font-weight:700;margin:27px 0 0}.hero-portrait{position:absolute;right:8.2%;top:12px;height:449px;width:auto;object-fit:contain;z-index:2}.hero-strokes{position:absolute;width:299px;height:476px;left:-55px;top:0;z-index:1}.hero-halftone{position:absolute;width:515px;height:185px;left:170px;top:3px;z-index:1}.hero-circle{position:absolute;width:447px;height:207px;left:39.7%;top:194px;z-index:4;pointer-events:none}.hero-side{position:absolute;right:-10px;top:197px;display:flex;align-items:center;flex-direction:column;gap:26px;font-weight:700;z-index:3}.hero-side>span:first-child{font-size:51px}.hero-side small{font-size:22px}.hero-side-rule{width:1px;height:63px;background:#777}.wave-wrap{height:28px;position:relative;z-index:5;margin-top:-6px;overflow:hidden}.wave-wrap img{position:absolute;width:100%;height:auto;min-height:28px;left:0;top:-43%;object-fit:fill}.home-lower{display:grid;grid-template-columns:385px minmax(0,1fr);gap:56px;margin:10px 3.6% 38px;min-height:320px}.home-lower h2{font-size:52px;line-height:1;font-weight:800;letter-spacing:-.04em;margin:0 0 29px}.home-about{padding:0 39px 0 5px;border-right:1px solid var(--line)}.home-about p{font-size:20px;line-height:1.2;max-width:330px;margin:32px 0 0}.home-about>a{display:inline-block;margin-top:45px;font-size:18px;text-underline-offset:8px}.section-heading{display:flex;justify-content:space-between;align-items:start;gap:12px}.section-heading>a{font-size:18px;margin-top:8px;text-underline-offset:7px;white-space:nowrap}.publication-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9.4%;margin-top:-14px}.publication-card{display:block;text-decoration:none;font-size:18px;line-height:1.3}.publication-card img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;margin-bottom:8px}.publication-card span{display:block;max-width:250px}.publication-card:hover span{text-decoration:underline}.site-footer{margin:0 3.6%;font-size:14px}.footer-top{border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;grid-template-columns:32% 37% 31%;align-items:center;min-height:69px}.footer-top>span:first-child{font-size:20px}.footer-top>span:nth-child(2){font-size:18px;font-weight:bold;text-align:center}.footer-top>div{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.footer-bottom{display:flex;justify-content:space-between;padding:12px 0 9px;font-size:12px}.placeholder{padding:90px 4%;min-height:65vh}.placeholder h1{font-size:clamp(60px,8vw,120px);margin:0}@media(min-width:1750px){.hero,.site-header,.site-footer,.home-lower{max-width:1640px;margin-left:auto;margin-right:auto}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 /* Desktop reference alignment, 1536px design baseline. Keep normal document scrolling. */
-@media(min-width:1080px){
+@media(min-width:0px){
 .site-header{margin-left:3.6%;margin-right:3.6%}
 .hero{margin-left:0;margin-right:0;height:473px}
 .hero-content{left:4.1%;top:165px}
@@ -19,7 +19,7 @@
 /* Desktop composition refinement — 2026-11-16.
    The reference is 1536px wide; these overrides intentionally change
    visible proportions rather than only moving elements by a few pixels. */
-@media (min-width:1080px) {
+@media (min-width:0px) {
   .hero { height: 455px; }
   .hero-content { top: 158px; left: 4%; }
   .hero h1 { font-size: clamp(83px, 7.45vw, 114px); line-height: .94; }
@@ -40,7 +40,7 @@
 }
 
 /* Approved desktop header reference: 1536 × 1024 */
-@media (min-width:1080px) {
+@media (min-width:0px) {
   .site-header {
     height: 67px;
     margin-left: 3.6%;
@@ -111,7 +111,7 @@
 
 
 /* Homepage hero: match Figma's independent Arial title sizes and portrait scale. */
-@media(min-width:1080px){
+@media(min-width:0px){
   .hero h1{font-family:Arial,Helvetica,sans-serif;font-weight:700;letter-spacing:-.012em;line-height:.91}
   .hero-title-first,.hero-title-second{display:block;white-space:nowrap}
   .hero-title-first{font-size:clamp(85px,7.8125vw,150px)}
@@ -124,7 +124,7 @@
 /* Desktop homepage: river divider beneath the portrait, before the content grid.
    The supplied PNG has a tall transparent canvas; compress it vertically so
    the actual river, not its transparent padding, occupies the separator. */
-@media(min-width:1080px){
+@media(min-width:0px){
   .wave-wrap{
     height:125px;
     margin-top:-13px;
@@ -149,7 +149,7 @@
 }
 
 /* Portrait and river aligned to the desktop reference. */
-@media(min-width:1080px){.hero-portrait{top:-17px}.river-label{position:absolute;right:5.2%;top:27px;z-index:6;font:italic 14px Arial,Helvetica,sans-serif;transform:rotate(-12.5deg);white-space:nowrap;color:#101010}}
+@media(min-width:0px){.hero-portrait{top:-17px}.river-label{position:absolute;right:5.2%;top:27px;z-index:6;font:italic 14px Arial,Helvetica,sans-serif;transform:rotate(-12.5deg);white-space:nowrap;color:#101010}}
 
 /* Subtle paper grain across public pages; header stays opaque and pinned. */
 body{position:relative}
@@ -181,7 +181,7 @@ main,.site-footer{position:relative;z-index:1}
 
 /* Desktop hero finishing: shift portrait and river together; tighten whitespace
    before the about/publications section without crowding the divider. */
-@media(min-width:1080px){
+@media(min-width:0px){
   .hero-portrait{top:-25px;right:11.1%}
   .wave-wrap{margin-top:-21px;height:99px}
   .home-lower{margin-top:14px}
@@ -189,7 +189,7 @@ main,.site-footer{position:relative;z-index:1}
 
 /* Second alignment pass from 17 Nov screenshot: bring portrait and river higher,
    and tighten the transition to the content block. */
-@media(min-width:1080px){
+@media(min-width:0px){
   .hero-portrait{top:-47px;right:12.3%}
   .wave-wrap{margin-top:-35px;height:86px}
   .home-lower{margin-top:12px}
@@ -286,7 +286,7 @@ html,body{max-width:100%;overflow-x:clip}
 
 /* Approved publications masthead reference — 17 Nov.
    Fine-tuning is scoped to the archive heading and star only. */
-@media (min-width:1080px){
+@media (min-width:0px){
   .archive-intro h1{
     font-size:clamp(72px,6.65vw,104px);
     font-weight:700;
@@ -306,3 +306,53 @@ html,body{max-width:100%;overflow-x:clip}
 
 /* Explicit initial archive visibility independent of browser [hidden] handling. */
 .archive-card.archive-card--initially-hidden{display:none!important}
+
+
+/* Desktop composition lock — 1536px reference.
+   Browser zoom changes the visible area, not the layout's internal coordinates.
+   Mobile/tablet redesign remains a separate project stage. */
+html { min-width: 0; }
+body { width: 100%; min-width: 1536px; }
+main { width: 1536px; max-width: none; margin-inline: auto; }
+.site-header, .site-footer {
+  width: 1425px;
+  max-width: none;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.hero { width: 1536px; max-width: none; margin-inline: 0; }
+.hero h1 .hero-title-first { font-size: 120px; }
+.hero h1 .hero-title-second { font-size: 128px; }
+.hero-portrait { height: 507px; }
+.hero-circle { width: 420px; }
+.hero-content { left: 61px; }
+.hero-side { right: 48px; }
+.hero-halftone { left: 246px; }
+.wave-wrap { width: 1536px; }
+.wave-wrap img { width: 1634px; }
+.home-lower {
+  width: 1425px;
+  max-width: none;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  grid-template-columns: 385px minmax(0,1fr);
+  gap: 56px;
+}
+.archive-page {
+  width: 1536px;
+  max-width: none;
+  margin-inline: 0;
+  padding-left: 76px;
+  padding-right: 76px;
+}
+.archive-intro h1 { font-size: 102px; }
+.archive-star { right: -21px; }
+.placeholder { width: 1536px; }
+/* Disable the old >1750px layout switch: zoom must not trigger a new composition. */
+@media(min-width:1750px) {
+  .hero,.site-header,.site-footer,.home-lower,.archive-page {
+    max-width: none;
+  }
+  .hero,.archive-page { margin-left: 0; margin-right: 0; }
+  .site-header,.site-footer,.home-lower { margin-left: auto; margin-right: auto; }
+}
