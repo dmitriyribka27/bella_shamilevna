@@ -14,16 +14,41 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(!f)return new Response('Invalid form',{status:400,headers});
  const get=(key:string)=>f.get(key);
  const id=get('id'),lang=get('lang'),title=get('title'),body=get('body_json'),excerpt=get('excerpt'),seoTitle=get('seo_title'),seoDescription=get('seo_description'),action=get('action');
- if(typeof id!=='string'||!id||id.length>100||!['ru','en','fr'].includes(String(lang))||typeof title!=='string'||!title.trim()||title.length>200||typeof body!=='string'||body.length>100000||typeof excerpt!=='string'||excerpt.length>1000||typeof seoTitle!=='string'||seoTitle.length>200||typeof seoDescription!=='string'||seoDescription.length>320||!['draft','publish','unpublish'].includes(String(action)))return new Response('Invalid article fields',{status:400,headers});
+ if(typeof id!=='string'||!id||id.length>100||!['ru','en','fr'].includes(String(lang))||typeof title!=='string'||title.length>50||typeof body!=='string'||body.length>100000||typeof excerpt!=='string'||excerpt.length>1000||typeof seoTitle!=='string'||seoTitle.length>200||typeof seoDescription!=='string'||seoDescription.length>320||!['draft','publish','unpublish'].includes(String(action)))return new Response('Invalid article fields',{status:400,headers});
  let doc:unknown;try{doc=JSON.parse(body)}catch{return new Response('Invalid article document',{status:400,headers})}
  if(!doc||typeof doc!=='object'||(doc as any).type!=='doc'||typeof (doc as any).html!=='string'||(doc as any).html.length>100000)return new Response('Invalid article document',{status:400,headers});
  const existing=await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
  if(!existing)return new Response('Article not found',{status:404,headers});
  const status=action==='publish'?'published':'draft';
  try{
-  await env.DB.prepare(`INSERT INTO article_translations(article_id,lang,title,body_json,excerpt,seo_title,seo_description,status,published_at,updated_at)
- VALUES(?,?,?,?,?,?,?,?,CASE WHEN ?='published' THEN datetime('now') ELSE NULL END,datetime('now'))
- ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,status=excluded.status,published_at=CASE WHEN excluded.status='published' THEN COALESCE(article_translations.published_at,datetime('now')) ELSE NULL END,updated_at=datetime('now')`).bind(id,lang,title.trim(),body,excerpt,seoTitle,seoDescription,status,status).run();
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS article_working_versions (
+   article_id TEXT NOT NULL,lang TEXT NOT NULL,title TEXT NOT NULL DEFAULT '',
+   body_json TEXT NOT NULL DEFAULT '{"type":"doc","html":""}',excerpt TEXT NOT NULL DEFAULT '',
+   seo_title TEXT NOT NULL DEFAULT '',seo_description TEXT NOT NULL DEFAULT '',
+   seo_title_manual INTEGER NOT NULL DEFAULT 0,seo_description_manual INTEGER NOT NULL DEFAULT 0,
+   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   PRIMARY KEY(article_id,lang))`).run();
+  const old=await env.DB.prepare('SELECT status FROM article_translations WHERE article_id=? AND lang=?').bind(id,lang).first<{status:string}>();
+  const plain=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\\s+/g,' ').trim();
+  const autoTitle=title.trim()+' — Белла Рыбка';
+  const autoDescription=plain.slice(0,160);
+  const manualTitle=get('seo_title_manual')==='1',manualDescription=get('seo_description_manual')==='1';
+  const finalTitle=manualTitle?seoTitle:autoTitle,finalDescription=manualDescription?seoDescription:autoDescription;
+  await env.DB.prepare(`INSERT INTO article_working_versions(article_id,lang,title,body_json,excerpt,seo_title,seo_description,seo_title_manual,seo_description_manual,updated_at)
+   VALUES(?,?,?,?,?,?,?,?,?,datetime('now'))
+   ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,seo_title_manual=excluded.seo_title_manual,seo_description_manual=excluded.seo_description_manual,updated_at=datetime('now')`).bind(id,lang,title.trim(),body,excerpt,finalTitle,finalDescription,Number(manualTitle),Number(manualDescription)).run();
+  if(action==='publish'){
+   if(!title.trim()||!plain)return new Response('Для публикации заполните название и текст',{status:400,headers});
+   await env.DB.prepare(`INSERT INTO article_translations(article_id,lang,title,body_json,excerpt,seo_title,seo_description,status,published_at,updated_at)
+   VALUES(?,?,?,?,?,?,?,'published',datetime('now'),datetime('now'))
+   ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,status='published',published_at=COALESCE(article_translations.published_at,datetime('now')),updated_at=datetime('now')`).bind(id,lang,title.trim(),body,excerpt,finalTitle,finalDescription).run();
+   await env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=? AND lang=?').bind(id,lang).run();
+  }else if(action==='unpublish'){
+   await env.DB.prepare("UPDATE article_translations SET status='draft',updated_at=datetime('now') WHERE article_id=? AND lang=?").bind(id,lang).run();
+  }else if(old?.status!=='published'){
+   await env.DB.prepare(`INSERT INTO article_translations(article_id,lang,title,status) VALUES (?,?,?,'draft')
+    ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title`).bind(id,lang,title.trim()).run();
+  }
   await env.DB.prepare("UPDATE articles SET updated_at=datetime('now') WHERE id=?").bind(id).run();
  }catch(e){console.error('Article save failed',e);return new Response('Could not save article',{status:500,headers})}
  return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang='+encodeURIComponent(String(lang))+'&saved=1');
