@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PublicationCard from '../../components/PublicationCard.astro';
+import { previewPublications } from '../../data/publications';
+---
+<BaseLayout lang="fr" title="Rybka Bella Shamilevna — Psychologie, accompagnement, écriture" description="Psychologie, recherche et publications de Rybka Bella Shamilevna.">
+<section class="hero" aria-labelledby="hero-title">
+<img class="hero-strokes" src="/assets/graphics/Group-2.svg" alt="" />
+<img class="hero-halftone" src="/assets/graphics/Group-1.svg" alt="" />
+<div class="hero-content"><h1 id="hero-title"><span class="hero-title-first">RYBKA BELLA</span><span class="hero-title-second">SHAMILEVNA</span></h1><p>PSYCHOLOGIE · RECHERCHE · ÉCRITURE</p></div>
+<img class="hero-circle" src="/assets/graphics/Group.svg" alt="" />
+<img class="hero-portrait" src="/assets/images/home-portrait.png" alt="Portrait en noir et blanc de Bella" fetchpriority="high" />
+<div class="hero-side"><span>ПСЭ</span><span class="hero-side-rule"></span><small>ДУША</small></div>
+</section>
+<div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">Rivière Tchetouk</span></div>
+<section class="home-lower">
+<div class="home-about"><h2>À PROPOS</h2><p>À propos de la psychologie, de la nature humaine et des contradictions qui font de nous des êtres humains. Vous trouverez ici mes recherches, mes publications, mes centres d’intérêt professionnels et mes réflexions personnelles.</p><a href="/fr/about/">EN SAVOIR PLUS</a></div>
+<div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/fr/publications/">VOIR TOUTES LES PUBLICATIONS</a></div><div class="publication-grid" lang="ru">{previewPublications.map((p) => <PublicationCard {...p} href={`/fr/publications/${p.slug}/`} />)}</div></div>
+</section>
+</BaseLayout>
