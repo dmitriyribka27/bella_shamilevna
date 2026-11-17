@@ -5,7 +5,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response> {
   if(!env.DB || !env.ADMIN_PASSWORD_HASH) return new Response('Admin is not configured',{status:503,headers:securityHeaders()});
   if(Number(request.headers.get('Content-Length')||0)>4096) return new Response('Request too large',{status:413,headers:securityHeaders()});
   const form = await request.formData().catch(()=>null);
-  if(!form || !validCsrf(request,form)) return new Response('Invalid or expired form. Reload /admin/ and retry.',{status:403,headers:securityHeaders()});
+  if(!form || !(await validCsrf(request,form,env))) return new Response('Invalid or expired form. Reload /admin/ and retry.',{status:403,headers:securityHeaders()});
   const password = form.get('password');
   if(typeof password!=='string'||password.length>1024) return new Response('Invalid request',{status:400,headers:securityHeaders()});
   // Do not trust forwarded client IP for a permanent account ban. Throttle per Cloudflare-verified IP.
