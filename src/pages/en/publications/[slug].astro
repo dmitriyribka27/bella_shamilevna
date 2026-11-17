@@ -26,12 +26,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).to
     <p class="article-language-note">This article is currently available in Russian only. The original text is displayed without automatic translation.</p>
     <header class="article-masthead">
       <div class="article-heading">
-        <h1>{post.title}</h1>
+        <h1 lang="ru">{post.title}</h1>
         <time datetime={post.publishedAt}>{dateText}</time>
       </div>
       <img class="article-cover" src={post.image} alt="" width="800" height="600" />
     </header>
-    <div class="article-content">
+    <div class="article-content" lang="ru">
       {post.contentKey === 'demo-008'
         ? <DemoArticle008 />
         : <div class="article-body"><p>Article coming soon.</p></div>}
@@ -49,10 +49,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).to
   </article>
   <nav class="article-neighbors" aria-label="Other publications">
     <div class="article-neighbor article-neighbor-prev">
-      {previous && <a href={`/en/publications/${previous.slug}/`}><span class="article-arrow" aria-hidden="true">⟵</span><span><small>PREVIOUS PUBLICATION</small><strong>{previous.title}</strong></span></a>}
+      {previous && <a href={`/en/publications/${previous.slug}/`}><span class="article-arrow" aria-hidden="true">⟵</span><span><small>PREVIOUS PUBLICATION</small><strong lang="ru">{previous.title}</strong></span></a>}
     </div>
     <div class="article-neighbor article-neighbor-next">
-      {next && <a href={`/en/publications/${next.slug}/`}><span><small>NEXT PUBLICATION</small><strong>{next.title}</strong></span><span class="article-arrow" aria-hidden="true">⟶</span></a>}
+      {next && <a href={`/en/publications/${next.slug}/`}><span><small>NEXT PUBLICATION</small><strong lang="ru">{next.title}</strong></span><span class="article-arrow" aria-hidden="true">⟶</span></a>}
     </div>
   </nav>
 </BaseLayout>
