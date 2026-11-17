@@ -1,12 +1,12 @@
-import {redirect,sameOrigin,securityHeaders,startSession,verifyPassword} from '../_lib/auth';
+import {redirect,validCsrf,securityHeaders,startSession,verifyPassword} from '../_lib/auth';
 import type {Env} from '../_lib/auth';
 interface Context {request:Request;env:Env}
 export async function onRequestPost({request,env}:Context):Promise<Response> {
-  if(!sameOrigin(request)) return new Response('Forbidden',{status:403,headers:securityHeaders()});
   if(!env.DB || !env.ADMIN_PASSWORD_HASH) return new Response('Admin is not configured',{status:503,headers:securityHeaders()});
   if(Number(request.headers.get('Content-Length')||0)>4096) return new Response('Request too large',{status:413,headers:securityHeaders()});
   const form = await request.formData().catch(()=>null);
-  const password = form?.get('password');
+  if(!form || !validCsrf(request,form)) return new Response('Invalid or expired form. Reload /admin/ and retry.',{status:403,headers:securityHeaders()});
+  const password = form.get('password');
   if(typeof password!=='string'||password.length>1024) return new Response('Invalid request',{status:400,headers:securityHeaders()});
   // Do not trust forwarded client IP for a permanent account ban. Throttle per Cloudflare-verified IP.
   const ip = request.headers.get('CF-Connecting-IP')||'unknown';
