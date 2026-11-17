@@ -446,3 +446,17 @@ main { width: 1536px; max-width: none; margin-inline: auto; }
   box-shadow: 4px 5px 0 rgba(16, 16, 16, .11);
   border-radius: 0;
 }
+
+/* BELLA editorial motion: lightweight, one-time entrances; never alters layout. */
+@keyframes bella-appear {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.motion-enter {
+  animation: bella-appear 580ms cubic-bezier(.22, 1, .36, 1) var(--motion-delay, 0ms) both;
+}
+.motion-pending { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .motion-enter { animation: none !important; }
+  .motion-pending { opacity: 1 !important; }
+}
