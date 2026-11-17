@@ -99,3 +99,12 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - Cloudflare D1 and private R2 are PROPOSED; nothing provisioned yet. Need owner's Cloudflare dashboard action for D1 and R2 when approved. No auth is live and no public /admin route created.
 - Critical architectural issue: existing Astro output is static; publishing D1 records alone does not create public article HTML. Resolve and test static publishing pipeline before claiming CMS works.
 - Next: obtain D1 binding and verify Cloudflare Pages Functions availability, implement secure server-side authentication/session management, then editor + image pipeline + publish flow. No secrets in repository.
+
+
+## Editor working revisions — 2026-11-18
+- New article buttons POST to /admin/create, creating an untitled draft and redirecting to the same /admin/edit editor. Existing draft edit uses the same editor.
+- /admin/save writes working content to article_working_versions. For already published translations, Save does not overwrite article_translations; Publish promotes the saved content. This working-version table is created lazily by the server.
+- Editor loads the working version first. Automatic SEO title derives from the title and author name; description derives from plain editor text. Explicit edits are marked by hidden manual flags and stored separately for each language.
+- Added unsaved-change warning on language navigation and page unload. No autosave.
+- **Not yet implemented:** public pages reading D1; cover upload/storage and publish validation for cover; public preview with approved site layout; archive numbering in editor; Word paste integration tests; robust cross-device concurrency/version conflict handling. Current preview is in-editor only.
+- **QA not executed:** no local TypeScript build, Cloudflare deployment validation, D1 migration inspection, or iPhone Safari tests. Test first on a disposable draft and an existing published article before relying on the workflow. The schema and runtime must be checked in production.
