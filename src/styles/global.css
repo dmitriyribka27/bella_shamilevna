@@ -239,3 +239,29 @@ html,body{max-width:100%;overflow-x:clip}
 .footer-socials{display:flex;flex-direction:row;flex:none;gap:24px}
 .footer-policies{min-width:0;align-items:flex-end;text-align:right}
 .footer-policies a{white-space:normal}
+
+
+/* Correct legacy .footer-top > div selector overriding the contact row. */
+.site-footer .footer-top > .footer-adyghe{
+  display:flex;
+  flex-direction:row;
+  justify-content:flex-start;
+  align-items:center;
+  text-align:left;
+}
+.site-footer .footer-top > .footer-contacts{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  justify-content:center;
+  align-items:center;
+  gap:32px;
+  text-align:center;
+}
+.site-footer .footer-top > .footer-contacts .footer-socials{
+  display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:24px;
+}
