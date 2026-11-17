@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DemoArticle008 from '../../components/DemoArticle008.astro';
+import { chronologicalPublications, publishedPublications } from '../../data/publications';
+import type { Publication } from '../../data/publications';
+
+export function getStaticPaths() {
+  return publishedPublications.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+const { post } = Astro.props as { post: Publication };
+const index = chronologicalPublications.findIndex((item) => item.slug === post.slug);
+const previous = index > 0 ? chronologicalPublications[index - 1] : null;
+const next = index < chronologicalPublications.length - 1 ? chronologicalPublications[index + 1] : null;
+const dateText = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(post.publishedAt + 'T12:00:00Z'));
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
+---
+<BaseLayout lang="en" title={`${post.title} - Rybka Bella Shamilevna`} description={post.seoDescription ?? post.title}>
+  <link slot="head" rel="canonical" href={canonical} />
+  <meta slot="head" property="og:type" content="article" />
+  <meta slot="head" property="og:title" content={post.title} />
+  <meta slot="head" property="og:description" content={post.seoDescription ?? post.title} />
+  <meta slot="head" property="og:url" content={canonical} />
+  <meta slot="head" property="og:image" content={new URL(post.image, Astro.site ?? Astro.url.origin).toString()} />
+  {post.demo && <meta slot="head" name="robots" content="noindex" />}
+  <article class="article-page">
+    <p class="article-language-note">This article is currently available in Russian only. The original text is displayed without automatic translation.</p>
+    <header class="article-masthead">
+      <div class="article-heading">
+        <h1>{post.title}</h1>
+        <time datetime={post.publishedAt}>{dateText}</time>
+      </div>
+      <img class="article-cover" src={post.image} alt="" width="800" height="600" />
+    </header>
+    <div class="article-content">
+      {post.contentKey === 'demo-008'
+        ? <DemoArticle008 />
+        : <div class="article-body"><p>Article coming soon.</p></div>}
+    </div>
+    <div class="article-ending" aria-hidden="true">
+      <img src="/assets/graphics/03-vector-distressed-star.svg" alt="" width="549" height="214" />
+    </div>
+    <div class="article-actions">
+      <button type="button" class="article-copy-link" data-copy-link>
+        <span data-copy-label>Copy link</span>
+        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 13.5a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-2 2"/><path d="M14 10.5a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l2-2"/></svg>
+      </button>
+      <span class="article-copy-status" role="status" aria-live="polite" data-copy-status></span>
+    </div>
+  </article>
+  <nav class="article-neighbors" aria-label="Other publications">
+    <div class="article-neighbor article-neighbor-prev">
+      {previous && <a href={`/en/publications/${previous.slug}/`}><span class="article-arrow" aria-hidden="true">⟵</span><span><small>PREVIOUS PUBLICATION</small><strong>{previous.title}</strong></span></a>}
+    </div>
+    <div class="article-neighbor article-neighbor-next">
+      {next && <a href={`/en/publications/${next.slug}/`}><span><small>NEXT PUBLICATION</small><strong>{next.title}</strong></span><span class="article-arrow" aria-hidden="true">⟶</span></a>}
+    </div>
+  </nav>
+</BaseLayout>
+<script>
+  const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-link]');
+  copyButton?.addEventListener('click', async () => {
+    const status = document.querySelector<HTMLElement>('[data-copy-status]');
+    const label = document.querySelector<HTMLElement>('[data-copy-label]');
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      if (status) status.textContent = 'Link copied';
+      if (label) label.textContent = 'Ссылка скопирована';
+    } catch {
+      if (status) status.textContent = 'Could not copy link';
+    }
+  });
+</script>
