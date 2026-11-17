@@ -25,7 +25,14 @@
    const submit=coverForm.querySelector('button[type="submit"]');
    busy=true;if(submit)submit.disabled=true;
    try{
-    const bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
+    const bitmap=await (async()=>{
+     if(typeof createImageBitmap==='function'){try{return await createImageBitmap(file)}catch{}}
+     const objectUrl=URL.createObjectURL(file);
+     try{
+      const img=new Image();img.src=objectUrl;await img.decode();
+      return {width:img.naturalWidth,height:img.naturalHeight,drawSource:img,close(){}};
+     }finally{URL.revokeObjectURL(objectUrl)}
+    })();
     try{
      const ratio=4/3;
      const sourceWidth=bitmap.width,sourceHeight=bitmap.height;
@@ -37,7 +44,7 @@
      const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
      const ctx=canvas.getContext('2d');
      if(!ctx)throw new Error('Не удалось обработать фотографию.');
-     ctx.drawImage(bitmap,left,top,cropWidth,cropHeight,0,0,width,height);
+     ctx.drawImage(bitmap.drawSource||bitmap,left,top,cropWidth,cropHeight,0,0,width,height);
      let blob=null;
      for(const quality of [0.93,0.9,0.86,0.82,0.78]){
       blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
@@ -46,8 +53,12 @@
      if(!blob||blob.size>2_000_000)throw new Error('Не удалось сжать обложку до 2 МБ.');
      const data=new FormData(coverForm);
      data.set('image',new File([blob],'cover.jpg',{type:'image/jpeg'}));
-     const response=await fetch(coverForm.action,{method:'POST',body:data,credentials:'same-origin',redirect:'follow'});
-     if(!response.ok)throw new Error('Не удалось загрузить обложку ('+response.status+').');
+     let response;
+     try{response=await fetch(coverForm.action,{method:'POST',body:data,credentials:'same-origin',redirect:'manual'})}
+     catch(networkError){throw new Error('Сетевая ошибка при загрузке. '+String(networkError))}
+     if(response.type==='opaqueredirect'){window.location.assign('/admin/edit?id='+encodeURIComponent(data.get('id'))+'&lang=ru&saved=1');return}
+     if(!response.ok){const detail=await response.text().catch(()=>'');throw new Error('Ошибка загрузки ('+response.status+'): '+detail.slice(0,250))}
+     
      window.location.assign(response.url);
     }finally{bitmap.close()}
    }catch(err){
