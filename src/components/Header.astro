@@ -25,6 +25,51 @@ const icon = {
         : <span class="social-unlinked" title="Ссылка будет добавлена после подтверждения контакта" aria-label={name === 'telegram' ? 'Telegram — ссылка пока не указана' : name === 'instagram' ? 'Instagram — ссылка пока не указана' : 'Почта — адрес пока не указан'} set:html={svg} />
       )}
     </div>
-    <span class="header-lang" lang="ru">RU</span>
+    <div class="language-switcher" data-language-switcher>
+      <button class="header-lang language-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu" aria-label="Выбрать язык сайта">
+        <span data-current-language>RU</span>
+        <svg class="language-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="m2.5 4.5 3.5 3 3.5-3" /></svg>
+      </button>
+      <div class="language-menu" id="language-menu" hidden>
+        <button class="language-option is-selected" type="button" data-language="ru" aria-pressed="true"><span>RU</span><span>Русский</span></button>
+        <button class="language-option" type="button" data-language="en" aria-pressed="false"><span>EN</span><span>English</span></button>
+        <p class="language-note" data-language-note hidden>English translation is coming soon. The site content is currently in Russian.</p>
+      </div>
+    </div>
   </div>
 </header>
+
+<script>
+  const switcher = document.querySelector<HTMLElement>('[data-language-switcher]');
+  if (switcher) {
+    const trigger = switcher.querySelector<HTMLButtonElement>('.language-trigger')!;
+    const menu = switcher.querySelector<HTMLElement>('.language-menu')!;
+    const current = switcher.querySelector<HTMLElement>('[data-current-language]')!;
+    const note = switcher.querySelector<HTMLElement>('[data-language-note]')!;
+    const options = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-language]'));
+    const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
+    const select = (language: string) => {
+      current.textContent = language.toUpperCase();
+      options.forEach((option) => {
+        const selected = option.dataset.language === language;
+        option.classList.toggle('is-selected', selected);
+        option.setAttribute('aria-pressed', String(selected));
+      });
+      note.hidden = language !== 'en';
+      // The page text stays Russian until translations are actually published.
+      close();
+    };
+    trigger.addEventListener('click', () => {
+      const opening = menu.hidden;
+      menu.hidden = !opening;
+      trigger.setAttribute('aria-expanded', String(opening));
+    });
+    options.forEach((option) => option.addEventListener('click', () => select(option.dataset.language || 'ru')));
+    document.addEventListener('click', (event) => {
+      if (!switcher.contains(event.target as Node)) close();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') { close(); trigger.focus(); }
+    });
+  }
+</script>
