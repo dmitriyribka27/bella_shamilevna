@@ -2,6 +2,7 @@
 const { lang = 'ru' } = Astro.props;
 const en = lang === 'en';
 const fr = lang === 'fr';
+const legalPrefix = lang === 'en' ? '/en' : lang === 'fr' ? '/fr' : '';
 const contacts = [
   { label: 'Telegram', href: 'https://t.me/skot4os', svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>' },
   { label: 'Instagram', href: 'https://www.instagram.com/cognitioverum/', svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.3" y="2.3" width="19.4" height="19.4" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle class="insta-dot" cx="17.7" cy="6.5" r="1"/></svg>' },
@@ -18,8 +19,8 @@ const contacts = [
       </div>
     </div>
     <nav class="footer-policies" aria-label={fr ? "Documents juridiques" : en ? "Legal documents" : "Правовые документы"}>
-      <a href="/privacy-policy/">{fr ? 'Politique de confidentialité' : en ? 'Privacy Policy' : 'Политика конфиденциальности'}</a>
-      <a href="/personal-data-policy/">{fr ? 'Politique de traitement des données personnelles' : en ? 'Personal Data Processing Policy' : 'Политика обработки персональных данных'}</a>
+      <a href={`${legalPrefix}/privacy-policy/`}>{fr ? 'Politique de confidentialité' : en ? 'Privacy Policy' : 'Политика конфиденциальности'}</a>
+      <a href={`${legalPrefix}/personal-data-policy/`}>{fr ? 'Politique de traitement des données personnelles' : en ? 'Personal Data Processing Policy' : 'Политика обработки персональных данных'}</a>
     </nav>
   </div>
   <div class="footer-bottom"><span>© {lang === 'ru' ? 'Рыбка Белла Шамилевна' : 'Rybka Bella Shamilevna'}</span><span>{fr ? 'Tous droits réservés' : en ? 'All rights reserved' : 'Все права защищены'}</span></div>
