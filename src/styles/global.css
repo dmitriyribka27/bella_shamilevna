@@ -402,3 +402,9 @@ main { width: 1536px; max-width: none; margin-inline: auto; }
 /* Smaller article cover on every detail page; retain 4:3 and stable desktop grid. */
 .article-masthead{grid-template-columns:minmax(0,1fr) 380px;gap:90px;padding-top:30px;padding-bottom:30px}
 .article-cover{width:380px;height:285px;aspect-ratio:4/3}
+
+/* Article cover: subtle editorial frame, echoing the language dropdown. */
+.article-cover{
+  border:1px solid rgba(16,16,16,.35);
+  box-shadow:4px 5px 0 rgba(16,16,16,.11);
+}
