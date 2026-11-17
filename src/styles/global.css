@@ -297,3 +297,9 @@ html,body{max-width:100%;overflow-x:clip}
     right:-1.5%;
   }
 }
+
+/* Archive progressive reveal: 8 cards per click; hidden cards never occupy grid space. */
+.archive-card[hidden],.archive-load-more[hidden]{display:none!important}
+.archive-load-more{display:block;margin:55px auto 0;padding:13px 28px;border:1px solid var(--ink);background:transparent;color:var(--ink);font:700 17px Arial,Helvetica,sans-serif;cursor:pointer}
+.archive-load-more:hover{background:var(--ink);color:var(--paper)}
+.archive-load-more:focus-visible{outline:3px solid #147b45;outline-offset:4px}
