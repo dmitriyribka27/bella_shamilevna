@@ -1,5 +1,5 @@
 // Design-only fixtures. These are NOT published articles.
-// Archive numbers are persistent metadata, never derived from array positions.
+// Archive numbers are immutable, unique metadata assigned at first publication.\n// Never renumber or re-sort by edited dates, array position, or updatedAt.\n// CMS must allocate the next number atomically on first publication; editing preserves it.
 export type Publication = {
   archiveNumber: number;
   slug: string;
@@ -25,7 +25,7 @@ export const demoPublications: Publication[] = [
 // Later replace this fixture with approved content from the CMS.
 export const allPublications: Publication[] = demoPublications;
 export const publishedPublications = allPublications.filter(p => p.status === 'published')
-  .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || b.archiveNumber - a.archiveNumber);
+  .sort((a, b) => b.archiveNumber - a.archiveNumber);
 export const previewPublications = publishedPublications.slice(0, 3);
-// Ascending chronological order for previous/next; independent of archive grid ordering.
-export const chronologicalPublications = [...publishedPublications].sort((a, b) => a.publishedAt.localeCompare(b.publishedAt) || a.archiveNumber - b.archiveNumber);
+// Stable archive sequence for previous/next. Dates and edits never change navigation.
+export const chronologicalPublications = [...publishedPublications].sort((a, b) => a.archiveNumber - b.archiveNumber);
