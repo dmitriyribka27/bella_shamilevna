@@ -194,3 +194,37 @@ main,.site-footer{position:relative;z-index:1}
   .wave-wrap{margin-top:-35px;height:86px}
   .home-lower{margin-top:12px}
 }
+
+
+/* Footer — three-column layout from the approved desktop reference. */
+.site-footer .footer-top{
+  display:grid;
+  grid-template-columns:31% 36% 33%;
+  align-items:center;
+  min-height:70px;
+}
+.footer-adyghe{
+  display:flex;
+  align-items:center;
+  min-height:44px;
+  font-size:18px;
+  border-right:1px solid var(--line);
+}
+.footer-contacts{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:36px;
+  min-height:44px;
+  border-right:1px solid var(--line);
+}
+.footer-contacts strong{font-size:17px;font-weight:700;white-space:nowrap}
+.footer-socials{display:flex;align-items:center;gap:27px}
+.footer-socials a{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px}
+.footer-socials svg{display:block;width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.footer-socials .insta-dot{fill:currentColor;stroke:none}
+.footer-socials a:hover{opacity:.65}
+.footer-policies{display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding-left:16px}
+.footer-policies a{font-size:13px;line-height:1.2;text-decoration:none}
+.footer-policies a:hover{text-decoration:underline;text-underline-offset:3px}
+.site-footer .footer-bottom{font-size:12px;padding:12px 0 9px}
