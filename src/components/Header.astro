@@ -3,10 +3,10 @@
 const contacts = {
   telegram: 'https://t.me/skot4os',
   instagram: 'https://www.instagram.com/cognitioverum/',
-  email: 'skot4os@bk.ru',
+  email: 'https://mail.google.com/mail/?view=cm&fs=1&to=skot4os%40bk.ru',
 };
 const icon = {
-  telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.2 2.7 10.5c-.9.35-.85 1.1.1 1.4l4.75 1.55 1.85 5.8c.2.65.8.75 1.25.25l2.7-2.7 4.9 3.65c.75.55 1.45.15 1.65-.8l3.05-14.9c.2-1.1-.45-1.7-1.45-1.3Z"/><path d="m7.55 13.45 10.65-7.4-8.8 10.1"/></svg>',
+  telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>',
   instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.3" y="2.3" width="19.4" height="19.4" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle class="insta-dot" cx="17.7" cy="6.5" r="1"/></svg>',
   email: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4.5" width="20" height="15" rx="1.5"/><path d="m2.7 5.4 9.3 7.4 9.3-7.4"/></svg>',
 };
@@ -21,7 +21,7 @@ const icon = {
   <div class="header-right">
     <div class="header-socials" aria-label="Социальные сети и почта">
       {Object.entries(icon).map(([name, svg]) => contacts[name]
-        ? <a href={name === 'email' ? `mailto:${contacts[name]}` : contacts[name]} target={name === 'email' ? undefined : '_blank'} rel={name === 'email' ? undefined : 'noopener noreferrer'} aria-label={name === 'telegram' ? 'Telegram' : name === 'instagram' ? 'Instagram' : 'Электронная почта'} set:html={svg} />
+        ? <a href={contacts[name]} target="_blank" rel="noopener noreferrer" aria-label={name === 'telegram' ? 'Telegram' : name === 'instagram' ? 'Instagram' : 'Написать письмо через Gmail'} set:html={svg} />
         : <span class="social-unlinked" title="Ссылка будет добавлена после подтверждения контакта" aria-label={name === 'telegram' ? 'Telegram — ссылка пока не указана' : name === 'instagram' ? 'Instagram — ссылка пока не указана' : 'Почта — адрес пока не указан'} set:html={svg} />
       )}
     </div>
