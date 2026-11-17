@@ -15,6 +15,6 @@ import { previewPublications } from '../../data/publications';
 <div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">Rivière Tchetouk</span></div>
 <section class="home-lower">
 <div class="home-about"><h2>À PROPOS</h2><p>À propos de la psychologie, de la nature humaine et des contradictions qui font de nous des êtres humains. Vous trouverez ici mes recherches, mes publications, mes centres d’intérêt professionnels et mes réflexions personnelles.</p><a href="/fr/about/">EN SAVOIR PLUS</a></div>
-<div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/fr/publications/">VOIR TOUTES LES PUBLICATIONS</a></div><div class="publication-grid" lang="ru">{previewPublications.map((p) => <PublicationCard {...p} href={`/fr/publications/${p.slug}/`} />)}</div></div>
+<div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/fr/publications/">TOUT VOIR</a></div><div class="publication-grid" lang="ru">{previewPublications.map((p) => <PublicationCard {...p} href={`/fr/publications/${p.slug}/`} />)}</div></div>
 </section>
 </BaseLayout>
