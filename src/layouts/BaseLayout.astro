@@ -2,12 +2,12 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
-const { title = 'Белла Рыбка - психология, консультирование, авторство', description = 'Психология, исследования и авторство' } = Astro.props;
+const { title = 'Белла Рыбка - психология, консультирование, авторство', description = 'Психология, исследования и авторство', lang = 'ru' } = Astro.props;
 ---
 <!doctype html>
-<html lang="ru">
+<html lang={lang}>
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content={description} /><title>{title}</title><link rel="icon" type="image/svg+xml" href="/favicon.svg" /><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" /><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" /><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" /><slot name="head" /></head>
-<body><Header /><main><slot /></main><Footer />
+<body><Header lang={lang} /><main><slot /></main><Footer lang={lang} />
 <script>
   // Progressive enhancement: content remains visible if JavaScript is unavailable.
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
