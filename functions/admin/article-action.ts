@@ -17,7 +17,14 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   const exists=await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
   if(!exists)return new Response('Not found',{status:404,headers});
   if(action==='archive')await env.DB.prepare('INSERT OR IGNORE INTO admin_archived_articles(article_id) VALUES (?)').bind(id).run();
-  else if(action==='restore')await env.DB.prepare('DELETE FROM admin_archived_articles WHERE article_id=?').bind(id).run();
+  else if(action==='restore'){
+   const archived=await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first();
+   if(!archived)return new Response('Article is not in trash',{status:409,headers});
+   // Restore as drafts: never republish an article just by restoring it.
+   await env.DB.prepare("UPDATE article_translations SET status='draft',published_at=NULL,updated_at=datetime('now') WHERE article_id=?").bind(id).run();
+   await env.DB.prepare("UPDATE articles SET updated_at=datetime('now') WHERE id=?").bind(id).run();
+   await env.DB.prepare('DELETE FROM admin_archived_articles WHERE article_id=?').bind(id).run();
+  }
   else{
    const archived=await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first();
    if(archived)return new Response('Restore article first',{status:409,headers});
