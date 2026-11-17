@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { demoPublications } from '../../data/publications';
+export function getStaticPaths() {
+  return demoPublications.map(post => ({ params: { slug: post.slug }, props: { post } }));
+}
+const { post } = Astro.props;
+---
+<BaseLayout title={`${post.title} — Белла Шамилевна Рыбка`}>
+  <meta slot="head" name="robots" content="noindex" />
+  <section class="placeholder">
+    <p>ДЕМОНСТРАЦИОННАЯ КАРТОЧКА</p>
+    <h1 style="font-size:clamp(32px,5vw,70px)">{post.title}</h1>
+    <p>Текст публикации пока не добавлен.</p>
+    <a href="/publications/">Вернуться к публикациям</a>
+  </section>
+</BaseLayout>
