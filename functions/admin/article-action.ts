@@ -11,7 +11,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(site==='cross-site')return new Response('Forbidden',{status:403,headers});
  if(Number(request.headers.get('Content-Length')||0)>4096)return new Response('Too large',{status:413,headers});
  const form=await request.formData().catch(()=>null),id=form?.get('id'),action=form?.get('action');
- if(typeof id!=='string'||id.length>100||(!id&&action!=='empty_trash')||!['publish','unpublish','archive','restore','delete_forever','empty_trash'].includes(String(action)))return new Response('Invalid action',{status:400,headers});
+ if(!['publish','unpublish','archive','restore','delete_forever','empty_trash'].includes(String(action))||(action!=='empty_trash'&&(typeof id!=='string'||!id||id.length>100))||(action==='empty_trash'&&id!==null&&(typeof id!=='string'||id.length>100)))return new Response('Invalid action',{status:400,headers});
  try{
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS admin_archived_articles (article_id TEXT PRIMARY KEY, archived_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)').run();
   if(action==='empty_trash'||action==='delete_forever'){
