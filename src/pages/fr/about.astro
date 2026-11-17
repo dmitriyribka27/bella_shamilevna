@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Temporary structured content. Replace with the approved CMS record later.
+// Never publish unverified qualifications from the visual mockup.
+const profile = {
+  name: 'RYBKA BELLA SHAMILEVNA',
+  subtitle: 'PSYCHOLOGIE, ACCOMPAGNEMENT EXISTENTIEL, ÉCRITURE',
+  paragraphs: [
+    'Psychologue et chercheuse s’intéressant aux relations interpersonnelles, au rapport au corps et à l’expérience émotionnelle.',
+    'J’ai obtenu mon diplôme à la faculté de psychologie de l’Université d’État de Moscou et suivi des formations complémentaires en psychothérapie corporelle et humaniste.',
+    'J’accompagne des demandes individuelles, mène des recherches et publie des textes d’analyse.'
+  ],
+  education: [
+    {
+      id: 'mgtu',
+      institution: 'Université technologique d’État de Maïkop',
+      program: 'Opératrice informatique, enseignement professionnel secondaire',
+      description: 'Diplôme avec mention d’excellence'
+    },
+    {
+      id: 'kubsu',
+      institution: 'Université d’État du Kouban',
+      program: 'Psychologie de l’éducation · études supérieures non achevées.',
+      description: 'Mon parcours universitaire s’est interrompu, mais mon engagement intellectuel envers la psychologie demeure. Je prévois de poursuivre mes études à l’étranger.'
+    }
+  ],
+  additionalFormation: [
+    {
+      id: 'body',
+      program: 'Psychothérapie à médiation corporelle',
+      description: '280 heures de formation · Diplôme avec mention d’excellence'
+    },
+    {
+      id: 'existential',
+      program: 'Psychologie existentielle et méthodes d’accompagnement existentiel',
+      description: '1 056 heures de formation · Diplôme avec mention d’excellence'
+    }
+  ]
+};
+---
+<BaseLayout lang="fr" title="À propos - Rybka Bella Shamilevna" description="À propos de Rybka Bella Shamilevna : centres d’intérêt en psychologie, publications et formation.">
+  <section class="about-page" aria-labelledby="about-title">
+    <div class="about-hero">
+      <div class="about-title-block">
+        <p class="about-kicker">À PROPOS</p>
+        <h1 id="about-title">À PROPOS</h1>
+      </div>
+      <img class="about-cloud" src="/assets/graphics/halftone-cloud.svg" alt="" aria-hidden="true" width="952" height="321" />
+    </div>
+    <div class="about-information">
+      <div class="about-photo-column">
+        <img class="about-portrait" src="/assets/images/about-portrait.png" width="378" height="460" alt="Portrait de Rybka Bella Shamilevna" />
+      </div>
+      <section class="about-biography" aria-label="Biographie">
+        <h2>{profile.name}</h2>
+        <p class="about-subtitle">{profile.subtitle}</p>
+        <div class="about-paragraphs">
+          {profile.paragraphs.map(paragraph => <p>{paragraph}</p>)}
+        </div>
+      </section>
+      <section class="about-education" aria-label="Formation">
+        <h2>FORMATION</h2>
+        <div class="about-education-list">
+          {profile.education.map(item => <div class="about-education-item">
+            <p class="about-education-name">{item.institution}</p>
+            
+            <p>{item.program}</p>
+            {item.description && <p>{item.description}</p>}
+          </div>)}
+        </div>
+        <h2 class="about-extra-title">FORMATION COMPLÉMENTAIRE</h2>
+        <div class="about-education-list">
+          {profile.additionalFormation.map(item => <div class="about-education-item">
+            <p class="about-education-name">{item.program}</p>
+            <p>{item.description}</p>
+          </div>)}
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
