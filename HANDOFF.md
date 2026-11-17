@@ -68,3 +68,10 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - Future CMS fallback contract (after author-supplied published translations exist): RU interface ru > en; EN interface en > fr; FR interface fr > en; if none available, retain explicitly authored original (do not translate). A title/body/SEO translation must be published by Bella, not generated from interface locale.
 - Adyghe words stay unchanged. Georgian remains reserved for legal pages only; legal EN/FR/KA translations await user-supplied approved documents. Until then legal links remain Russian originals.
 - IMPORTANT: check Cloudflare deployment after latest commits; no build or browser QA performed by connector.
+
+## Demo content removal — 2026-11-17
+- Project owner requested removal of ALL demo publications and their texts before CMS development. Removed `src/data/publications.ts`, `src/components/DemoArticle008.astro`, `src/components/PublicationCard.astro` and all three dynamic demo article routes (`ru/en/fr/publications/[slug].astro`).
+- Home publication previews now show RU `СКОРО`, EN `COMING SOON`, FR `BIENTÔT`. Publication archives retain their approved heading/decorative graphic and display the same localized empty-state message; no demo cards or article URLs are generated.
+- Keep homepage and About portrait/graphics unchanged. Demo cover files must only be deleted after verifying exact repository paths and confirming they are not referenced outside demo content; binary-file inspection via the available GitHub connector is limited.
+- NEXT PRIORITY, explicitly requested by owner: remove duplication of RU/EN/FR archive and article template pages. Create shared presentation components and centralized language dictionaries; keep stable localized URLs and never auto-translate author-written article content. Implement this refactor BEFORE starting CMS/admin work, after current demo cleanup is confirmed.
+- QA status: source edits committed through GitHub; build and live browser tests not executed.
