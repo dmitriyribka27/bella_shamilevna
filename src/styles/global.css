@@ -126,9 +126,9 @@
    the actual river, not its transparent padding, occupies the separator. */
 @media(min-width:1080px){
   .wave-wrap{
-    height:55px;
-    margin-top:clamp(55px,6vw,115px);
-    overflow:hidden;
+    height:125px;
+    margin-top:12px;
+    overflow:visible;
     z-index:5;
     pointer-events:none;
   }
@@ -136,7 +136,7 @@
     display:block;
     position:absolute;
     left:0;
-    top:-290px;
+    top:-250px;
     width:1634px;
     max-width:none;
     height:545px;
