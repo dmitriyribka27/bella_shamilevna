@@ -228,3 +228,14 @@ main,.site-footer{position:relative;z-index:1}
 .footer-policies a{font-size:13px;line-height:1.2;text-decoration:none}
 .footer-policies a:hover{text-decoration:underline;text-underline-offset:3px}
 .site-footer .footer-bottom{font-size:12px;padding:12px 0 9px}
+
+
+/* Footer alignment and horizontal overflow correction, 17 Nov. */
+html,body{max-width:100%;overflow-x:clip}
+.site-footer .footer-top{grid-template-columns:31% 36% minmax(0,33%)}
+.footer-adyghe{justify-content:flex-start;text-align:left;padding-left:0;padding-right:16px}
+.footer-contacts{flex-direction:row;justify-content:center;align-items:center;gap:32px;min-width:0}
+.footer-contacts strong{display:block;flex:none}
+.footer-socials{display:flex;flex-direction:row;flex:none;gap:24px}
+.footer-policies{min-width:0;align-items:flex-end;text-align:right}
+.footer-policies a{white-space:normal}
