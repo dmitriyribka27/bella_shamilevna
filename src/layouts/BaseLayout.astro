@@ -7,5 +7,60 @@ const { title = 'Белла Шамилевна Рыбка', description = 'Пс�
 <!doctype html>
 <html lang="ru">
 <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content={description} /><title>{title}</title><slot name="head" /></head>
-<body><Header /><main><slot /></main><Footer /></body>
+<body><Header /><main><slot /></main><Footer />
+<script>
+  // Progressive enhancement: content remains visible if JavaScript is unavailable.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion) {
+    const initialSelectors = [
+      '.hero-content h1', '.hero-content p', '.hero-portrait', '.hero-strokes',
+      '.hero-halftone', '.hero-circle', '.hero-side',
+      '.archive-kicker', '.archive-intro h1', '.archive-star',
+      '.about-title-block', '.about-cloud',
+      '.article-heading', '.article-cover'
+    ];
+    initialSelectors.forEach((selector, index) => {
+      document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
+        element.classList.add('motion-enter');
+        element.style.setProperty('--motion-delay', `${Math.min(index % 7, 5) * 65}ms`);
+      });
+    });
+
+    const scrollSelectors = [
+      '.home-about', '.home-publications', '.about-photo-column',
+      '.about-biography', '.about-education', '.archive-card',
+      '.publication-card'
+    ];
+    const targets = scrollSelectors.flatMap((selector) =>
+      Array.from(document.querySelectorAll<HTMLElement>(selector))
+    );
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const element = entry.target as HTMLElement;
+          element.classList.remove('motion-pending');
+          element.classList.add('motion-enter');
+          observer.unobserve(element);
+        }
+      }, { threshold: 0.08, rootMargin: '0px 0px 35px 0px' });
+
+      const register = (element: HTMLElement) => {
+        if (element.classList.contains('motion-enter') || element.classList.contains('motion-pending')) return;
+        if (element.classList.contains('archive-card--initially-hidden') || element.hidden) return;
+        element.classList.add('motion-pending');
+        observer.observe(element);
+      };
+      targets.forEach(register);
+
+      // The archive reveals eight more posts per click. Observe only those newly shown.
+      document.querySelector('#archive-load-more')?.addEventListener('click', () => {
+        requestAnimationFrame(() => {
+          document.querySelectorAll<HTMLElement>('.archive-card').forEach(register);
+        });
+      });
+    }
+  }
+</script>
+</body>
 </html>
