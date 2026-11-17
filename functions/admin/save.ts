@@ -13,10 +13,11 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  const f=await request.formData().catch(()=>null);
  if(!f)return new Response('Invalid form',{status:400,headers});
  const get=(key:string)=>f.get(key);
- const id=get('id'),lang=get('lang'),title=get('title'),body=get('body_json'),excerpt=get('excerpt')??'',seoTitle=get('seo_title'),seoDescription=get('seo_description'),action=get('action');
+ const id=get('id'),lang=get('lang'),title=get('title'),body=get('body_json'),excerpt=get('excerpt')??'',seoTitle=get('seo_title'),seoDescription=get('seo_description'),action=get('action'),publishedAt=get('published_at');
  if(typeof id!=='string'||id.length>100||!['ru','en','fr'].includes(String(lang))||typeof title!=='string'||title.length>50||typeof body!=='string'||body.length>100000||typeof excerpt!=='string'||excerpt.length>1000||typeof seoTitle!=='string'||seoTitle.length>200||typeof seoDescription!=='string'||seoDescription.length>320||!['draft','publish','unpublish'].includes(String(action)))return new Response('Invalid article fields',{status:400,headers});
  let doc:unknown;try{doc=JSON.parse(body)}catch{return new Response('Invalid article document',{status:400,headers})}
  if(!doc||typeof doc!=='object'||(doc as any).type!=='doc'||typeof (doc as any).html!=='string'||(doc as any).html.length>100000)return new Response('Invalid article document',{status:400,headers});
+ if(typeof publishedAt!=='string'||(publishedAt!==''&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(publishedAt)))return new Response('Invalid publication date',{status:400,headers});
  const isNew=id==='';
  if(isNew&&action==='unpublish')return new Response('Cannot unpublish unsaved article',{status:400,headers});
  const existing=isNew?null:await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
@@ -62,6 +63,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    await env.DB.prepare(`INSERT INTO article_translations(article_id,lang,title,body_json,excerpt,seo_title,seo_description,status,published_at,updated_at)
    VALUES(?,?,?,?,?,?,?,'published',datetime('now'),datetime('now'))
    ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,status='published',published_at=COALESCE(article_translations.published_at,datetime('now')),updated_at=datetime('now')`).bind(articleId,lang,title.trim(),body,excerpt,safeTitle,safeDescription).run();
+   if(publishedAt)await env.DB.prepare('UPDATE article_translations SET published_at=? WHERE article_id=? AND lang=?').bind(publishedAt+' 12:00:00',articleId,lang).run();
    await env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=? AND lang=?').bind(articleId,lang).run();
   }else if(action==='unpublish'){
    await env.DB.prepare("UPDATE article_translations SET status='draft',updated_at=datetime('now') WHERE article_id=? AND lang=?").bind(articleId,lang).run();
