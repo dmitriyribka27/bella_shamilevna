@@ -150,3 +150,16 @@
 
 /* Portrait and river aligned to the desktop reference. */
 @media(min-width:1080px){.hero-portrait{top:-17px}.river-label{position:absolute;right:5.2%;top:27px;z-index:6;font:italic 14px Arial,Helvetica,sans-serif;transform:rotate(-12.5deg);white-space:nowrap;color:#101010}}
+
+/* Subtle paper grain across public pages; header stays opaque and pinned. */
+body{position:relative}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.62' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23paper)' opacity='.35'/%3E%3C/svg%3E");
+  background-repeat:repeat;opacity:.14;
+}
+main,.site-footer{position:relative;z-index:1}
+.site-header{
+  position:sticky;top:0;z-index:100;
+  background:var(--paper);
+}
