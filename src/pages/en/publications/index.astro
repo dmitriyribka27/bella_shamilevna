@@ -21,7 +21,7 @@ const formatNumber = (number: number) => String(number).padStart(3, '0');
             >
               <span class="archive-number">{formatNumber(post.archiveNumber)}.</span>
               <img class="archive-cover" src={post.image} width="270" height="203" loading="lazy" alt="" />
-              <span class="archive-card-title">{post.title}</span>
+              <span class="archive-card-title" lang="ru">{post.title}</span>
             </a>
           ))}
         </div>
