@@ -92,3 +92,19 @@
   .header-socials a:hover { opacity: .65; }
   .header-lang { font-size: 20px; font-weight: 400; letter-spacing: 0; }
 }
+
+
+/* Compact language picker, matching the monochrome editorial header. */
+.language-switcher{position:relative;display:flex;align-items:center;z-index:30}
+.language-trigger{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:0;padding:9px 0 9px 9px;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.language-chevron{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.3;transition:transform .18s ease}
+.language-trigger[aria-expanded="true"] .language-chevron{transform:rotate(180deg)}
+.language-menu{position:absolute;right:0;top:calc(100% + 10px);width:174px;padding:6px;background:var(--paper);border:1px solid var(--ink);box-shadow:3px 4px 0 rgba(0,0,0,.12);font-family:Arial,Helvetica,sans-serif}
+.language-menu[hidden],.language-note[hidden]{display:none!important}
+.language-option{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;border:0;background:transparent;color:var(--ink);padding:11px 10px;font:400 15px Arial,Helvetica,sans-serif;text-align:left;cursor:pointer}
+.language-option span:first-child{font-weight:700}
+.language-option span:last-child{font-size:12px}
+.language-option:hover,.language-option:focus-visible{background:#e7e4df}
+.language-option.is-selected{box-shadow:inset 2px 0 0 var(--ink)}
+.language-note{border-top:1px solid var(--line);margin:5px 4px 2px;padding:10px 5px 4px;font:12px/1.35 Arial,Helvetica,sans-serif}
+@media(prefers-reduced-motion:reduce){.language-chevron{transition:none}}
