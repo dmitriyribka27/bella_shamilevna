@@ -4,7 +4,8 @@ interface Context {request:Request;env:Env}
 export async function onRequestPost({request,env}:Context):Promise<Response> {
   const headers=securityHeaders();
   const origin=request.headers.get('Origin');
-  if(origin && origin!==new URL(request.url).origin) return new Response('Forbidden',{status:403,headers});
+  if(origin && origin!=='null' && origin!==new URL(request.url).origin) return new Response('Forbidden',{status:403,headers});
+  if(origin==='null' && request.headers.get('Sec-Fetch-Site')!=='same-origin') return new Response('Forbidden',{status:403,headers});
   if(request.headers.get('Sec-Fetch-Site')==='cross-site') return new Response('Forbidden',{status:403,headers});
   if(!env.DB || !env.ADMIN_PASSWORD_HASH) return new Response('Admin is not configured',{status:503,headers});
   if(Number(request.headers.get('Content-Length')||0)>4096) return new Response('Request too large',{status:413,headers});
