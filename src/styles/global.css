@@ -283,3 +283,17 @@ html,body{max-width:100%;overflow-x:clip}
 .archive-empty{font-size:21px;margin:20px 0 180px}
 @media(min-width:1750px){.archive-page{max-width:1640px;margin-inline:auto}}
 /* Mobile/tablet layouts remain a separate approval stage. */
+
+/* Approved publications masthead reference — 17 Nov.
+   Fine-tuning is scoped to the archive heading and star only. */
+@media (min-width:1080px){
+  .archive-intro h1{
+    font-size:clamp(72px,6.65vw,104px);
+    font-weight:700;
+    letter-spacing:-.035em;
+  }
+  .archive-star{
+    top:-27px;
+    right:-1.5%;
+  }
+}
