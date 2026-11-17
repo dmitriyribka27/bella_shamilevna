@@ -11,9 +11,22 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(site==='cross-site')return new Response('Forbidden',{status:403,headers});
  if(Number(request.headers.get('Content-Length')||0)>4096)return new Response('Too large',{status:413,headers});
  const form=await request.formData().catch(()=>null),id=form?.get('id'),action=form?.get('action');
- if(typeof id!=='string'||id.length>100||!id||!['publish','unpublish','archive','restore'].includes(String(action)))return new Response('Invalid action',{status:400,headers});
+ if(typeof id!=='string'||id.length>100||(!id&&action!=='empty_trash')||!['publish','unpublish','archive','restore','delete_forever','empty_trash'].includes(String(action)))return new Response('Invalid action',{status:400,headers});
  try{
   await env.DB.prepare('CREATE TABLE IF NOT EXISTS admin_archived_articles (article_id TEXT PRIMARY KEY, archived_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)').run();
+  if(action==='empty_trash'||action==='delete_forever'){
+   const ids=action==='empty_trash'?(await env.DB.prepare('SELECT article_id FROM admin_archived_articles').all<{article_id:string}>()).results.map(x=>x.article_id):[id as string];
+   if(action==='delete_forever'&&!await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first())return new Response('Article is not in trash',{status:409,headers});
+   for(const articleId of ids){
+    await env.DB.batch([
+     env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=?').bind(articleId),
+     env.DB.prepare('DELETE FROM article_translations WHERE article_id=?').bind(articleId),
+     env.DB.prepare('DELETE FROM admin_archived_articles WHERE article_id=?').bind(articleId),
+     env.DB.prepare('DELETE FROM articles WHERE id=?').bind(articleId)
+    ]);
+   }
+   return redirect(request,'/admin/?view=trash&done=1');
+  }
   const exists=await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
   if(!exists)return new Response('Not found',{status:404,headers});
   if(action==='archive')await env.DB.prepare('INSERT OR IGNORE INTO admin_archived_articles(article_id) VALUES (?)').bind(id).run();
