@@ -1,4 +1,63 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Temporary structured content. Replace with the approved CMS record later.
+// Never publish unverified qualifications from the visual mockup.
+const profile = {
+  name: 'БЕЛЛА ШАМИЛЕВНА РЫБКА',
+  subtitle: 'ПСИХОЛОГИЯ, ИССЛЕДОВАНИЯ, АВТОРСТВО',
+  paragraphs: [
+    'Изучаю психологию, человеческие отношения и эмоциональный опыт.',
+    'Здесь будут опубликованы согласованные Беллой сведения о её профессиональном пути, интересах и авторской работе.'
+  ],
+  education: [
+    { id: 'mgtu', institution: 'Майкопский государственный технологический университет', period: '2022–2023', program: 'Оператор ЭВМ' },
+    { id: 'kubsu', institution: 'Кубанский государственный университет', period: '2023–2026', program: 'Психолого-педагогическое образование, профиль «Психология образования»', description: 'Высшее образование не завершено' }
+  ],
+  additionalEducation: [
+    { id: 'body', program: 'Телесно-ориентированная психотерапия', period: '2025', description: 'Сведения о программе уточняются' },
+    { id: 'existential', program: 'Экзистенциальная психология и методы экзистенциального консультирования', period: '2026', description: 'Сведения о программе уточняются' }
+  ]
+};
 ---
-<BaseLayout title="Обо мне — Белла Шамилевна Рыбка"><section class="placeholder"><h1>ОБО МНЕ</h1><p>Страница готовится. Биография и образование будут опубликованы после подтверждения формулировок.</p></section></BaseLayout>
+<BaseLayout title="Обо мне — Белла Шамилевна Рыбка" description="О Белле Шамилевне Рыбке: психологические интересы, публикации и образование.">
+  <section class="about-page" aria-labelledby="about-title">
+    <div class="about-hero">
+      <div class="about-title-block">
+        <p class="about-kicker">ОБО МНЕ</p>
+        <h1 id="about-title">ОБО МНЕ</h1>
+      </div>
+      <img class="about-cloud" src="/assets/graphics/halftone-cloud.svg" alt="" aria-hidden="true" width="952" height="321" />
+    </div>
+    <div class="about-information">
+      <div class="about-photo-column">
+        <img class="about-portrait" src="/assets/images/about-portrait.png" width="378" height="460" alt="Портрет Беллы Шамилевны Рыбки" />
+      </div>
+      <section class="about-biography" aria-label="Биография">
+        <h2>{profile.name}</h2>
+        <p class="about-subtitle">{profile.subtitle}</p>
+        <div class="about-paragraphs">
+          {profile.paragraphs.map(paragraph => <p>{paragraph}</p>)}
+        </div>
+      </section>
+      <section class="about-education" aria-label="Образование">
+        <h2>ОБРАЗОВАНИЕ</h2>
+        <div class="about-education-list">
+          {profile.education.map(item => <div class="about-education-item">
+            <p class="about-education-name">{item.institution}</p>
+            <p>{item.period}</p>
+            <p>{item.program}</p>
+            {item.description && <p>{item.description}</p>}
+          </div>)}
+        </div>
+        <h2 class="about-extra-title">ДОПОЛНИТЕЛЬНОЕ ОБРАЗОВАНИЕ</h2>
+        <div class="about-education-list">
+          {profile.additionalEducation.map(item => <div class="about-education-item">
+            <p class="about-education-name">{item.program}</p>
+            <p>{item.period} · {item.description}</p>
+          </div>)}
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
