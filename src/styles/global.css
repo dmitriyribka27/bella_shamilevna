@@ -434,3 +434,15 @@ main { width: 1536px; max-width: none; margin-inline: auto; }
 .about-education-item .about-education-name{font-weight:500}
 .about-education .about-extra-title{margin:23px 0 20px}
 @media(min-width:1750px){.about-page{max-width:none}}
+
+
+/* Consistent subtle editorial frame for all content photographs.
+   Shared with article detail covers; dimensions and grid positions stay unchanged. */
+.article-cover,
+.about-portrait,
+.publication-card img,
+.archive-cover {
+  border: 1px solid rgba(16, 16, 16, .35);
+  box-shadow: 4px 5px 0 rgba(16, 16, 16, .11);
+  border-radius: 0;
+}
