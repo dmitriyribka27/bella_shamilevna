@@ -7,7 +7,7 @@ type SessionRow = { token_hash: string };
 const encoder = new TextEncoder();
 const COOKIE = 'bella_admin_session';
 const MAX_AGE = 60 * 60 * 12;
-const ITERATIONS = 310000;
+const ITERATIONS = 100000;
 function hex(bytes: Uint8Array): string { return Array.from(bytes, b => b.toString(16).padStart(2,'0')).join(''); }
 function fromHex(value: string): Uint8Array | null {
   if (!/^(?:[0-9a-f]{2})+$/i.test(value)) return null;
@@ -24,7 +24,7 @@ function equal(a: Uint8Array, b: Uint8Array): boolean {
 }
 export async function verifyPassword(password: string, stored?: string): Promise<boolean> {
   if (!stored || password.length > 1024) return false;
-  const match = /^pbkdf2-sha256\$310000\$([a-f0-9]{32})\$([a-f0-9]{64})$/i.exec(stored);
+  const match = /^pbkdf2-sha256\$100000\$([a-f0-9]{32})\$([a-f0-9]{64})$/i.exec(stored);
   if (!match) return false;
   const salt = fromHex(match[1])!, expected = fromHex(match[2])!;
   const key = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']);
