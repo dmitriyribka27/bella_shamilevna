@@ -38,3 +38,57 @@
   .publication-grid { gap: 7%; margin-top: -8px; }
   .publication-card { font-size: 17px; }
 }
+
+/* Approved desktop header reference: 1536 × 1024 */
+@media (min-width:1080px) {
+  .site-header {
+    height: 67px;
+    margin-left: 3.6%;
+    margin-right: 3.6%;
+    grid-template-columns: 36% 35% 29%;
+    border-bottom: 1px solid #8c8c8c;
+  }
+  .site-header .brand {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.025em;
+    line-height: 1;
+  }
+  .site-header nav {
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .site-header nav a {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -.035em;
+    line-height: 1;
+  }
+  .site-header .header-right {
+    justify-content: flex-end;
+    gap: 80px;
+  }
+  .header-socials { display: flex; align-items: center; gap: 35px; }
+  .header-socials a, .header-socials .social-unlinked {
+    display: inline-flex;
+    width: 31px;
+    height: 31px;
+    align-items: center;
+    justify-content: center;
+  }
+  .header-socials svg {
+    display: block;
+    width: 29px;
+    height: 29px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .header-socials svg .insta-dot { fill: currentColor; stroke: none; }
+  .header-socials a:first-child svg { stroke-width: 1.55; }
+  .header-socials a:hover { opacity: .65; }
+  .header-lang { font-size: 20px; font-weight: 400; letter-spacing: 0; }
+}
