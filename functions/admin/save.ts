@@ -17,7 +17,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(typeof id!=='string'||id.length>100||!['ru','en','fr'].includes(String(lang))||typeof title!=='string'||title.length>50||typeof body!=='string'||body.length>100000||typeof excerpt!=='string'||excerpt.length>1000||typeof seoTitle!=='string'||seoTitle.length>200||typeof seoDescription!=='string'||seoDescription.length>320||!['draft','publish','unpublish'].includes(String(action)))return new Response('Invalid article fields',{status:400,headers});
  let doc:unknown;try{doc=JSON.parse(body)}catch{return new Response('Invalid article document',{status:400,headers})}
  if(!doc||typeof doc!=='object'||(doc as any).type!=='doc'||typeof (doc as any).html!=='string'||(doc as any).html.length>100000)return new Response('Invalid article document',{status:400,headers});
- if(typeof publishedAt!=='string'||(publishedAt!==''&&!/^\\d{4}-\\d{2}-\\d{2}$/.test(publishedAt)))return new Response('Invalid publication date',{status:400,headers});
+ if(typeof publishedAt!=='string'||(publishedAt!==''&&!/^\d{4}-\d{2}-\d{2}$/.test(publishedAt)))return new Response('Invalid publication date',{status:400,headers});
  const isNew=id==='';
  if(isNew&&action==='unpublish')return new Response('Cannot unpublish unsaved article',{status:400,headers});
  const existing=isNew?null:await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
