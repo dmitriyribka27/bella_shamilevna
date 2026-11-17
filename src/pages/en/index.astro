@@ -12,7 +12,7 @@ import { previewPublications } from '../../data/publications';
 <img class="hero-portrait" src="/assets/images/home-portrait.png" alt="Black-and-white portrait of Bella" fetchpriority="high" />
 <div class="hero-side"><span>ПСЭ</span><span class="hero-side-rule"></span><small>ДУША</small></div>
 </section>
-<div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">р. Четук</span></div>
+<div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">Chetuk River</span></div>
 <section class="home-lower">
 <div class="home-about"><h2>ABOUT ME</h2><p>On psychology, human nature and the contradictions that make us human. Here you can find my research, publications, professional interests and personal reflections.</p><a href="/en/about/">READ MORE</a></div>
 <div class="home-publications"><div class="section-heading"><h2>PUBLICATIONS</h2><a href="/en/publications/">VIEW ALL</a></div><div class="publication-grid" lang="ru">{previewPublications.map((p) => <PublicationCard {...p} href={`/en/publications/${p.slug}/`} />)}</div></div>
