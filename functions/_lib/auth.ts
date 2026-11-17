@@ -57,8 +57,18 @@ export function securityHeaders(): HeadersInit {
   return {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"};
 }
 export function sameOrigin(request: Request): boolean {
+  const expected = new URL(request.url).origin;
   const origin = request.headers.get('Origin');
-  return !!origin && origin === new URL(request.url).origin;
+  // Origin can be absent on ordinary same-site HTML form POSTs in some browsers.
+  // If it is supplied, it must match exactly; never fall back after a mismatch.
+  if (origin !== null) return origin === expected;
+  const fetchSite = request.headers.get('Sec-Fetch-Site');
+  if (fetchSite === 'cross-site' || fetchSite === 'same-site') return false;
+  if (fetchSite === 'same-origin') return true;
+  const referer = request.headers.get('Referer');
+  if (!referer) return false;
+  try { return new URL(referer).origin === expected; }
+  catch { return false; }
 }
 export function redirect(request: Request, path: string, cookie?: string): Response {
   const headers = new Headers(securityHeaders()); headers.set('Location',new URL(path,request.url).toString());
