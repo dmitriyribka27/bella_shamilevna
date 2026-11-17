@@ -56,6 +56,23 @@ export const clearCookie = `${COOKIE}=; Path=/admin; Max-Age=0; HttpOnly; Secure
 export function securityHeaders(): HeadersInit {
   return {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"};
 }
+const CSRF_COOKIE = 'bella_admin_csrf';
+export function issueCsrf(): { token:string; cookie:string } {
+  const token = hex(crypto.getRandomValues(new Uint8Array(32)));
+  return {token,cookie:`${CSRF_COOKIE}=${token}; Path=/admin; Max-Age=3600; HttpOnly; Secure; SameSite=Strict`};
+}
+export function validCsrf(request: Request, form: FormData): boolean {
+  const supplied = form.get('csrf');
+  if(typeof supplied !== 'string' || !/^[a-f0-9]{64}$/.test(supplied)) return false;
+  const raw = request.headers.get('Cookie') || '';
+  const stored = raw.split(';').map(x=>x.trim()).find(x=>x.startsWith(CSRF_COOKIE+'='))?.slice(CSRF_COOKIE.length+1);
+  if(!stored || !/^[a-f0-9]{64}$/.test(stored)) return false;
+  const origin = request.headers.get('Origin');
+  if(origin !== null && origin !== new URL(request.url).origin) return false;
+  const site = request.headers.get('Sec-Fetch-Site');
+  if(site === 'cross-site' || site === 'same-site') return false;
+  return equal(fromHex(supplied)!,fromHex(stored)!);
+}
 export function sameOrigin(request: Request): boolean {
   const expected = new URL(request.url).origin;
   const origin = request.headers.get('Origin');
