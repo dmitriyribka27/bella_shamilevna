@@ -398,3 +398,7 @@ main { width: 1536px; max-width: none; margin-inline: auto; }
 .article-heading time{font-size:20px}
 .article-cover{width:480px;height:360px;aspect-ratio:4/3}
 .article-content{padding-top:48px}
+
+/* Smaller article cover on every detail page; retain 4:3 and stable desktop grid. */
+.article-masthead{grid-template-columns:minmax(0,1fr) 380px;gap:90px;padding-top:30px;padding-bottom:30px}
+.article-cover{width:380px;height:285px;aspect-ratio:4/3}
