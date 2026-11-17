@@ -5,6 +5,9 @@ const contacts = {
   instagram: 'https://www.instagram.com/cognitioverum/',
   email: 'https://mail.google.com/mail/?view=cm&fs=1&to=skot4os%40bk.ru',
 };
+const { lang = 'ru' } = Astro.props;
+const en = lang === 'en';
+const prefix = en ? '/en' : '';
 const icon = {
   telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>',
   instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.3" y="2.3" width="19.4" height="19.4" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle class="insta-dot" cx="17.7" cy="6.5" r="1"/></svg>',
@@ -12,11 +15,11 @@ const icon = {
 };
 ---
 <header class="site-header">
-  <a class="brand" href="/">БЕЛЛА ШАМИЛЕВНА</a>
-  <nav aria-label="Основная навигация">
-    <a href="/">ГЛАВНАЯ</a>
-    <a href="/publications/">ПУБЛИКАЦИИ</a>
-    <a href="/about/">ОБО МНЕ</a>
+  <a class="brand" href={en ? '/en/' : '/'}>{en ? 'RYBKA BELLA SHAMILEVNA' : 'БЕЛЛА ШАМИЛЕВНА'}</a>
+  <nav aria-label={en ? "Main navigation" : "Основная навигация"}>
+    <a href={`${prefix}/`}>{en ? 'HOME' : 'ГЛАВНАЯ'}</a>
+    <a href={`${prefix}/publications/`}>{en ? 'PUBLICATIONS' : 'ПУБЛИКАЦИИ'}</a>
+    <a href={`${prefix}/about/`}>{en ? 'ABOUT ME' : 'ОБО МНЕ'}</a>
   </nav>
   <div class="header-right">
     <div class="header-socials" aria-label="Социальные сети и почта">
@@ -26,15 +29,14 @@ const icon = {
       )}
     </div>
     <div class="language-switcher" data-language-switcher>
-      <button class="header-lang language-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu" aria-label="Выбрать язык сайта">
-        <span data-current-language>RU</span>
+      <button class="header-lang language-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu" aria-label={en ? "Choose site language" : "Выбрать язык сайта"}>
+        <span data-current-language>{en ? 'EN' : 'RU'}</span>
         <svg class="language-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="m2.5 4.5 3.5 3 3.5-3" /></svg>
       </button>
       <div class="language-menu" id="language-menu" hidden>
-        <button class="language-option is-selected" type="button" data-language="ru" aria-pressed="true"><span>RU</span><span>Русский</span></button>
-        <button class="language-option" type="button" data-language="en" aria-pressed="false"><span>EN</span><span>English</span></button>
-        <p class="language-note" data-language-note hidden>English translation is coming soon. The site content is currently in Russian.</p>
-      </div>
+        <button class:list={['language-option', {'is-selected': !en}]} type="button" data-language="ru" aria-pressed={!en}><span>RU</span><span>Русский</span></button>
+        <button class:list={['language-option', {'is-selected': en}]} type="button" data-language="en" aria-pressed={en}><span>EN</span><span>English</span></button>
+        </div>
     </div>
   </div>
 </header>
@@ -45,26 +47,20 @@ const icon = {
     const trigger = switcher.querySelector<HTMLButtonElement>('.language-trigger')!;
     const menu = switcher.querySelector<HTMLElement>('.language-menu')!;
     const current = switcher.querySelector<HTMLElement>('[data-current-language]')!;
-    const note = switcher.querySelector<HTMLElement>('[data-language-note]')!;
-    const options = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-language]'));
     const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
-    const select = (language: string) => {
-      current.textContent = language.toUpperCase();
-      options.forEach((option) => {
-        const selected = option.dataset.language === language;
-        option.classList.toggle('is-selected', selected);
-        option.setAttribute('aria-pressed', String(selected));
-      });
-      note.hidden = language !== 'en';
-      // The page text stays Russian until translations are actually published.
-      close();
+    const routeFor = (language: string) => {
+      const path = window.location.pathname;
+      const base = path.startsWith('/en/') ? path.slice(3) : path;
+      // Legal translations will be published from lawyer-approved documents separately.
+      if (base.startsWith('/privacy-policy/') || base.startsWith('/personal-data-policy/')) return base;
+      return language === 'en' ? '/en' + base : base;
     };
     trigger.addEventListener('click', () => {
       const opening = menu.hidden;
       menu.hidden = !opening;
       trigger.setAttribute('aria-expanded', String(opening));
     });
-    options.forEach((option) => option.addEventListener('click', () => select(option.dataset.language || 'ru')));
+    options.forEach((option) => option.addEventListener('click', () => { const target = routeFor(option.dataset.language || 'ru'); if (target !== window.location.pathname) window.location.assign(target); else close(); }));
     document.addEventListener('click', (event) => {
       if (!switcher.contains(event.target as Node)) close();
     });
