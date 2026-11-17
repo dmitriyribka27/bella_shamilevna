@@ -48,3 +48,15 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - **Asset upload still required:** public/assets/images/about-portrait.png (original 378x460) and public/assets/graphics/halftone-cloud.svg (original 952x321). Current page references these exact paths; until uploaded, images will not display.
 - **QA pending:** no local build, Cloudflare deployment confirmation, visual comparison or Safari testing performed.
 - **Mobile:** desktop-only as previously approved; tablet/mobile layout not implemented.
+
+
+## Localization — 2026-11-17
+- Russian site: `/`; English static site: `/en/`, `/en/about/`, `/en/publications/`, `/en/publications/[slug]/`.
+- Header language switcher uses real page navigation, preserving section/slug; document content is server-rendered (no JS needed to read it). Current interface languages RU/EN; French planned, not yet enabled.
+- Never machine-translate article titles or bodies. Existing demo posts have **only Russian** source; on EN pages their Russian titles and bodies remain in Russian and are marked `lang="ru"`. Do not silently replace them with English. Article translations must be explicitly authored/published by Bella.
+- Planned CMS data model: a publication is one stable ID, archiveNumber, slug, image, publication date, status; separate per-language records `translations[ru|en|fr] = {title, body, seoDescription, status}`. A translation is available only when explicitly saved and published. Never infer availability from a generated translation.
+- User-specified article fallback priority: RU UI: ru > en; EN UI: en > fr; FR UI: fr > en. For future CMS, define explicit final fallback behavior if neither preferred nor secondary language exists; preserve original text rather than translating automatically. Current fixture is Russian only, so English article pages show Russian originals until translated versions exist.
+- Adyghe inscriptions stay unchanged, including `Псэр ети напэр къащтэ.` and the decorative hero labels. English rendering of Bella's name: `Rybka Bella Shamilevna`.
+- Georgian is to be offered **only on legal-document pages**, not in global site language navigation. Legal English and Georgian versions must use lawyer-supplied text; **not yet supplied/published**. Footer legal links currently lead to Russian documents even from EN pages.
+- Caution: the About profile currently includes unverified claims about university education and credentials; obtain Bella's confirmation before final public launch.
+- Implementation needs verification: run `npm run build`, check Cloudflare deploy and EN navigation, especially iPhone/Safari. No tests were executed via this GitHub connector.
