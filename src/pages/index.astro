@@ -1,7 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PublicationCard from '../components/PublicationCard.astro';
-import { previewPublications } from '../data/publications';
 ---
 <BaseLayout>
 <section class="hero" aria-labelledby="hero-title">
@@ -15,6 +13,6 @@ import { previewPublications } from '../data/publications';
 <div class="wave-wrap" aria-hidden="true"><img src="/assets/graphics/wave.png" alt="" /><span class="river-label">р. Четук</span></div>
 <section class="home-lower">
 <div class="home-about"><h2>ОБО МНЕ</h2><p>О психологии, человеческой природе и противоречиях, которые делают нас людьми. Здесь собраны мои исследования, публикации, профессиональные интересы и личные наблюдения.</p><a href="/about/">ПОДРОБНЕЕ</a></div>
-<div class="home-publications"><div class="section-heading"><h2>ПУБЛИКАЦИИ</h2><a href="/publications/">СМОТРЕТЬ ВСЕ</a></div><div class="publication-grid">{previewPublications.map((p) => <PublicationCard {...p} />)}</div></div>
+<div class="home-publications"><div class="section-heading"><h2>ПУБЛИКАЦИИ</h2><a href="/publications/">СМОТРЕТЬ ВСЕ</a></div><p class="publications-coming-soon">СКОРО</p></div>
 </section>
 </BaseLayout>
