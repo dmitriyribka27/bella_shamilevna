@@ -2,6 +2,10 @@
  'use strict';
  const editor=document.getElementById('editor'),form=document.getElementById('article-form'),hidden=document.getElementById('body-json'),preview=document.getElementById('preview'),error=document.getElementById('editor-error');
  if(!editor||!form)return;
+ const deleteLanguage=document.getElementById('delete-language-form');
+ if(deleteLanguage)deleteLanguage.addEventListener('submit',event=>{
+  if(!confirm('Удалить только выбранную языковую версию? Остальные языки и статья сохранятся.'))event.preventDefault();
+ });
  const allowed=['P','H2','H3','BLOCKQUOTE','UL','OL','LI','STRONG','EM','A','BR'];
  function cleanNode(node,depth=0){
   if(depth>25)return null;
