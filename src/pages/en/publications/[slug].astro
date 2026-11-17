@@ -1,8 +1,8 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import DemoArticle008 from '../../components/DemoArticle008.astro';
-import { chronologicalPublications, publishedPublications } from '../../data/publications';
-import type { Publication } from '../../data/publications';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DemoArticle008 from '../../../components/DemoArticle008.astro';
+import { chronologicalPublications, publishedPublications } from '../../../data/publications';
+import type { Publication } from '../../../data/publications';
 
 export function getStaticPaths() {
   return publishedPublications.map((post) => ({ params: { slug: post.slug }, props: { post } }));
