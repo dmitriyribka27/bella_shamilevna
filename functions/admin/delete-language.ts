@@ -15,6 +15,8 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  try{
   const article=await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
   if(!article)return new Response('Article not found',{status:404,headers});
+  const versions=await env.DB.prepare('SELECT lang FROM article_translations WHERE article_id=? UNION SELECT lang FROM article_working_versions WHERE article_id=?').bind(id,id).all<{lang:string}>();
+  if((versions.results||[]).length<=1)return new Response('Нельзя удалить последнюю языковую версию. Используйте корзину для всей статьи.',{status:409,headers});
   // Only remove the selected translation and its working version. The article and other languages survive.
   await env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=? AND lang=?').bind(id,lang).run();
   await env.DB.prepare('DELETE FROM article_translations WHERE article_id=? AND lang=?').bind(id,lang).run();
