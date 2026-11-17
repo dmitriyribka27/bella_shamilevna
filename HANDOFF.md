@@ -60,3 +60,11 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - Georgian is to be offered **only on legal-document pages**, not in global site language navigation. Legal English and Georgian versions must use lawyer-supplied text; **not yet supplied/published**. Footer legal links currently lead to Russian documents even from EN pages.
 - Caution: the About profile currently includes unverified claims about university education and credentials; obtain Bella's confirmation before final public launch.
 - Implementation needs verification: run `npm run build`, check Cloudflare deploy and EN navigation, especially iPhone/Safari. No tests were executed via this GitHub connector.
+
+### French public interface — 2026-11-17
+- Added `/fr/`, `/fr/about/`, `/fr/publications/`, `/fr/publications/[slug]/`. Global selector now offers RU/EN/FR and retains the current route/slug.
+- French article dates are rendered at build time using `Intl.DateTimeFormat('fr-FR', {day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})`; English uses `en-GB`, Russian `ru-RU`. Dates are localized regardless of article translation availability.
+- Publication titles, article bodies, and article-specific SEO descriptions are not translated automatically. Existing Russian demo articles are shown unchanged on EN and FR article pages, with a localized notice. This is a temporary last-resort original-language display until CMS translation records exist.
+- Future CMS fallback contract (after author-supplied published translations exist): RU interface ru > en; EN interface en > fr; FR interface fr > en; if none available, retain explicitly authored original (do not translate). A title/body/SEO translation must be published by Bella, not generated from interface locale.
+- Adyghe words stay unchanged. Georgian remains reserved for legal pages only; legal EN/FR/KA translations await user-supplied approved documents. Until then legal links remain Russian originals.
+- IMPORTANT: check Cloudflare deployment after latest commits; no build or browser QA performed by connector.
