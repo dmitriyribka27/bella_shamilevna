@@ -39,3 +39,12 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - **QA not completed:** no local Astro build, browser screenshot comparison, Cloudflare deployment verification, iPhone/Safari test, or copy-to-clipboard interaction test performed in this session. New commits on main should trigger Cloudflare Pages build, subject to project configuration.
 - **Security:** demo article content is authored trusted Astro markup. Do not render future CMS HTML with `set:html` until server-side sanitization/allowlist is implemented.
 - **Mobile:** not implemented; 1536px desktop composition is intentionally locked pending a separately approved mobile stage.
+
+## About page — 2026-11-17
+- Replaced /about/ placeholder with semantic Astro page and fixed 1536px desktop three-column composition.
+- Shared BaseLayout, Header, Footer and global paper texture unchanged.
+- Structured profile, basic education and additional education records are currently in src/pages/about.astro; move into CMS storage after approval.
+- Explicitly omitted the mockup's false claim of completed MSU education and unverified honors/hours; profile paragraphs are provisional, not Bella-approved.
+- **Asset upload still required:** public/assets/images/about-portrait.png (original 378x460) and public/assets/graphics/halftone-cloud.svg (original 952x321). Current page references these exact paths; until uploaded, images will not display.
+- **QA pending:** no local build, Cloudflare deployment confirmation, visual comparison or Safari testing performed.
+- **Mobile:** desktop-only as previously approved; tablet/mobile layout not implemented.
