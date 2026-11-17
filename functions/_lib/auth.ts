@@ -56,44 +56,6 @@ export const clearCookie = `${COOKIE}=; Path=/admin; Max-Age=0; HttpOnly; Secure
 export function securityHeaders(): HeadersInit {
   return {'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"};
 }
-// Signed, time-limited CSRF form token; independent of browser cookie policy.
-// The password verifier is a server-only secret and serves as HMAC key material.
-async function csrfKey(env: Env): Promise<CryptoKey> {
-  if(!env.ADMIN_PASSWORD_HASH) throw new Error('Admin secret not configured');
-  return crypto.subtle.importKey('raw',encoder.encode(env.ADMIN_PASSWORD_HASH),'HMAC',false,['sign','verify']);
-}
-export async function issueCsrf(env: Env): Promise<string> {
-  const payload = `${Date.now()}.${hex(crypto.getRandomValues(new Uint8Array(16))) }`;
-  const signature = new Uint8Array(await crypto.subtle.sign('HMAC',await csrfKey(env),encoder.encode(payload)));
-  return `${payload}.${hex(signature)}`;
-}
-export async function validCsrf(request: Request, form: FormData, env: Env): Promise<boolean> {
-  const token = form.get('csrf');
-  if(typeof token !== 'string') return false;
-  const match = /^(\d{13})\.([a-f0-9]{32})\.([a-f0-9]{64})$/.exec(token);
-  if(!match || !env.ADMIN_PASSWORD_HASH) return false;
-  const age = Date.now()-Number(match[1]);
-  if(age < -60000 || age > 60*60*1000) return false;
-  const origin = request.headers.get('Origin');
-  if(origin && origin !== new URL(request.url).origin) return false;
-  const site = request.headers.get('Sec-Fetch-Site');
-  if(site === 'cross-site' || site === 'same-site') return false;
-  return crypto.subtle.verify('HMAC',await csrfKey(env),fromHex(match[3])!,encoder.encode(match[1]+'.'+match[2]));
-}
-export function sameOrigin(request: Request): boolean {
-  const expected = new URL(request.url).origin;
-  const origin = request.headers.get('Origin');
-  // Origin can be absent on ordinary same-site HTML form POSTs in some browsers.
-  // If it is supplied, it must match exactly; never fall back after a mismatch.
-  if (origin !== null) return origin === expected;
-  const fetchSite = request.headers.get('Sec-Fetch-Site');
-  if (fetchSite === 'cross-site' || fetchSite === 'same-site') return false;
-  if (fetchSite === 'same-origin') return true;
-  const referer = request.headers.get('Referer');
-  if (!referer) return false;
-  try { return new URL(referer).origin === expected; }
-  catch { return false; }
-}
 export function redirect(request: Request, path: string, cookie?: string): Response {
   const headers = new Headers(securityHeaders()); headers.set('Location',new URL(path,request.url).toString());
   if(cookie) headers.set('Set-Cookie',cookie);
