@@ -1,11 +1,11 @@
 /** Shared sidebar for every authenticated admin view. */
-export function adminSidebar(view:'all'|'trash'='all'):string {
+export function adminSidebar(view:'all'|'trash'|'new'='all'):string {
  const active=(key:string)=>view===key?' class="active" aria-current="page"':'';
  return `<aside class="side admin-sidebar">
  <div class="brand">Белла Рыбка<small>Админ-панель</small></div>
  <nav aria-label="Разделы">
   <a${active('all')} href="/admin/">Все публикации</a>
-  <a class="side-create" href="/admin/edit?new=1&amp;lang=ru">Новая публикация</a>
+  <a${active('new')} class="side-create${view==='new'?' active':''}" href="/admin/edit?new=1&amp;lang=ru">Новая публикация</a>
   <a${active('trash')} href="/admin/?view=trash">Корзина</a>
  </nav>
  <div class="side-bottom">
@@ -22,7 +22,7 @@ export const adminSidebarCss=`
 .admin-sidebar nav{display:flex;flex-direction:column;align-items:stretch;gap:0;overflow:visible}
 .admin-sidebar nav form{display:block;width:100%;margin:0}
 .admin-sidebar nav a,.admin-sidebar nav .side-create{box-sizing:border-box;display:flex;align-items:center;width:100%;min-height:52px;margin:0 0 6px;padding:13px 16px;border:0;border-radius:20px;background:transparent;color:#25313d;font:400 16px/1.55 system-ui,-apple-system,sans-serif;text-align:left;text-decoration:none;cursor:pointer}
-.admin-sidebar nav a.active,.admin-sidebar nav a:hover,.admin-sidebar nav .side-create:hover{background:#e8eef5;color:#284b79}
+.admin-sidebar nav a.active,.admin-sidebar nav a:hover,.admin-sidebar nav .side-create.active,.admin-sidebar nav .side-create:hover{background:#e8eef5;color:#284b79}
 .admin-sidebar .side-bottom{position:static;width:100%;margin-top:auto;padding:20px 4px 0;border-top:1px solid #e4e7eb}
 .admin-sidebar .side-bottom .site-link{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;margin:0 0 8px;padding:12px 14px;border-radius:16px;color:#284b79;font:400 16px/1.55 system-ui,-apple-system,sans-serif}
 .admin-sidebar .side-bottom .site-link:hover{background:#e8eef5}
