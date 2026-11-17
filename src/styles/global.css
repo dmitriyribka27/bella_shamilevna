@@ -190,7 +190,7 @@ main,.site-footer{position:relative;z-index:1}
 /* Second alignment pass from 17 Nov screenshot: bring portrait and river higher,
    and tighten the transition to the content block. */
 @media(min-width:1080px){
-  .hero-portrait{top:-53px;right:12.8%}
+  .hero-portrait{top:-47px;right:12.3%}
   .wave-wrap{margin-top:-35px;height:86px}
   .home-lower{margin-top:12px}
 }
