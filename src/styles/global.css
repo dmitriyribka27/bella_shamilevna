@@ -303,3 +303,6 @@ html,body{max-width:100%;overflow-x:clip}
 .archive-load-more{display:block;margin:55px auto 0;padding:13px 28px;border:1px solid var(--ink);background:transparent;color:var(--ink);font:700 17px Arial,Helvetica,sans-serif;cursor:pointer}
 .archive-load-more:hover{background:var(--ink);color:var(--paper)}
 .archive-load-more:focus-visible{outline:3px solid #147b45;outline-offset:4px}
+
+/* Explicit initial archive visibility independent of browser [hidden] handling. */
+.archive-card.archive-card--initially-hidden{display:none!important}
