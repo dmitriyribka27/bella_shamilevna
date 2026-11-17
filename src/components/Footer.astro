@@ -1,1 +1,23 @@
-<footer class="site-footer"><div class="footer-top"><span lang="ady">Псэр ети напэр къащтэ.</span><span>КОНТАКТЫ</span><div><span>Политика конфиденциальности</span><span>Политика обработки персональных данных</span></div></div><div class="footer-bottom"><span>© Рыбка Белла Шамилевна</span><span>Все права защищены</span></div></footer>
+---
+const contacts = [
+  { label: 'Telegram', href: 'https://t.me/skot4os', svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>' },
+  { label: 'Instagram', href: 'https://www.instagram.com/cognitioverum/', svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.3" y="2.3" width="19.4" height="19.4" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle class="insta-dot" cx="17.7" cy="6.5" r="1"/></svg>' },
+  { label: 'Написать письмо через Gmail', href: 'https://mail.google.com/mail/?view=cm&fs=1&to=skot4os%40bk.ru', svg: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4.5" width="20" height="15" rx="1.5"/><path d="m2.7 5.4 9.3 7.4 9.3-7.4"/></svg>' },
+];
+---
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-adyghe" lang="ady">Псэр ети напэр къащтэ.</div>
+    <div class="footer-contacts">
+      <strong>КОНТАКТЫ</strong>
+      <div class="footer-socials">
+        {contacts.map(({label,href,svg}) => <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} set:html={svg} />)}
+      </div>
+    </div>
+    <nav class="footer-policies" aria-label="Правовые документы">
+      <a href="/privacy-policy/">Политика конфиденциальности</a>
+      <a href="/personal-data-policy/">Политика обработки персональных данных</a>
+    </nav>
+  </div>
+  <div class="footer-bottom"><span>© Рыбка Белла Шамилевна</span><span>Все права защищены</span></div>
+</footer>
