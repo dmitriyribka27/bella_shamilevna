@@ -2,9 +2,12 @@
  'use strict';
  const editor=document.getElementById('editor'),form=document.getElementById('article-form'),hidden=document.getElementById('body-json'),preview=document.getElementById('preview'),error=document.getElementById('editor-error');
  if(!editor||!form)return;
- const deleteLanguage=document.getElementById('delete-language-form');
- if(deleteLanguage)deleteLanguage.addEventListener('submit',event=>{
-  if(!confirm('Удалить только выбранную языковую версию? Остальные языки и статья сохранятся.'))event.preventDefault();
+ document.querySelectorAll('form[id^="delete-language-"]').forEach(f=>f.addEventListener('submit',event=>{
+  const lang=f.querySelector('[name="lang"]')?.value||'';
+  if(!confirm('Удалить '+lang.toUpperCase()+' версию? Остальные переводы сохранятся.'))event.preventDefault();
+ }));
+ document.getElementById('archive-article-form')?.addEventListener('submit',event=>{
+  if(!confirm('Переместить всю статью со всеми языковыми версиями в корзину? Её можно будет восстановить.'))event.preventDefault();
  });
  const allowed=['P','H2','H3','BLOCKQUOTE','UL','OL','LI','STRONG','EM','A','BR'];
  function cleanNode(node,depth=0){
