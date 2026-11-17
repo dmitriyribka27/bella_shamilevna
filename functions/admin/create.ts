@@ -13,9 +13,9 @@ export async function onRequestPost({request,env}:Context):Promise<Response> {
  if(Number(request.headers.get('Content-Length')||0)>4096)return new Response('Too large',{status:413,headers});
  const form=await request.formData().catch(()=>null);
  const title=form?.get('title');
- if(typeof title!=='string'||!title.trim()||title.length>200)return new Response('Invalid title',{status:400,headers});
+ if(title!==null&&(typeof title!=='string'||title.length>50))return new Response('Invalid title',{status:400,headers});
  const translit:Record<string,string>={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'yo',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};
- const base=Array.from(title.trim().toLowerCase()).map(c=>translit[c]??c).join('').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,105).replace(/-+$/,'')||'article';
+ const base=Array.from((typeof title==='string'?title:'').trim().toLowerCase()).map(c=>translit[c]??c).join('').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,105).replace(/-+$/,'')||'article';
  const id=crypto.randomUUID();
  let slug='';
  try {
@@ -27,7 +27,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response> {
    try{
     await env.DB.batch([
      env.DB.prepare('INSERT INTO articles(id,slug) VALUES (?,?)').bind(id,candidate),
-     env.DB.prepare("INSERT INTO article_translations(article_id,lang,title,status) VALUES (?,'ru',?,'draft')").bind(id,title.trim())
+     env.DB.prepare("INSERT INTO article_translations(article_id,lang,title,status) VALUES (?,'ru',?,'draft')").bind(id,(typeof title==='string'?title:'').trim())
     ]);
     slug=candidate;
     break;
