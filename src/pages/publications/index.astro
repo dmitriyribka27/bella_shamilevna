@@ -10,15 +10,27 @@ const formatNumber = (number: number) => String(number).padStart(3, '0');
       <img class="archive-star" src="/assets/graphics/03-vector-distressed-star.svg" alt="" aria-hidden="true" width="549" height="214" />
     </div>
     {publishedPublications.length ? (
-      <div class="archive-grid">
-        {publishedPublications.map((post) => (
-          <a class="archive-card" href={`/publications/${post.slug}/`} aria-label={`${formatNumber(post.archiveNumber)}. ${post.title}`}>
+      <div class="archive-grid" id="archive-list">
+        {publishedPublications.map((post, index) => (
+          <a class="archive-card" data-archive-card data-index={index} hidden={index >= 8} href={`/publications/${post.slug}/`} aria-label={`${formatNumber(post.archiveNumber)}. ${post.title}`}>
             <span class="archive-number">{formatNumber(post.archiveNumber)}.</span>
             <img class="archive-cover" src={post.image} width="270" height="203" loading="lazy" alt="" />
             <span class="archive-card-title">{post.title}</span>
           </a>
         ))}
       </div>
+      {publishedPublications.length > 8 && <button type="button" class="archive-load-more" id="archive-load-more" aria-controls="archive-list" >ПОКАЗАТЬ ЕЩЁ</button>}
     ) : <p class="archive-empty">Публикаций пока нет</p>}
   </section>
 </BaseLayout>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('#archive-load-more');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-archive-card]'));
+  let visible = 8;
+  button?.addEventListener('click', () => {
+    visible = Math.min(visible + 8, cards.length);
+    cards.forEach((card, index) => { card.hidden = index >= visible; });
+    if (visible >= cards.length) button.hidden = true;
+  });
+</script>
