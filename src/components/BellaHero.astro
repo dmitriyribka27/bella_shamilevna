@@ -1,0 +1,30 @@
+---
+interface Props { lang: 'ru' | 'en' | 'fr'; tagline: string; portraitAlt: string; soul: string; river: string }
+const {lang,tagline,portraitAlt,soul,river}=Astro.props;
+const first=lang==='ru'?'БЕЛЛА':'BELLA';
+const second=lang==='ru'?'ШАМИЛЬЕВНА':'SHAMILEVNA';
+const surname=lang==='ru'?'РЫБКА':'RYBKA';
+const pse=lang==='ru'?'ПСЭ':'PSE';
+---
+<section class="bella-hero" aria-labelledby="hero-title">
+  <div class="bella-hero__stage">
+    <img class="bella-hero__rays" src="/assets/home-redesign/rays-left.png" alt="" aria-hidden="true" width="1600" height="1080" decoding="async"/>
+    <img class="bella-hero__mountains" src="/assets/home-redesign/mountains-light.png" alt="" aria-hidden="true" width="2180" height="721" decoding="async"/>
+    <div class="bella-hero__heading">
+      <h1 id="hero-title"><span>{first}</span><span>{second}</span></h1>
+      <div class="bella-hero__surname"><span>{surname}</span><i aria-hidden="true"></i></div>
+      <p class="bella-hero__tagline">{tagline}</p>
+    </div>
+    <div class="bella-hero__portrait-layer">
+      <img class="bella-hero__portrait" src="/assets/images/home-portrait.png" width="338" height="507" alt={portraitAlt} fetchpriority="high" decoding="async"/>
+    </div>
+    <div class="bella-hero__side" aria-label={pse+' — '+soul}>
+      <span>{pse}</span><i aria-hidden="true"></i><span>{soul}</span>
+    </div>
+    <picture class="bella-hero__river" aria-hidden="true">
+      <source media="(max-width:700px)" srcset="/assets/home-redesign/river-mobile.png"/>
+      <img src="/assets/home-redesign/river-desktop.png" width="2400" height="120" alt=""/>
+    </picture>
+    <span class="bella-hero__river-caption">{river}</span>
+  </div>
+</section>
