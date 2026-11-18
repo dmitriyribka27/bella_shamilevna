@@ -10,7 +10,7 @@ const legalPrefix=prefix;
 const contacts=[
  {name:'Telegram',url:'https://t.me/skot4os',icon:'telegram'},
  {name:'Instagram',url:'https://www.instagram.com/cognitioverum/',icon:'instagram'},
- {name:'Email',url:'https://mail.google.com/mail/?view=cm&fs=1&to=skot4os%40bk.ru',icon:'email'}
+ {name:'Email',url:'mailto:skot4os@bk.ru',icon:'email'}
 ];
 ---
 <div class="bm-mobile-home" data-bm-mobile-home>
@@ -42,7 +42,7 @@ const contacts=[
    <div class="bm-mobile-contact-group">
     <strong>{lang==='ru'?'КОНТАКТЫ':lang==='fr'?'CONTACTS':'CONTACTS'}</strong>
     <div class="bm-mobile-contact-icons">
-     {contacts.map(c=><a href={c.url} aria-label={c.name} target="_blank" rel="noopener noreferrer">
+     {contacts.map(c=><a href={c.url} aria-label={c.name === 'Email' ? (lang === 'ru' ? 'Написать письмо' : lang === 'fr' ? 'Écrire un courriel' : 'Compose email') : c.name} target={c.name === 'Email' ? undefined : '_blank'} rel={c.name === 'Email' ? undefined : 'noopener noreferrer'}>
       {c.icon==='telegram'?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>:c.icon==='instagram'?<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.3" y="2.3" width="19.4" height="19.4" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle class="insta-dot" cx="17.7" cy="6.5" r="1"/></svg>:<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4.5" width="20" height="15" rx="1.5"/><path d="m2.7 5.4 9.3 7.4 9.3-7.4"/></svg>}
      </a>)}
     </div>
