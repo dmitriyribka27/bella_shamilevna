@@ -292,3 +292,10 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - Отдельный JS раскрывающегося переключателя удалён из Desktop Header — это обычные HTML-ссылки, работающие без JS. Позиционирование Desktop задано только в `global.css` внутри `@media(min-width:701px)` с классом `.site-header--nav-only`. 
 - **Mobile не изменялся**: `src/components/MobileHeader.astro`, `src/styles/mobile-home.css` и мобильные меню остались прежними.
 - Статически подтверждены новые ссылки, класс CSS, зелёная линия, удаление Desktop выпадающего меню и неизменность SHA мобильного CSS. Сборка Cloudflare / Safari визуально не подтверждены.
+
+## Уточнение Desktop-шапки: центральная навигация и Manrope Light (18.11.2026)
+- «Главная / Публикации / Обо мне» снова находятся по горизонтальному центру всей шапки, а не слева. Компоновка `1fr max-content 1fr`, пункты в центральной колонке, иконки и RU/EN/FR справа.
+- Навигация: Manrope (Google Fonts, веса 300/400), используется **300 Light**, 20 px, без жирного начертания; остальные тексты и типографика сайта не менялись.
+- Прежняя зелёная линия `#147b45` под активным языком сохранена.
+- Изменены `src/styles/global.css`, `src/layouts/BaseLayout.astro`; MobileHeader и mobile-home.css не менялись.
+- Статическая проверка GitHub прошла. Cloudflare Deploy, реальный MacBook/Safari и межъязыковое визуальное сравнение не подтверждены.
