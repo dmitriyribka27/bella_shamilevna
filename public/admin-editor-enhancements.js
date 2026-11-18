@@ -77,10 +77,12 @@
    setStatus('Версия с сервера оставлена');
   }
  }
- $('archive-number')?.addEventListener('input',()=>{
-  const hint=$('archive-number-hint'),input=$('archive-number');
-  const number=Number(input?.value);
-  if(hint&&Number.isInteger(number)&&number>=1&&number<=999999)hint.textContent='Архивный номер: № '+String(number).padStart(3,'0')+' · окончательно проверяется при сохранении';
+ const archiveInput=$('archive-number');
+ archiveInput?.addEventListener('blur',()=>{
+  const value=archiveInput.value.trim();
+  if(!/^\d{1,6}$/.test(value))return;
+  const number=Number(value);
+  if(Number.isInteger(number)&&number>0&&number<=999999)archiveInput.value=String(number).padStart(3,'0');
  });
  function updateStatistics(){
   const words=(text().trim().match(/[\p{L}\p{N}]+(?:[’'-][\p{L}\p{N}]+)*/gu)||[]).length;
