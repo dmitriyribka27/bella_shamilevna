@@ -19,7 +19,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  let doc:unknown;try{doc=JSON.parse(body)}catch{return new Response('Invalid article document',{status:400,headers})}
  if(!doc||typeof doc!=='object'||(doc as any).type!=='doc'||typeof (doc as any).html!=='string'||(doc as any).html.length>100000)return new Response('Invalid article document',{status:400,headers});
  if(typeof publishedAt!=='string'||(publishedAt!==''&&!/^\d{4}-\d{2}-\d{2}$/.test(publishedAt)))return new Response('Invalid publication date',{status:400,headers});
- const archiveNumber=typeof rawArchiveNumber==='string'&&/^[1-9]\d{0,5}$/.test(rawArchiveNumber)?Number(rawArchiveNumber):NaN;
+ const archiveNumber=typeof rawArchiveNumber==='string'&&/^\d{1,6}$/.test(rawArchiveNumber)?Number(rawArchiveNumber):NaN;
  if(!Number.isSafeInteger(archiveNumber)||archiveNumber<1||archiveNumber>999999)return new Response('Укажите архивный номер от 1 до 999999',{status:400,headers});
   const isNew=id==='';
  if(isNew&&action==='unpublish')return new Response('Cannot unpublish unsaved article',{status:400,headers});
