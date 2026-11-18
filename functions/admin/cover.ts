@@ -77,14 +77,20 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(article.archived)return new Response('Restore article before uploading a cover',{status:409,headers});
  const ext=type==='image/jpeg'?'jpg':type==='image/png'?'png':'webp';
  const key=crypto.randomUUID()+'.'+ext;
+ let staged=false;
  try{
   await env.BELLA_IMAGES.put(key,bytes,{httpMetadata:{contentType:type,cacheControl:'public,max-age=31536000,immutable'}});
   // Keep the currently published cover unchanged. Only one pending R2 object is retained.
   const result=await env.DB.prepare("UPDATE articles SET pending_cover_key=?,updated_at=datetime('now') WHERE id=? AND pending_cover_key IS ?").bind(key,id,article.pending_cover_key).run();
   if(!result.meta.changes){await env.BELLA_IMAGES.delete(key);return new Response('Cover changed, retry upload',{status:409,headers})}
+  staged=true;
   if(article.pending_cover_key&&article.pending_cover_key!==key){
    try{await env.BELLA_IMAGES.delete(article.pending_cover_key)}catch(e){console.error('Replaced pending cover cleanup failed',e)}
   }
- }catch(e){console.error('Cover upload failed',e);return new Response('Image upload failed',{status:500,headers})}
+ }catch(e){
+  if(!staged){try{await env.BELLA_IMAGES.delete(key)}catch(cleanupError){console.error('Failed upload cleanup failed',cleanupError)}}
+  console.error('Cover upload failed',e);
+  return new Response('Image upload failed',{status:500,headers})
+ }
  return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang='+encodeURIComponent(String(form?.get('lang')||'ru'))+'&cover=staged');
 }
