@@ -1,29 +1,51 @@
 ---
 interface Props { lang: 'ru' | 'en' | 'fr'; tagline: string; portraitAlt: string; soul: string; river: string }
-const {lang,tagline,portraitAlt,soul,river}=Astro.props;
-const first=lang==='ru'?'БЕЛЛА':'BELLA';
-const second=lang==='ru'?'ШАМИЛЬЕВНА':'SHAMILEVNA';
-const surname=lang==='ru'?'РЫБКА':'RYBKA';
-const pse=lang==='ru'?'ПСЭ':'PSE';
+const { lang, tagline, portraitAlt, soul, river } = Astro.props;
+const first = lang === 'ru' ? 'БЕЛЛА' : 'BELLA';
+const second = lang === 'ru' ? 'ШАМИЛЕВНА' : 'SHAMILEVNA';
+const surname = lang === 'ru' ? 'РЫБКА' : 'RYBKA';
+const pse = lang === 'ru' ? 'ПСЭ' : 'PSE';
+
+// The same sampled contour from the owner's original desktop_river_line.png
+// drives BOTH the SVG river stroke and the CSS clipping boundary.
+// x: 0..1000; y: 0..1000 relative to the entire hero stage.
+const riverY = [940.1,938.9,938.3,937.4,936.8,935.9,935.6,935.3,935.3,935.3,935.9,936.8,938,938.9,940.1,941.3,942.2,942.8,943.4,943.4,943.1,942.5,941.3,939.8,938,935.9,933.8,932,930.5,929.6,929.3,929.3,929.9,931.1,932,932.3,931.7,929.9,927.5,925.1,923.6,923,923.6,924.5,926,926.9,927.8,928.1,928.7,929.3,929.9,931.1,932.3,933.5,935.3,936.8,938.3,939.8,941,941.9,942.8,943.1,943.1,943.1,942.8,942.5,941.6,940.7,939.5,938.3,937.1,935.6,934.1,932.9,932.3,931.7,932,932.9,934.1,935.9,938];
+const riverPoints = riverY.map((y, i) => [i * 1000 / (riverY.length - 1), y]);
+const riverLine = riverPoints.map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+const riverClip = 'polygon(0% 0%,100% 0%,' +
+  riverPoints.slice().reverse().map(([x, y]) =>
+    `${(x / 10).toFixed(3)}% ${(y / 10).toFixed(3)}%`
+  ).join(',') + ')';
 ---
 <section class="bella-hero" aria-labelledby="hero-title">
   <div class="bella-hero__stage">
-    <img class="bella-hero__rays" src="/assets/home-redesign/rays-left.png" alt="" aria-hidden="true" width="1600" height="1080" decoding="async"/>
-    <img class="bella-hero__mountains" src="/assets/home-redesign/mountains-light.png" alt="" aria-hidden="true" width="2180" height="721" decoding="async"/>
+    <img class="bella-hero__rays" src="/assets/home-redesign/rays-reference-corrected.svg"
+      alt="" aria-hidden="true" width="780" height="760" decoding="async"/>
+    <img class="bella-hero__mountains" src="/assets/home-redesign/mountains-light.png"
+      alt="" aria-hidden="true" width="2180" height="721" decoding="async"/>
     <div class="bella-hero__heading">
-      <h1 id="hero-title"><span>{first}</span><span>{second}</span><span class="bella-hero__surname"><span>{surname}</span><i aria-hidden="true"></i></span></h1>
+      <h1 id="hero-title">
+        <span>{first}</span>
+        <span>{second}</span>
+        <span class="bella-hero__surname">
+          <span>{surname}</span><i aria-hidden="true"></i>
+        </span>
+      </h1>
       <p class="bella-hero__tagline">{tagline}</p>
     </div>
-    <div class="bella-hero__portrait-layer">
-      <img class="bella-hero__portrait" src="/assets/images/home-portrait.png" width="338" height="507" alt={portraitAlt} fetchpriority="high" decoding="async"/>
+    <div class="bella-hero__portrait-layer" style={`clip-path:${riverClip};-webkit-clip-path:${riverClip}`}>
+      <img class="bella-hero__portrait" src="/assets/images/home-portrait.png"
+        width="338" height="507" alt={portraitAlt} fetchpriority="high" decoding="async"/>
     </div>
-    <div class="bella-hero__side" aria-label={pse+' — '+soul}>
+    <div class="bella-hero__side" aria-label={pse + ' — ' + soul}>
       <span>{pse}</span><i aria-hidden="true"></i><span>{soul}</span>
     </div>
-    <picture class="bella-hero__river" aria-hidden="true">
-      <source media="(max-width:700px)" srcset="/assets/home-redesign/river-mobile.png"/>
-      <img src="/assets/home-redesign/river-desktop.png" width="2400" height="120" alt=""/>
-    </picture>
+    <svg class="bella-hero__river" viewBox="0 0 1000 1000"
+       preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <polyline points={riverLine} fill="none" stroke="#172C25"
+        stroke-width="2.25" vector-effect="non-scaling-stroke"
+        stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
     <span class="bella-hero__river-caption">{river}</span>
   </div>
 </section>
