@@ -1,4 +1,5 @@
 import {authenticated,redirect,securityHeaders} from '../_lib/auth';
+import {ensureArchiveNumbers,nextArchiveNumber} from '../_lib/archive-number';
 import type {Env} from '../_lib/auth';
 interface Context {request:Request;env:Env}
 export async function onRequestPost({request,env}:Context):Promise<Response>{
@@ -13,7 +14,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  const form=await request.formData().catch(()=>null),id=form?.get('id'),action=form?.get('action');
  if(!['unpublish','archive','restore','delete_forever','empty_trash'].includes(String(action))||(action!=='empty_trash'&&(typeof id!=='string'||!id||id.length>100))||(action==='empty_trash'&&id!==null&&(typeof id!=='string'||id.length>100)))return new Response('Invalid action',{status:400,headers});
  try{
-  await env.DB.prepare('CREATE TABLE IF NOT EXISTS admin_archived_articles (article_id TEXT PRIMARY KEY, archived_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)').run();
+  await ensureArchiveNumbers(env.DB);
   if(action==='empty_trash'||action==='delete_forever'){
    const ids=action==='empty_trash'?(await env.DB.prepare('SELECT article_id FROM admin_archived_articles').all<{article_id:string}>()).results.map(x=>x.article_id):[id as string];
    if(action==='delete_forever'&&!await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first())return new Response('Article is not in trash',{status:409,headers});
@@ -21,6 +22,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
     await env.DB.batch([
      env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=?').bind(articleId),
      env.DB.prepare('DELETE FROM article_translations WHERE article_id=?').bind(articleId),
+     env.DB.prepare('DELETE FROM admin_article_numbers WHERE article_id=?').bind(articleId),
      env.DB.prepare('DELETE FROM admin_archived_articles WHERE article_id=?').bind(articleId),
      env.DB.prepare('DELETE FROM articles WHERE id=?').bind(articleId)
     ]);
@@ -29,14 +31,21 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   }
   const exists=await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
   if(!exists)return new Response('Not found',{status:404,headers});
-  if(action==='archive')await env.DB.prepare('INSERT OR IGNORE INTO admin_archived_articles(article_id) VALUES (?)').bind(id).run();
+  if(action==='archive')await env.DB.batch([
+   env.DB.prepare('INSERT OR IGNORE INTO admin_archived_articles(article_id) VALUES (?)').bind(id),
+   env.DB.prepare('DELETE FROM admin_article_numbers WHERE article_id=?').bind(id)
+  ]);
   else if(action==='restore'){
    const archived=await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first();
    if(!archived)return new Response('Article is not in trash',{status:409,headers});
    // Restore as drafts: never republish an article just by restoring it.
    await env.DB.prepare("UPDATE article_translations SET status='draft',published_at=NULL,updated_at=datetime('now') WHERE article_id=?").bind(id).run();
    await env.DB.prepare("UPDATE articles SET updated_at=datetime('now') WHERE id=?").bind(id).run();
-   await env.DB.prepare('DELETE FROM admin_archived_articles WHERE article_id=?').bind(id).run();
+   const next=await nextArchiveNumber(env.DB);
+   await env.DB.batch([
+    env.DB.prepare('DELETE FROM admin_archived_articles WHERE article_id=?').bind(id),
+    env.DB.prepare('INSERT INTO admin_article_numbers(number,article_id) VALUES (?,?)').bind(next,id)
+   ]);
   }
   else{
    const archived=await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first();
