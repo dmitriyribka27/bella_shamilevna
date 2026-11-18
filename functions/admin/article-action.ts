@@ -1,6 +1,8 @@
 import {authenticated,redirect,securityHeaders} from '../_lib/auth';
 import {ensureArchiveNumbers,nextArchiveNumber} from '../_lib/archive-number';
-import type {Env} from '../_lib/auth';
+import {ensurePendingCoverColumn} from '../_lib/pending-cover';
+import type {Env as BaseEnv} from '../_lib/auth';
+interface Env extends BaseEnv {BELLA_IMAGES?:R2Bucket}
 interface Context {request:Request;env:Env}
 export async function onRequestPost({request,env}:Context):Promise<Response>{
  const headers=securityHeaders();
@@ -15,10 +17,12 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(!['unpublish','archive','restore','delete_forever','empty_trash'].includes(String(action))||(action!=='empty_trash'&&(typeof id!=='string'||!id||id.length>100))||(action==='empty_trash'&&id!==null&&(typeof id!=='string'||id.length>100)))return new Response('Invalid action',{status:400,headers});
  try{
   await ensureArchiveNumbers(env.DB);
+  await ensurePendingCoverColumn(env.DB);
   if(action==='empty_trash'||action==='delete_forever'){
    const ids=action==='empty_trash'?(await env.DB.prepare('SELECT article_id FROM admin_archived_articles').all<{article_id:string}>()).results.map(x=>x.article_id):[id as string];
    if(action==='delete_forever'&&!await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first())return new Response('Article is not in trash',{status:409,headers});
    for(const articleId of ids){
+    const media=await env.DB.prepare('SELECT cover_key,pending_cover_key FROM articles WHERE id=?').bind(articleId).first<{cover_key:string|null;pending_cover_key:string|null}>();
     await env.DB.batch([
      env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=?').bind(articleId),
      env.DB.prepare('DELETE FROM article_translations WHERE article_id=?').bind(articleId),
@@ -26,6 +30,11 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
      env.DB.prepare('DELETE FROM admin_archived_articles WHERE article_id=?').bind(articleId),
      env.DB.prepare('DELETE FROM articles WHERE id=?').bind(articleId)
     ]);
+    // Remove media only after all D1 deletion statements succeeded.
+    if(env.BELLA_IMAGES){
+     const keys=new Set([media?.cover_key,media?.pending_cover_key].filter((k):k is string=>Boolean(k)));
+     for(const key of keys){try{await env.BELLA_IMAGES.delete(key)}catch(error){console.error('Deleted article cover cleanup failed',error)}}
+    }
    }
    return redirect(request,'/admin/?view=trash&done=1');
   }
