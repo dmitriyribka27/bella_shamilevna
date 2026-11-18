@@ -575,3 +575,29 @@ html[lang="fr"] .section-heading>a{white-space:normal;text-align:right;max-width
     outline-offset:2px;
   }
 }
+
+/* Desktop header refinement: center the main navigation on the page axis. */
+@media (min-width:701px){
+  .site-header.site-header--nav-only{
+    grid-template-columns:minmax(0,1fr) max-content minmax(0,1fr);
+    column-gap:0;
+  }
+  .site-header.site-header--nav-only > nav:first-child{
+    grid-column:2;
+    justify-content:center;
+    gap:58px;
+  }
+  .site-header.site-header--nav-only > nav:first-child a{
+    font-family:'Manrope',Arial,Helvetica,sans-serif;
+    font-size:20px;
+    font-weight:300;
+    line-height:1.2;
+    letter-spacing:0;
+    text-decoration:none;
+  }
+  .site-header.site-header--nav-only .header-right{
+    grid-column:3;
+    justify-self:end;
+    gap:40px;
+  }
+}
