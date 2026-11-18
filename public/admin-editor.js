@@ -234,16 +234,17 @@
  });
  const titleField=document.getElementById('title'),counter=document.getElementById('title-counter'),seoTitle=document.getElementById('seo-title'),seoDescription=document.getElementById('seo-description');
  const titleManual=document.getElementById('seo-title-manual'),descriptionManual=document.getElementById('seo-description-manual');
- const plainText=()=>editor.innerHTML.replace(/<[^>]*>/g,' ').replace(/&(?:nbsp|amp|lt|gt|quot|#39);/g,m=>({'&nbsp;':' ','&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'" }[m]||m)).replace(/\s+/g,' ').trim();
+ const suggestedDescription=()=>typeof globalThis.BellaSeoDescription==='function'
+  ?globalThis.BellaSeoDescription(editor.innerHTML,titleField?.value||''):'';
  function updateSeoModes(){
   const titleMode=document.getElementById('seo-title-mode');
   const descriptionMode=document.getElementById('seo-description-mode');
   if(titleMode)titleMode.textContent=titleManual?.value==='1'?'Задано вручную':'Обновляется автоматически';
-  if(descriptionMode)descriptionMode.textContent=descriptionManual?.value==='1'?'Задано вручную':'Обновляется автоматически';
+  if(descriptionMode)descriptionMode.textContent=descriptionManual?.value==='1'?'Задано вручную':seoDescription?.value?'Автоматически выбрано законченное предложение из текста':'Нет подходящего предложения — заполните описание вручную';
  }
  function refreshSeo(){
   if(seoTitle&&titleManual?.value!=='1')seoTitle.value=(titleField.value.trim()?titleField.value.trim()+' — Белла Рыбка':'');
-  if(seoDescription&&descriptionManual?.value!=='1')seoDescription.value=plainText().slice(0,160);
+  if(seoDescription&&descriptionManual?.value!=='1')seoDescription.value=suggestedDescription();
   updateSeoModes();
  }
  seoTitle?.addEventListener('input',()=>{if(titleManual)titleManual.value='1';updateSeoModes()});
