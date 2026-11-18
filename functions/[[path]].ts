@@ -13,7 +13,7 @@ function safeBody(raw:string|null):string {
   const m=/^<\s*(\/?)\s*([a-z][a-z0-9]*)\b([^>]*)>$/i.exec(token);
   if(!m)return '';
   const tag=m[2].toLowerCase();
-  if(!['p','h2','h3','blockquote','ul','ol','li','strong','em','br','a'].includes(tag))return '';
+  if(!['p','h2','h3','blockquote','ul','ol','li','strong','em','u','s','br','a'].includes(tag))return '';
   if(m[1])return tag==='br'?'':`</${tag}>`;
   if(tag==='br')return '<br>';
   if(tag==='a'){
@@ -88,7 +88,7 @@ export async function onRequest(context:Context):Promise<Response>{
   const article=`<article class="article-page"><header class="article-masthead"><div class="article-heading"><h1>${esc(e.title)}</h1><time datetime="${esc(e.published_at?.slice(0,10)||'')}">${esc(date(e.published_at))}</time></div>${cover}</header><div class="article-content"><div class="article-body">${safeBody(e.body_json)}</div><div class="article-actions"><button type="button" class="article-copy-link" id="article-copy-link">${info.lang==='en'?'Copy link':info.lang==='fr'?'Copier le lien':'Скопировать ссылку'}</button><span class="article-copy-status" role="status" aria-live="polite"></span></div></div><nav class="article-neighbors" aria-label="${esc(labels.archive)}">${neighbor(entries[currentIndex+1],'prev')}${neighbor(entries[currentIndex-1],'next')}</nav></article><script>document.getElementById('article-copy-link')?.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);document.querySelector('.article-copy-status').textContent='✓'}catch{document.querySelector('.article-copy-status').textContent=location.href}});</script>`;
   html=html.replace(/<section class="archive-page"[\s\S]*?<\/section>/,article);
  }
- const css=`<style>.archive-grid{margin-top:35px}.archive-card-date{display:block;margin-top:12px;font-size:15px;color:#74859a}.archive-card-title{overflow-wrap:anywhere}.article-heading h1{overflow-wrap:anywhere}.article-body{overflow-wrap:anywhere}.article-body img{max-width:100%;height:auto}.article-neighbor-next .article-arrow{order:2}.article-neighbor-next a{justify-content:flex-end}</style>`;
+ const css=`<style>.archive-grid{margin-top:35px}.archive-card-date{display:block;margin-top:12px;font-size:15px;color:#74859a}.archive-card-title{overflow-wrap:anywhere}.article-heading h1{overflow-wrap:anywhere}.article-body{overflow-wrap:anywhere}.article-body img{max-width:100%;height:auto}.article-body a{color:#27598c;text-decoration:underline;text-underline-offset:3px}.article-body a:hover{color:#183c64}.article-body u{text-underline-offset:3px}.article-body s{text-decoration:line-through}.article-neighbor-next .article-arrow{order:2}.article-neighbor-next a{justify-content:flex-end}</style>`;
  html=html.replace('</head>',css+'</head>');
  const headers=new Headers({'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=0, must-revalidate','X-Content-Type-Options':'nosniff'});
  return new Response(html,{status:200,headers});
