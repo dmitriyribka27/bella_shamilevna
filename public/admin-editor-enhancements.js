@@ -181,6 +181,7 @@
   }
  },true);
  $('editor-link-form')?.addEventListener('submit',linkApply);
+ $('editor-link-cancel')?.addEventListener('click',()=>modal?.close());
  [urlField,textField].forEach(field=>field?.addEventListener('input',()=>field.setCustomValidity('')));
  $('editor-link-remove')?.addEventListener('click',()=>{const link=activeAnchor;if(link&&editor.contains(link)){link.replaceWith(document.createTextNode(link.textContent||''));editor.dispatchEvent(new Event('input',{bubbles:true}))}modal?.close()});
  editor.addEventListener('click',event=>{if(event.target.closest('a[href]')&&event.metaKey){event.preventDefault();openLink(event)}},true);
@@ -197,7 +198,7 @@
  });
  // When redirect from a successful Save/Publish completes, safely discard the backup.
  if(new URLSearchParams(location.search).get('saved')==='1'){
-  try{localStorage.removeItem(draftKey)}catch{}
+  try{localStorage.removeItem(draftKey);localStorage.removeItem('bella-editor-draft-v2:new:'+lang)}catch{}
  }
  try{recover()}catch{setStatus('Локальная копия недоступна в этом браузере')}
  updateStatistics();updateToolbar();
