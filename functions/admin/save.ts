@@ -41,6 +41,10 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   await ensurePendingCoverColumn(env.DB);
   const archived=!isNew?await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first():null;
   if(archived)return new Response('Восстановите статью из корзины перед редактированием',{status:409,headers});
+  if(action==='publish'&&!isNew){
+   const candidate=await env.DB.prepare('SELECT pending_cover_key FROM articles WHERE id=?').bind(id).first<{pending_cover_key:string|null}>();
+   if(candidate?.pending_cover_key&&!env.BELLA_IMAGES)return new Response('Image storage unavailable: cannot publish staged cover',{status:503,headers});
+  }
   const conflict=await env.DB.prepare('SELECT article_id FROM admin_article_numbers WHERE number=? AND article_id<>?').bind(archiveNumber,id).first();
   if(conflict)return new Response('Архивный номер уже занят. Выберите другой номер.',{status:409,headers});
   if(isNew){
