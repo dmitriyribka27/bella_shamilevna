@@ -320,7 +320,7 @@ export async function onRequestGet({request,env}:Context):Promise<Response>{
 <div class="top-title"><label for="title">Заголовок</label><textarea id="title" name="title" rows="2" maxlength="50" placeholder="Название статьи">${esc(t?.title)}</textarea><div class="title-count"><span id="title-counter">0 / 50</span></div></div>
 <div class="article-meta-row">
 <div class="archive-field"><label for="archive-number">Архивный номер</label><input id="archive-number" type="text" inputmode="numeric" pattern="[0-9]{1,6}" name="archive_number" maxlength="6" required value="${String(suggestedArchiveNumber).padStart(3,'0')}" aria-label="Архивный номер статьи"></div>
-<div class="top-date"><label for="published-at">Дата публикации</label><input id="published-at" type="date" name="published_at" value="${esc(working?.published_at??t?.published_at?.slice(0,10)??'')}"></div>
+<div class="top-date"><label for="published-at">Дата публикации</label><input id="published-at" type="date" name="published_at" value="${esc(working?.published_at??published?.published_at?.slice(0,10)??'')}"></div>
 </div>
 </div>
 <div class="top-right">
