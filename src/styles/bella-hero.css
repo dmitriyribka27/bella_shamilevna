@@ -14,8 +14,22 @@
     user-select:none;pointer-events:none;
   }
   /* Source of the rays is one point at the left edge, not a stretched fan. */
-  .bella-hero__rays{
-    z-index:2;width:50.5%;left:0;top:-21%;opacity:1;
+  /* Rays now live in a fixed page-level overlay instead of the clipped hero.
+     The original img stays in markup for reference but is not rendered. */
+  .bella-hero__rays{display:none}
+  body:has(.bella-hero)::after{
+    content:"";
+    position:fixed;
+    top:-48px;
+    left:-19px;
+    width:clamp(250px,25vw,390px);
+    aspect-ratio:775/742;
+    height:auto;
+    background:url('/assets/home-redesign/rays-use-this-exact.svg') left top / contain no-repeat;
+    opacity:.76;
+    z-index:120;
+    pointer-events:none;
+    user-select:none;
   }
   /* Peaks in the upper third, fading to the paper instead of competing with text. */
   .bella-hero__mountains{
