@@ -23,6 +23,24 @@ const { title = 'Белла Рыбка - психология, консульт�
   })();
 </script><slot name="head" /></head>
 <body><Header lang={interfaceLang} /><main><slot /></main><Footer lang={interfaceLang} />
+<script is:inline>
+  // Windows often has no configured mailto handler. Open Gmail composer there;
+  // preserve native Mail/Gmail app handling on macOS and iOS.
+  (() => {
+    if (!/Windows/i.test(navigator.userAgent)) return;
+    for (const link of document.querySelectorAll('a[href^="mailto:"]')) {
+      const address = link.getAttribute('href')?.slice(7).split('?')[0];
+      if (!address) continue;
+      const gmail = new URL('https://mail.google.com/mail/');
+      gmail.searchParams.set('view', 'cm');
+      gmail.searchParams.set('fs', '1');
+      gmail.searchParams.set('to', decodeURIComponent(address));
+      link.href = gmail.toString();
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+  })();
+</script>
 <script>
   // Progressive enhancement: content remains visible if JavaScript is unavailable.
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
