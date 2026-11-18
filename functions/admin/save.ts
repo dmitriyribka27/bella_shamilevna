@@ -43,6 +43,8 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
     env.DB.prepare("INSERT INTO article_translations(article_id,lang,title,status) VALUES (?,?,?,'draft')").bind(articleId,lang,title.trim())
    ]);
   }
+  const workingCols=(await env.DB.prepare('PRAGMA table_info(article_working_versions)').all<{name:string}>()).results||[];
+  if(!workingCols.some(c=>c.name==='published_at'))await env.DB.prepare('ALTER TABLE article_working_versions ADD COLUMN published_at TEXT').run();
   const old=await env.DB.prepare('SELECT status FROM article_translations WHERE article_id=? AND lang=?').bind(articleId,lang).first<{status:string}>();
   const plain=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
   const autoTitle=title.trim()+' — Белла Рыбка';
@@ -55,9 +57,9 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   const safeDescription=manualDescription?finalDescription:(existingWorking?.seo_description_manual?existingWorking.seo_description:(!existingWorking&&existingPublished?.seo_description&&existingPublished.seo_description!==autoDescription?existingPublished.seo_description:finalDescription));
   const keepTitleManual=manualTitle||Boolean(existingWorking?.seo_title_manual)||Boolean(!existingWorking&&existingPublished?.seo_title&&existingPublished.seo_title!==autoTitle);
   const keepDescriptionManual=manualDescription||Boolean(existingWorking?.seo_description_manual)||Boolean(!existingWorking&&existingPublished?.seo_description&&existingPublished.seo_description!==autoDescription);
-  await env.DB.prepare(`INSERT INTO article_working_versions(article_id,lang,title,body_json,excerpt,seo_title,seo_description,seo_title_manual,seo_description_manual,updated_at)
-   VALUES(?,?,?,?,?,?,?,?,?,datetime('now'))
-   ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,seo_title_manual=excluded.seo_title_manual,seo_description_manual=excluded.seo_description_manual,updated_at=datetime('now')`).bind(articleId,lang,title.trim(),body,excerpt,safeTitle,safeDescription,Number(keepTitleManual),Number(keepDescriptionManual)).run();
+  await env.DB.prepare(`INSERT INTO article_working_versions(article_id,lang,title,body_json,excerpt,seo_title,seo_description,seo_title_manual,seo_description_manual,published_at,updated_at)
+   VALUES(?,?,?,?,?,?,?,?,?,?,datetime('now'))
+   ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,seo_title_manual=excluded.seo_title_manual,seo_description_manual=excluded.seo_description_manual,published_at=excluded.published_at,updated_at=datetime('now')`).bind(articleId,lang,title.trim(),body,excerpt,safeTitle,safeDescription,Number(keepTitleManual),Number(keepDescriptionManual),publishedAt||null).run();
   if(action==='publish'){
    if(!title.trim()||!plain)return new Response('Для публикации заполните название и текст',{status:400,headers});
    await env.DB.prepare(`INSERT INTO article_translations(article_id,lang,title,body_json,excerpt,seo_title,seo_description,status,published_at,updated_at)
