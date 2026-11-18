@@ -16,7 +16,7 @@
  function snapshot(){
   return {version:2,at:Date.now(),title:title?.value||'',date:date?.value||'',html:editor.innerHTML,
    seoTitle:$('seo-title')?.value||'',seoDescription:$('seo-description')?.value||'',
-   seoTitleManual:$('seo-title-manual')?.value||'0',seoDescriptionManual:$('seo-description-manual')?.value||'0'};
+   seoTitleManual:$('seo-title-manual')?.value||'0',seoDescriptionManual:$('seo-description-manual')?.value||'0',archiveNumber:$('archive-number')?.value||''};
  }
  function hasContent(v){return !!(v?.title||v?.html?.replace(/<[^>]*>/g,'').trim())}
  function setStatus(message){if(status)status.textContent=message}
@@ -44,11 +44,12 @@
   const initial=snapshot();
   // Never overwrite published/server content automatically.
   const different=draft.title!==initial.title||draft.date!==initial.date||draft.html!==initial.html||
-   draft.seoTitle!==initial.seoTitle||draft.seoDescription!==initial.seoDescription;
+   draft.seoTitle!==initial.seoTitle||draft.seoDescription!==initial.seoDescription||draft.archiveNumber!==initial.archiveNumber;
   if(!different){localStorage.removeItem(draftKey);return}
   if(confirm('На этом Mac найдена несохранённая версия статьи. Восстановить её? Нажмите «Отмена», чтобы оставить версию с сервера.')){
    if(title)title.value=draft.title;
    if(date)date.value=draft.date;
+   if($('archive-number')&&draft.archiveNumber)$('archive-number').value=draft.archiveNumber;
    if($('seo-title'))$('seo-title').value=draft.seoTitle;
    if($('seo-description'))$('seo-description').value=draft.seoDescription;
    if($('seo-title-manual'))$('seo-title-manual').value=draft.seoTitleManual;
@@ -76,6 +77,11 @@
    setStatus('Версия с сервера оставлена');
   }
  }
+ $('archive-number')?.addEventListener('input',()=>{
+  const hint=$('archive-number-hint'),input=$('archive-number');
+  const number=Number(input?.value);
+  if(hint&&Number.isInteger(number)&&number>=1&&number<=999999)hint.textContent='Архивный номер: № '+String(number).padStart(3,'0')+' · окончательно проверяется при сохранении';
+ });
  function updateStatistics(){
   const words=(text().trim().match(/[\p{L}\p{N}]+(?:[’'-][\p{L}\p{N}]+)*/gu)||[]).length;
   const chars=text().length;
