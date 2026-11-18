@@ -175,6 +175,18 @@ input,textarea,.languages a{border-radius:14px}
 .file-picker #cover-file-label{padding:5px 7px}
 .cover-upload-area .cover-upload button{min-height:40px;margin-top:6px;padding:8px 10px}
 @media(min-width:761px) and (max-width:1080px){.top-fields{grid-template-columns:minmax(0,1fr) minmax(200px,38%)!important;column-gap:16px!important}.top-cover,.cover-upload-area,.top-cover .cover-image,.top-cover .cover-placeholder{max-width:275px}}
+/* Compact preview typography for long-form articles */
+.preview-details .preview{padding:clamp(20px,2.4vw,30px)}
+.preview .preview-hero{grid-template-columns:minmax(0,1fr) minmax(150px,25%);gap:clamp(16px,3vw,35px);padding-bottom:19px}
+.preview .preview-hero h2{font-size:clamp(20px,1.65vw,26px);font-weight:700;line-height:1.25;letter-spacing:-.015em;margin:0 0 11px}
+.preview .preview-date{font-size:14px;line-height:1.4}
+.preview .preview-article{width:100%;max-width:none;margin:0;padding:24px 0 0;font-size:16px;line-height:1.65}
+.preview .preview-article p{font-size:inherit;line-height:inherit;margin:0 0 16px}
+.preview .preview-article h2{font-size:1.45em;line-height:1.3}
+.preview .preview-article h3{font-size:1.22em;line-height:1.35}
+.preview .preview-article li{line-height:1.6}
+@media(min-width:761px) and (max-width:1050px){.preview .preview-hero{grid-template-columns:minmax(0,1fr) 25%}.preview .preview-article{font-size:15px}}
+
 `;
 // Delete choices are rendered from existing published and working languages.
 function page(body:string,status=200):Response{const headers=new Headers(securityHeaders());headers.set('Content-Type','text/html; charset=utf-8');headers.set('Content-Security-Policy',"default-src 'none'; connect-src 'self'; img-src 'self' blob:; style-src 'unsafe-inline'; script-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");return new Response(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="/admin-icons/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/admin-icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/admin-icons/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/admin-icons/apple-touch-icon.png"><title>Редактор — Белла Рыбка</title><style>${styles}${adminSidebarCss}</style></head><body>${body}</body></html>`,{status,headers})}
