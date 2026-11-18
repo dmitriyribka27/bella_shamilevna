@@ -242,6 +242,15 @@ input,textarea,.languages a{border-radius:14px}
 .archive-field label,.top-date label{margin:0 0 6px!important}
 .archive-field input,.top-date input{min-height:48px!important}
 
+/* Single compact metadata row under article title */
+.top-left{gap:9px!important}
+.article-meta-row{display:grid;grid-template-columns:150px minmax(0,220px);align-items:start;gap:14px;margin:0;padding:0}
+.article-meta-row .archive-field,.article-meta-row .top-date{width:100%;max-width:none;min-width:0;margin:0!important;padding:0!important}
+.article-meta-row .archive-field label,.article-meta-row .top-date label{margin:0 0 6px!important;font-size:13px;line-height:20px}
+.article-meta-row .archive-field input,.article-meta-row .top-date input{width:100%;max-width:none;min-width:0;min-height:45px!important;height:45px;padding:9px 12px}
+.article-meta-row .archive-field input{font-variant-numeric:tabular-nums}
+@media(min-width:761px) and (max-width:1100px){.article-meta-row{grid-template-columns:minmax(95px,130px) minmax(0,185px);gap:10px}}
+
 `;
 // Delete choices are rendered from existing published and working languages.
 function page(body:string,status=200):Response{const headers=new Headers(securityHeaders());headers.set('Content-Type','text/html; charset=utf-8');headers.set('Content-Security-Policy',"default-src 'none'; connect-src 'self'; img-src 'self' blob:; style-src 'unsafe-inline'; script-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");return new Response(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="/admin-icons/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/admin-icons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/admin-icons/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/admin-icons/apple-touch-icon.png"><title>Редактор — Белла Рыбка</title><style>${styles}${adminSidebarCss}</style></head><body>${body}</body></html>`,{status,headers})}
@@ -276,8 +285,10 @@ export async function onRequestGet({request,env}:Context):Promise<Response>{
  const body=`<div class="shell">${adminSidebar(isNew?'new':'all')}<main class="main"><p class="breadcrumb"><a href="/admin/">Публикации</a> / Редактирование</p><header class="heading"><div><h1>${isNew?'Новая публикация':'Редактор статьи'}</h1></div><span class="status-pill">${esc(t?.status==='published'?'Опубликовано':t?.status==='draft'?'Черновик':'Новая версия')}</span></header>${saved}<div class="mobile-editor-message">Редактор доступен только с вашего MacBook.</div><form id="article-form" method="post" action="/admin/save"><input type="hidden" name="id" value="${esc(id)}"><input type="hidden" name="lang" value="${esc(lang)}"><input type="hidden" name="body_json" id="body-json"><input type="hidden" name="excerpt" value=""><div class="workspace"><div class="writing"><section class="card"><div class="editor-language-top"><span>Язык публикации</span><div class="languages">${tabs}</div></div><div class="top-fields">
 <div class="top-left">
 <div class="top-title"><label for="title">Заголовок</label><textarea id="title" name="title" rows="2" maxlength="50" placeholder="Название статьи">${esc(t?.title)}</textarea><div class="title-count"><span id="title-counter">0 / 50</span></div></div>
+<div class="article-meta-row">
 <div class="archive-field"><label for="archive-number">Архивный номер</label><input id="archive-number" type="text" inputmode="numeric" pattern="[0-9]{1,6}" name="archive_number" maxlength="6" required value="${String(suggestedArchiveNumber).padStart(3,'0')}" aria-label="Архивный номер статьи"></div>
 <div class="top-date"><label for="published-at">Дата публикации</label><input id="published-at" type="date" name="published_at" value="${esc(working?.published_at??t?.published_at?.slice(0,10)??'')}"></div>
+</div>
 </div>
 <div class="top-right">
 <div class="top-cover"><h2>Обложка 4:3</h2>${r.cover_key?`<img class="cover-image" src="/admin/cover-preview?id=${encodeURIComponent(id)}" alt="Обложка статьи">`: '<div class="cover-placeholder">Загрузите обложку статьи</div>'}</div>
