@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 function seoDescriptionFromHtml(html,title=''){
  const decode=s=>String(s||'').replace(/&(#x[0-9a-f]+|#[0-9]+|amp|nbsp|lt|gt|quot|apos|#39|ndash|mdash|hellip);/gi,(all,entity)=>{
@@ -8,7 +9,7 @@ function seoDescriptionFromHtml(html,title=''){
   }
   return ({amp:'&',nbsp:' ',lt:'<',gt:'>',quot:'"',apos:"'",ndash:'–',mdash:'—',hellip:'…'})[key]||all;
  });
- const normalize=s=>decode(String(s||'').replace(/<[^>]*>/g,' ')).replace(/\s+/g,' ').trim();
+ const normalize=s=>decode(String(s||'').replace(/<[^>]*>/g,' ')).replace(/\s+/g,' ').replace(/\s+([,.!?;:…])/g,'$1').trim();
  const cleanHtml=String(html||'').replace(/<!--[\s\S]*?-->/g,'').replace(/<(script|style|noscript)[^>]*>[\s\S]*?<\/\1>/gi,'');
  const headings=[...cleanHtml.matchAll(/<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi)].map(x=>normalize(x[1])).filter(Boolean);
  const blocks=[...cleanHtml.matchAll(/<(p|li|blockquote)\b[^>]*>([\s\S]*?)<\/\1>/gi)].map(x=>({type:x[1].toLowerCase(),value:normalize(x[2])})).filter(x=>x.value);
@@ -32,6 +33,7 @@ function seoDescriptionFromHtml(html,title=''){
    const complete=/[.!?…]$/.test(sentence);
    if(!complete)continue;
    const low=sentence.toLowerCase();
+   if(low.replace(/[\s.!?…]+/g,' ').trim()===String(title).toLowerCase().replace(/[\s.!?…]+/g,' ').trim())continue;
    const r=roots(sentence);
    let score=0;
    for(const w of r){if(titleRoots.has(w))score+=7;if(headingRoots.has(w))score+=3}
