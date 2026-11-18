@@ -57,7 +57,7 @@
      let response;
      try{response=await fetch(coverForm.action,{method:'POST',body:data,credentials:'same-origin',redirect:'manual'})}
      catch(networkError){throw new Error('Сетевая ошибка при загрузке. '+String(networkError))}
-     if(response.type==='opaqueredirect'){window.location.assign('/admin/edit?id='+encodeURIComponent(data.get('id'))+'&lang=ru&saved=1');return}
+     if(response.type==='opaqueredirect'){window.location.assign('/admin/edit?id='+encodeURIComponent(data.get('id'))+'&lang='+encodeURIComponent(data.get('lang')||'ru')+'&cover=staged');return}
      if(!response.ok){const detail=await response.text().catch(()=>'');throw new Error('Ошибка загрузки ('+response.status+'): '+detail.slice(0,250))}
      
      window.location.assign(response.url);
