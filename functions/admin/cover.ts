@@ -1,4 +1,5 @@
 import {authenticated,redirect,securityHeaders} from '../_lib/auth';
+import {ensurePendingCoverColumn} from '../_lib/pending-cover';
 import type {Env as BaseEnv} from '../_lib/auth';
 interface Env extends BaseEnv {BELLA_IMAGES?:R2Bucket}
 interface Context {request:Request;env:Env}
@@ -70,17 +71,19 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  if(!size||size.w<320||size.h<240||size.w>12000||size.h>12000||size.w*size.h>40000000)return new Response('Invalid image dimensions',{status:415,headers});
  // Client crops to landscape 4:3; server rejects unprocessed images.
  if(Math.abs(size.w/size.h-4/3)>0.005)return new Response('Image must be cropped to 4:3',{status:422,headers});
- const article=await env.DB.prepare('SELECT id,cover_key FROM articles WHERE id=?').bind(id).first<{id:string;cover_key:string|null}>();
+ await ensurePendingCoverColumn(env.DB);
+ const article=await env.DB.prepare('SELECT id,pending_cover_key FROM articles WHERE id=?').bind(id).first<{id:string;pending_cover_key:string|null}>();
  if(!article)return new Response('Article not found',{status:404,headers});
  const ext=type==='image/jpeg'?'jpg':type==='image/png'?'png':'webp';
  const key=crypto.randomUUID()+'.'+ext;
  try{
   await env.BELLA_IMAGES.put(key,bytes,{httpMetadata:{contentType:type,cacheControl:'public,max-age=31536000,immutable'}});
-  const result=await env.DB.prepare("UPDATE articles SET cover_key=?,cover_alt=?,updated_at=datetime('now') WHERE id=? AND (cover_key IS ? OR cover_key=?)").bind(key,typeof alt==='string'?alt.slice(0,200):'',id,article.cover_key,article.cover_key).run();
+  // Keep the currently published cover unchanged. Only one pending R2 object is retained.
+  const result=await env.DB.prepare("UPDATE articles SET pending_cover_key=?,updated_at=datetime('now') WHERE id=? AND pending_cover_key IS ?").bind(key,id,article.pending_cover_key).run();
   if(!result.meta.changes){await env.BELLA_IMAGES.delete(key);return new Response('Cover changed, retry upload',{status:409,headers})}
-  if(article.cover_key&&article.cover_key!==key){
-   try{await env.BELLA_IMAGES.delete(article.cover_key)}catch(e){console.error('Old cover cleanup failed',e)}
+  if(article.pending_cover_key&&article.pending_cover_key!==key){
+   try{await env.BELLA_IMAGES.delete(article.pending_cover_key)}catch(e){console.error('Replaced pending cover cleanup failed',e)}
   }
  }catch(e){console.error('Cover upload failed',e);return new Response('Image upload failed',{status:500,headers})}
- return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang=ru&saved=1');
+ return redirect(request,'/admin/edit?id='+encodeURIComponent(id)+'&lang='+encodeURIComponent(String(form?.get('lang')||'ru'))+'&cover=staged');
 }
