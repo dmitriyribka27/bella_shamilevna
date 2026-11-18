@@ -72,8 +72,9 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  // Client crops to landscape 4:3; server rejects unprocessed images.
  if(Math.abs(size.w/size.h-4/3)>0.005)return new Response('Image must be cropped to 4:3',{status:422,headers});
  await ensurePendingCoverColumn(env.DB);
- const article=await env.DB.prepare('SELECT id,pending_cover_key FROM articles WHERE id=?').bind(id).first<{id:string;pending_cover_key:string|null}>();
+ const article=await env.DB.prepare('SELECT a.id,a.pending_cover_key,ar.article_id AS archived FROM articles a LEFT JOIN admin_archived_articles ar ON ar.article_id=a.id WHERE a.id=?').bind(id).first<{id:string;pending_cover_key:string|null;archived:string|null}>();
  if(!article)return new Response('Article not found',{status:404,headers});
+ if(article.archived)return new Response('Restore article before uploading a cover',{status:409,headers});
  const ext=type==='image/jpeg'?'jpg':type==='image/png'?'png':'webp';
  const key=crypto.randomUUID()+'.'+ext;
  try{
