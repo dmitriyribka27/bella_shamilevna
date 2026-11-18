@@ -94,5 +94,6 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   if(/UNIQUE constraint failed: admin_article_numbers.number/i.test(msg))return new Response('Архивный номер уже занят. Выберите другой номер.',{status:409,headers});
   return new Response('Could not save article',{status:500,headers});
  }
- return redirect(request,'/admin/edit?id='+encodeURIComponent(articleId)+'&lang='+encodeURIComponent(String(lang))+'&saved=1');
+ return redirect(request,'/admin/edit?id='+encodeURIComponent(articleId)+'&lang='+encodeURIComponent(String(lang))+'&saved=1&result='+encodeURIComponent(String(action)));
+
 }
