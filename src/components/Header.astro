@@ -9,6 +9,10 @@ const { lang = 'ru' } = Astro.props;
 const en = lang === 'en';
 const fr = lang === 'fr';
 const prefix = lang === 'ru' ? '' : `/${lang}`;
+const currentPath = Astro.url.pathname;
+const relativePath = currentPath.replace(/^\/(en|fr|ka)(?=\/|$)/, '') || '/';
+const languageHref = (target: 'ru' | 'en' | 'fr') => target === 'ru' ? relativePath : `/${target}${relativePath.startsWith('/') ? relativePath : '/'+relativePath}`;
+
 const ui = {
   ru: { home: 'ГЛАВНАЯ', publications: 'ПУБЛИКАЦИИ', about: 'ОБО МНЕ', navigation: 'Основная навигация', socials: 'Социальные сети и почта', email: 'Написать письмо через Gmail', choose: 'Выбрать язык сайта' },
   en: { home: 'HOME', publications: 'PUBLICATIONS', about: 'ABOUT ME', navigation: 'Main navigation', socials: 'Social media and email', email: 'Compose email in Gmail', choose: 'Choose site language' },
@@ -20,12 +24,11 @@ const icon = {
   email: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4.5" width="20" height="15" rx="1.5"/><path d="m2.7 5.4 9.3 7.4 9.3-7.4"/></svg>',
 };
 ---
-<header class="site-header">
-  <a class="brand" href={`${prefix}/`}>{lang === 'ru' ? 'БЕЛЛА ШАМИЛЕВНА' : 'BELLA SHAMILEVNA'}</a>
+<header class="site-header site-header--nav-only">
   <nav aria-label={ui.navigation}>
-    <a href={`${prefix}/`}>{ui.home}</a>
-    <a href={`${prefix}/publications/`}>{ui.publications}</a>
-    <a href={`${prefix}/about/`}>{ui.about}</a>
+    <a href={`${prefix}/`} aria-current={Astro.url.pathname.replace(/\/?$/, '/') === `${prefix}/` ? 'page' : undefined}>{ui.home}</a>
+    <a href={`${prefix}/publications/`} aria-current={Astro.url.pathname.includes('/publications/') ? 'page' : undefined}>{ui.publications}</a>
+    <a href={`${prefix}/about/`} aria-current={Astro.url.pathname.includes('/about/') ? 'page' : undefined}>{ui.about}</a>
   </nav>
   <div class="header-right">
     <div class="header-socials" aria-label={ui.socials}>
@@ -34,44 +37,10 @@ const icon = {
         : <span class="social-unlinked" title={en ? "Link will be added after confirmation" : "Ссылка будет добавлена после подтверждения контакта"} aria-label={name === 'telegram' ? (en ? 'Telegram — link not provided' : 'Telegram — ссылка пока не указана') : name === 'instagram' ? (en ? 'Instagram — link not provided' : 'Instagram — ссылка пока не указана') : (en ? 'Email — address not provided' : 'Почта — адрес пока не указан')} set:html={svg} />
       )}
     </div>
-    <div class="language-switcher" data-language-switcher>
-      <button class="header-lang language-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="language-menu" aria-label={ui.choose}>
-        <span data-current-language>{lang.toUpperCase()}</span>
-        <svg class="language-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="m2.5 4.5 3.5 3 3.5-3" /></svg>
-      </button>
-      <div class="language-menu" id="language-menu" hidden>
-        <button class:list={['language-option', {'is-selected': lang === 'ru'}]} type="button" data-language="ru" aria-pressed={lang === 'ru'}><span>RU</span><span>Русский</span></button>
-        <button class:list={['language-option', {'is-selected': en}]} type="button" data-language="en" aria-pressed={en}><span>EN</span><span>English</span></button>
-        <button class:list={['language-option', {'is-selected': fr}]} type="button" data-language="fr" aria-pressed={fr}><span>FR</span><span>Français</span></button>
-        </div>
-    </div>
+    <nav class="desktop-languages" aria-label={ui.choose}>
+      <a href={languageHref('ru')} lang="ru" hreflang="ru" aria-current={lang === 'ru' ? 'page' : undefined}>RU</a>
+      <a href={languageHref('en')} lang="en" hreflang="en" aria-current={en ? 'page' : undefined}>EN</a>
+      <a href={languageHref('fr')} lang="fr" hreflang="fr" aria-current={fr ? 'page' : undefined}>FR</a>
+    </nav>
   </div>
 </header>
-
-<script>
-  const switcher = document.querySelector<HTMLElement>('[data-language-switcher]');
-  if (switcher) {
-    const trigger = switcher.querySelector<HTMLButtonElement>('.language-trigger')!;
-    const menu = switcher.querySelector<HTMLElement>('.language-menu')!;
-    const options = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-language]'));
-    const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
-    const routeFor = (language: string) => {
-      const path = window.location.pathname;
-      const base = path.replace(/^\/(en|fr|ka)(?=\/)/, '');
-      // Georgian is only a document translation, never a global interface language.
-      return language === 'ru' ? base : `/${language}${base}`;
-    };
-    trigger.addEventListener('click', () => {
-      const opening = menu.hidden;
-      menu.hidden = !opening;
-      trigger.setAttribute('aria-expanded', String(opening));
-    });
-    options.forEach((option) => option.addEventListener('click', () => { const target = routeFor(option.dataset.language || 'ru'); if (target !== window.location.pathname) window.location.assign(target); else close(); }));
-    document.addEventListener('click', (event) => {
-      if (!switcher.contains(event.target as Node)) close();
-    });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') { close(); trigger.focus(); }
-    });
-  }
-</script>
