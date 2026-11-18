@@ -68,36 +68,145 @@
    }
   });
  }
- const allowed=['P','H2','H3','BLOCKQUOTE','UL','OL','LI','STRONG','EM','A','BR'];
+
+ // Sanitize incoming rich text from Word, ChatGPT, Notes, and other browsers.
+ // Preserve semantic formatting; do not retain external CSS, classes, scripts, or images.
+ const blockTags=new Set(['P','H2','H3','BLOCKQUOTE','UL','OL','LI']);
+ const permitted=new Set(['P','H2','H3','BLOCKQUOTE','UL','OL','LI','STRONG','EM','U','S','A','BR']);
+ function safeUrl(raw){
+  if(!raw||!/^(https?:\/\/|mailto:|\/(?!\/)|#)/i.test(raw.trim()))return '';
+  try{const u=new URL(raw.trim(),location.origin);return ['https:','http:','mailto:'].includes(u.protocol)?u.href:''}catch{return ''}
+ }
+ function plainContent(text){
+  const fragment=document.createDocumentFragment();
+  String(text||'').replace(/\r\n?/g,'\n').split(/\n\n+/).forEach(section=>{
+   const p=document.createElement('p');
+   section.split('\n').forEach((line,i)=>{if(i)p.append(document.createElement('br'));p.append(document.createTextNode(line))});
+   fragment.append(p);
+  });
+  return fragment;
+ }
+ function normalizeTag(el){
+  const name=el.tagName;
+  if(name==='B')return 'STRONG';
+  if(name==='I')return 'EM';
+  if(name==='STRIKE'||name==='DEL')return 'S';
+  if(name==='INS')return 'U';
+  if(name==='H1')return 'H2';
+  if(name==='H4'||name==='H5'||name==='H6')return 'H3';
+  if(name==='DIV')return 'P';
+  if(name==='PRE')return 'P';
+  if(name==='A')return 'A';
+  if(name==='SPAN'||name==='FONT')return 'SPAN';
+  return permitted.has(name)?name:'SPAN';
+ }
  function cleanNode(node,depth=0){
-  if(depth>25)return null;
+  if(depth>35)return null;
   if(node.nodeType===Node.TEXT_NODE)return document.createTextNode(node.textContent||'');
   if(node.nodeType!==Node.ELEMENT_NODE)return null;
-  const tag=node.tagName==='B'?'STRONG':node.tagName==='I'?'EM':node.tagName;
-  const wrapper=document.createElement(allowed.includes(tag)?tag:'span');
+  const raw=node.tagName;
+  if(['SCRIPT','STYLE','META','LINK','HEAD','IFRAME','OBJECT','EMBED','SVG','IMG','FORM','INPUT','BUTTON','NOSCRIPT'].includes(raw))return null;
+  const tag=normalizeTag(node);
+  const base=document.createElement(tag==='SPAN'?'span':tag.toLowerCase());
   if(tag==='A'){
-   const href=node.getAttribute('href')||'';
-   try{const u=new URL(href,location.origin);if(['http:','https:','mailto:'].includes(u.protocol))wrapper.setAttribute('href',u.href)}catch{}
+   const href=safeUrl(node.getAttribute('href')||'');
+   if(href){base.setAttribute('href',href);base.setAttribute('rel','noopener noreferrer')}
   }
-  for(const child of Array.from(node.childNodes)){const safe=cleanNode(child,depth+1);if(safe)wrapper.appendChild(safe)}
-  return wrapper;
+  for(const child of Array.from(node.childNodes)){
+   const safe=cleanNode(child,depth+1);
+   if(safe)base.appendChild(safe);
+  }
+  if(raw==='SPAN'||raw==='FONT'||raw==='P'||raw==='DIV'){
+   const style=(node.getAttribute('style')||'').toLowerCase();
+   const bold=/font-weight\s*:\s*(bold|[6-9]00)/.test(style);
+   const italic=/font-style\s*:\s*italic/.test(style);
+   const underline=/text-decoration(?:-line)?\s*:[^;]*underline/.test(style);
+   const strike=/text-decoration(?:-line)?\s*:[^;]*line-through/.test(style);
+   let result=base;
+   for(const [active,t] of [[bold,'strong'],[italic,'em'],[underline,'u'],[strike,'s']]){
+    if(active){const wrapper=document.createElement(t);wrapper.appendChild(result);result=wrapper}
+   }
+   return result;
+  }
+  return base;
+ }
+ function sanitizedFragment(html){
+  const source=document.createElement('template');
+  source.innerHTML=String(html||'');
+  const output=document.createDocumentFragment();
+  for(const child of Array.from(source.content.childNodes)){const safe=cleanNode(child);if(safe)output.appendChild(safe)}
+  return output;
  }
  function safeHtml(html){
-  const source=document.createElement('template');source.innerHTML=html;
-  const output=document.createElement('div');
-  for(const child of Array.from(source.content.childNodes)){const safe=cleanNode(child);if(safe)output.appendChild(safe)}
-  return output.innerHTML;
+  const holder=document.createElement('div');
+  holder.append(sanitizedFragment(html));
+  return holder.innerHTML;
  }
+ const initial=document.getElementById('initial-body');
  try{
-  const value=JSON.parse(document.getElementById('initial-body').value);
+  const value=JSON.parse(initial.value);
   if(value&&value.type==='doc'&&typeof value.html==='string')editor.innerHTML=safeHtml(value.html);
   else if(value&&value.type==='doc'&&Array.isArray(value.content)&&value.content.length)error.textContent='Этот формат статьи пока нельзя отредактировать. Данные не изменены.';
  }catch{error.textContent='Не удалось прочитать содержимое статьи.'}
- document.querySelectorAll('[data-command]').forEach(button=>button.addEventListener('click',()=>{
-  editor.focus();const cmd=button.dataset.command;
-  if(cmd==='createLink'){const href=prompt('Адрес ссылки (https://)');if(href){try{const u=new URL(href);if(['http:','https:'].includes(u.protocol))document.execCommand(cmd,false,u.href)}catch{alert('Укажите полный адрес https://…')}}}
-  else document.execCommand(cmd,false,button.dataset.value||null);
- }));
+ function insertFragment(fragment){
+  editor.focus();
+  const selection=window.getSelection();
+  if(!selection||!selection.rangeCount)return;
+  const range=selection.getRangeAt(0);
+  if(!editor.contains(range.commonAncestorContainer))return;
+  range.deleteContents();
+  const last=fragment.lastChild;
+  range.insertNode(fragment);
+  if(last){range.setStartAfter(last);range.collapse(true);selection.removeAllRanges();selection.addRange(range)}
+  editor.dispatchEvent(new Event('input',{bubbles:true}));
+ }
+ editor.addEventListener('paste',event=>{
+  const clipboard=event.clipboardData;
+  if(!clipboard)return;
+  event.preventDefault();
+  const html=clipboard.getData('text/html');
+  const text=clipboard.getData('text/plain');
+  insertFragment(html?sanitizedFragment(html):plainContent(text));
+ });
+ // Drop must never inject unsupported browser HTML, remote assets, or files.
+ editor.addEventListener('drop',event=>{
+  event.preventDefault();
+  const text=event.dataTransfer?.getData('text/plain');
+  if(text)insertFragment(plainContent(text));
+ });
+ // Keep the text selection when a toolbar button is pressed (important on Safari).
+ document.querySelectorAll('[data-command]').forEach(button=>{
+  button.addEventListener('mousedown',event=>event.preventDefault());
+  button.addEventListener('click',()=>{
+   const cmd=button.dataset.command;
+   if(cmd==='createLink'){
+    const selection=window.getSelection();
+    if(!selection||selection.isCollapsed||!selection.rangeCount||!editor.contains(selection.getRangeAt(0).commonAncestorContainer)){
+     alert('Сначала выделите слово или фразу, к которой нужно добавить ссылку.');return;
+    }
+    const range=selection.getRangeAt(0).cloneRange();
+    const input=prompt('Введите адрес ссылки (https://...)');
+    if(input===null)return;
+    const href=safeUrl(input);
+    if(!href){alert('Укажите полный безопасный адрес https://...');return}
+    editor.focus();selection.removeAllRanges();selection.addRange(range);
+    document.execCommand('createLink',false,href);
+   }else{
+    editor.focus();
+    document.execCommand(cmd,false,button.dataset.value||null);
+   }
+   editor.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+ });
+ editor.addEventListener('keydown',event=>{
+  if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){
+   event.preventDefault();document.querySelector('[data-command="createLink"]')?.click();
+  }
+ });
+ // Never allow editor links to navigate away on ordinary clicks.
+ editor.addEventListener('click',event=>{
+  if(event.target.closest('a'))event.preventDefault();
+ });
  const titleField=document.getElementById('title'),counter=document.getElementById('title-counter'),seoTitle=document.getElementById('seo-title'),seoDescription=document.getElementById('seo-description');
  const titleManual=document.getElementById('seo-title-manual'),descriptionManual=document.getElementById('seo-description-manual');
  const plainText=()=>editor.textContent.replace(/\s+/g,' ').trim();
