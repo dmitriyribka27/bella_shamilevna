@@ -14,8 +14,9 @@ const paragraphs=[
   "Возможно, поэтому меня так занимает человеческая природа. Она редко бывает последовательной, почти никогда не укладывается в одну теорию и обладает совершенно неприличной способностью опровергать наши самые убедительные заключения.",
   "Я предпочитаю оставаться на стороне вопросов. Они, как правило, честнее ответов."
 ];
-const left=[paragraphs[0],paragraphs[1],paragraphs[2],paragraphs[7],paragraphs[8]];
-const right=[paragraphs[3],paragraphs[4],paragraphs[5],paragraphs[6],paragraphs[9]];
+// Keep reading order intact: first four paragraphs on the left, remaining six on the right.
+const left=paragraphs.slice(0,4);
+const right=paragraphs.slice(4);
 ---
 {lang==='ru'&&variant==='desktop'&&(
  <section class="hero-essay hero-essay--desktop" aria-label="Эссе о свободе и ответственности">
