@@ -637,3 +637,50 @@ html[lang="fr"] .section-heading>a{white-space:normal;text-align:right;max-width
     gap:18px;
   }
 }
+
+/* Unified public-site interactive color.
+   Every hoverable link/button uses the same green as the active language.
+   No dimensions, layout, or mobile breakpoints are changed. */
+:root{--bella-interactive-green:#147b45}
+@media (hover:hover){
+  a[href]:hover,
+  button:not(:disabled):hover,
+  [role="button"]:not([aria-disabled="true"]):hover{
+    color:var(--bella-interactive-green)!important;
+  }
+  /* Navigation, article cards and links with nested text/icons inherit green. */
+  a[href]:hover :is(span,strong,b,small),
+  button:not(:disabled):hover :is(span,strong,b,small),
+  [role="button"]:not([aria-disabled="true"]):hover :is(span,strong,b,small){
+    color:inherit!important;
+  }
+  a[href]:hover svg,
+  button:not(:disabled):hover svg{
+    color:var(--bella-interactive-green);
+    stroke:currentColor;
+  }
+  /* Preserve outlines and avoid the old black-filled archive button on hover. */
+  .archive-load-more:not(:disabled):hover{
+    background:transparent!important;
+    border-color:var(--bella-interactive-green)!important;
+  }
+  .site-header .header-socials a:hover,
+  .footer-socials a:hover,
+  .legal-page a:hover,
+  .legal-translations a:hover{
+    opacity:1!important;
+  }
+  .legal-translations a:hover{
+    border-bottom-color:var(--bella-interactive-green)!important;
+  }
+  .legal-translations .legal-georgian-link:hover{
+    border-color:var(--bella-interactive-green);
+    background:transparent!important;
+  }
+}
+/* Keyboard users receive the same accent without applying mouse hover on touch. */
+a[href]:focus-visible,
+button:not(:disabled):focus-visible,
+[role="button"]:not([aria-disabled="true"]):focus-visible{
+  outline-color:var(--bella-interactive-green);
+}
