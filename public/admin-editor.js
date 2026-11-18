@@ -14,6 +14,7 @@
  const coverForm=document.getElementById('cover-upload-form');
  const coverInput=document.getElementById('cover-file');
  if(coverForm&&coverInput){
+  coverInput.addEventListener('change',()=>{const name=document.getElementById('cover-file-name');if(name)name.textContent=coverInput.files?.[0]?.name||'Файл не выбран'});
   let busy=false;
   coverForm.addEventListener('submit',async event=>{
    event.preventDefault();
@@ -122,13 +123,13 @@
   const hero=document.createElement('div');hero.className='preview-hero';
   const text=document.createElement('div');
   const h=document.createElement('h2');h.textContent=titleField.value||'Без названия';text.appendChild(h);
-  const date=document.getElementById('published-at')?.value;
-  if(date){const p=document.createElement('p');p.className='preview-date';const parts=date.split('-');p.textContent=parts.length===3?parts.reverse().join('.'):date;text.appendChild(p)}
+  const date=document.getElementById('published-at')?.value||preview.dataset.publishedDate||'';
+  const time=document.createElement('time');time.className='preview-date';if(date){time.dateTime=date;const parts=date.split('-');time.textContent=parts.length===3?parts.reverse().join('.'):date}else time.textContent='Дата не указана';text.appendChild(time);
   hero.appendChild(text);
   const cover=document.querySelector('.top-cover .cover-image');
   if(cover){const img=document.createElement('img');img.src=cover.src;img.alt='Обложка статьи';hero.appendChild(img)}
   preview.appendChild(hero);
-  const article=document.createElement('article');article.innerHTML=safeHtml(editor.innerHTML);preview.appendChild(article);
+  const article=document.createElement('article');article.className='preview-article';article.innerHTML=safeHtml(editor.innerHTML);preview.appendChild(article);
  }
  previewDetails?.addEventListener('toggle',()=>{if(previewDetails.open)renderPreview()});
  [editor,titleField,document.getElementById('published-at')].forEach(el=>el?.addEventListener('input',()=>{if(previewDetails?.open)renderPreview()}));
