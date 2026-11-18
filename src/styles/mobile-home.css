@@ -1,0 +1,42 @@
+/*
+ * BELLA SITE — Mobile HOME visual layer, stage 2.
+ * NOT YET IMPORTED by public pages. Stage 3 integrates it together with
+ * the 402px home composition and the exact assets from bella-mobile(1).zip.
+ *
+ * Desktop/global.css is immutable for mobile work. All selectors are scoped
+ * to .bm-mobile-home, except the explicit mobile body min-width override
+ * which will be enabled only when the mobile HOME is mounted.
+ */
+.bm-mobile-home{display:none}
+
+@media (max-width:700px){
+  body:has(.bm-mobile-home){min-width:0;overflow-x:clip}
+  body:has(.bm-mobile-home) main{overflow:visible}
+  .bm-mobile-home{display:block;width:100%;max-width:100%;color:#111;background:#f5f3f0;font-family:Arial,Helvetica,sans-serif}
+  .bm-mobile-home *, .bm-mobile-home *::before,.bm-mobile-home *::after{box-sizing:border-box}
+  .bm-mobile-home .bm-mobile-header{position:relative;z-index:30;margin:0 5%;border-bottom:1px solid #777}
+  .bm-mobile-home .bm-mobile-header-line{height:72px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .bm-mobile-home .bm-mobile-brand{font-size:clamp(15px,4.25vw,18px);font-weight:800;letter-spacing:-.025em;text-decoration:none;white-space:nowrap}
+  .bm-mobile-home .bm-mobile-header-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
+  .bm-mobile-home .bm-mobile-menu-trigger,.bm-mobile-home .bm-mobile-language-trigger{display:flex;justify-content:center;align-items:center;min-width:42px;min-height:44px;padding:0;border:0;background:transparent;color:inherit;border-radius:2px;cursor:pointer}
+  .bm-mobile-home .bm-mobile-language-trigger{font-size:15px;font-weight:500}
+  .bm-mobile-home .bm-mobile-menu-trigger:focus-visible,.bm-mobile-home .bm-mobile-language-trigger:focus-visible,.bm-mobile-home .bm-mobile-popover a:focus-visible{outline:2px solid #147b45;outline-offset:2px}
+  .bm-mobile-home .bm-mobile-hamburger{display:flex;flex-direction:column;justify-content:center;gap:4px;width:20px;height:20px}
+  .bm-mobile-home .bm-mobile-hamburger span{display:block;height:1.5px;width:20px;background:currentColor;transform-origin:center}
+  .bm-mobile-home .bm-mobile-menu-trigger[aria-expanded="true"] .bm-mobile-hamburger span:first-child{transform:translateY(5.5px) rotate(45deg)}
+  .bm-mobile-home .bm-mobile-menu-trigger[aria-expanded="true"] .bm-mobile-hamburger span:nth-child(2){opacity:0}
+  .bm-mobile-home .bm-mobile-menu-trigger[aria-expanded="true"] .bm-mobile-hamburger span:last-child{transform:translateY(-5.5px) rotate(-45deg)}
+  .bm-mobile-home .bm-mobile-popover[hidden]{display:none!important}
+  .bm-mobile-home .bm-mobile-popover{background:#f5f3f0}
+  .bm-mobile-home .bm-mobile-nav{padding:15px 7px 19px}
+  .bm-mobile-home .bm-mobile-nav a{display:block;position:relative;width:max-content;max-width:100%;padding:9px 6px 9px 20px;font-size:15px;font-weight:750;letter-spacing:.012em;text-decoration:none;line-height:1.5}
+  .bm-mobile-home .bm-mobile-nav a[aria-current="page"]::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:2px;background:#111}
+  .bm-mobile-home .bm-mobile-languages{position:absolute;right:0;top:calc(100% - 1px);z-index:40;width:min(188px,56vw);border:1px solid #444;box-shadow:0 8px 16px rgba(0,0,0,.07);padding:6px;background:#f5f3f0}
+  .bm-mobile-home .bm-mobile-languages a{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:43px;padding:7px 9px 7px 15px;font-size:13px;text-decoration:none;position:relative}
+  .bm-mobile-home .bm-mobile-languages a strong{font-size:15px}
+  .bm-mobile-home .bm-mobile-languages a[aria-current="page"]::before{content:"";position:absolute;left:0;top:5px;bottom:5px;width:2px;background:#111}
+  .bm-mobile-home .bm-mobile-languages a:hover,.bm-mobile-home .bm-mobile-nav a:hover{background:rgba(0,0,0,.045)}
+}
+@media (prefers-reduced-motion:reduce){
+  .bm-mobile-home .bm-mobile-hamburger span{transition:none!important}
+}
