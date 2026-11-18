@@ -1,7 +1,9 @@
 import {authenticated,redirect,securityHeaders} from '../_lib/auth';
 import {ensureArchiveNumbers} from '../_lib/archive-number';
 import {seoDescriptionFromHtml} from '../_lib/seo-description';
-import type {Env} from '../_lib/auth';
+import {ensurePendingCoverColumn} from '../_lib/pending-cover';
+import type {Env as BaseEnv} from '../_lib/auth';
+interface Env extends BaseEnv {BELLA_IMAGES?:R2Bucket}
 interface Context {request:Request;env:Env}
 export async function onRequestPost({request,env}:Context):Promise<Response>{
  const headers=securityHeaders();
@@ -36,6 +38,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY(article_id,lang))`).run();
   await ensureArchiveNumbers(env.DB);
+  await ensurePendingCoverColumn(env.DB);
   const archived=!isNew?await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first():null;
   if(archived)return new Response('Восстановите статью из корзины перед редактированием',{status:409,headers});
   const conflict=await env.DB.prepare('SELECT article_id FROM admin_article_numbers WHERE number=? AND article_id<>?').bind(archiveNumber,id).first();
@@ -76,6 +79,16 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    VALUES(?,?,?,?,?,?,?,'published',datetime('now'),datetime('now'))
    ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,status='published',published_at=COALESCE(article_translations.published_at,datetime('now')),updated_at=datetime('now')`).bind(articleId,lang,title.trim(),body,excerpt,safeTitle,safeDescription).run();
    if(publishedAt)await env.DB.prepare('UPDATE article_translations SET published_at=? WHERE article_id=? AND lang=?').bind(publishedAt+' 12:00:00',articleId,lang).run();
+   // Only Publish promotes a shared staged cover. Save and Unpublish never touch it.
+   const cover=await env.DB.prepare('SELECT cover_key,pending_cover_key FROM articles WHERE id=?').bind(articleId).first<{cover_key:string|null;pending_cover_key:string|null}>();
+   if(cover?.pending_cover_key){
+    if(!env.BELLA_IMAGES)throw new Error('Image storage is unavailable for pending cover promotion');
+    const promotion=await env.DB.prepare("UPDATE articles SET cover_key=pending_cover_key,pending_cover_key=NULL,updated_at=datetime('now') WHERE id=? AND pending_cover_key=?").bind(articleId,cover.pending_cover_key).run();
+    // A concurrent upload could have replaced the staged cover. Never delete a still-referenced image.
+    if(promotion.meta.changes&&cover.cover_key&&cover.cover_key!==cover.pending_cover_key){
+     try{await env.BELLA_IMAGES.delete(cover.cover_key)}catch(error){console.error('Previous published cover cleanup failed',error)}
+    }
+   }
    await env.DB.prepare('DELETE FROM article_working_versions WHERE article_id=? AND lang=?').bind(articleId,lang).run();
   }else if(action==='unpublish'){
    await env.DB.prepare("UPDATE article_translations SET status='draft',updated_at=datetime('now') WHERE article_id=? AND lang=?").bind(articleId,lang).run();
