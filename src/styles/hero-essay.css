@@ -1,0 +1,26 @@
+/* Independent editorial composition. Existing desktop hero remains unchanged. */
+.hero-essay{--essay-portrait-width:535px;--essay-height:840px;--essay-shape-width:275px;position:relative;isolation:isolate;max-width:1536px;min-height:var(--essay-height);margin:0 auto;background:#f5f3f0;color:#101010}
+.hero-essay__composition{display:grid;grid-template-columns:50% 50%;position:relative;min-height:var(--essay-height);padding:25px clamp(22px,3.4vw,54px) 5px}
+.hero-essay__left,.hero-essay__right{position:relative;z-index:2;min-width:0;font:400 17px/1.37 Georgia,'Times New Roman',serif;hyphens:auto;overflow-wrap:normal}
+.hero-essay__left,.hero-essay__right{padding-top:10px}
+.hero-essay__left p,.hero-essay__right p{margin:0 0 15px}
+.hero-essay__left p:first-of-type:first-letter{font-size:2.65em;line-height:.78;float:left;padding:.1em .07em 0 0}
+.hero-essay__shape-left{float:right;width:var(--essay-shape-width);height:780px;shape-outside:polygon(100% 0,100% 100%,0 100%,4% 80%,6% 68%,24% 58%,40% 45%,46% 33%,50% 23%,57% 15%,80% 6%)}
+.hero-essay__shape-right{float:left;width:var(--essay-shape-width);height:780px;shape-outside:polygon(0 0,0 100%,100% 100%,95% 83%,94% 66%,78% 55%,61% 42%,53% 32%,49% 22%,43% 14%,20% 6%)}
+.hero-essay__portrait{position:absolute;z-index:3;pointer-events:none;width:var(--essay-portrait-width);height:auto;max-width:none;left:50%;bottom:0;transform:translateX(-50%);object-fit:contain}
+.hero-essay--mobile{display:none}
+@media(max-width:700px){
+ .hero-essay--desktop{display:none!important}
+ .hero-essay--mobile{display:block}
+ .hero-essay{--essay-height:480px;--essay-portrait-width:252px;--essay-shape-width:129px;width:100%;max-width:none;margin:0;min-height:var(--essay-height)}
+ .hero-essay__composition{min-height:var(--essay-height);padding:22px 6px 3px;grid-template-columns:50% 50%}
+ .hero-essay__left,.hero-essay__right{font:400 clamp(11px,2.9vw,12px)/1.28 Georgia,'Times New Roman',serif;hyphens:auto;overflow-wrap:normal;padding-top:3px}
+ .hero-essay__left p,.hero-essay__right p{margin:0}
+ .hero-essay__left p:first-of-type:first-letter{font-size:inherit;line-height:inherit;float:none;padding:0}
+ .hero-essay__shape-left,.hero-essay__shape-right{height:450px}
+ .hero-essay__shape-left{shape-outside:polygon(100% 0,100% 100%,0 100%,4% 78%,7% 65%,26% 54%,40% 42%,45% 30%,50% 22%,60% 14%,80% 6%)}
+ .hero-essay__shape-right{shape-outside:polygon(0 0,0 100%,100% 100%,96% 80%,94% 65%,74% 54%,60% 42%,55% 31%,50% 22%,40% 14%,20% 6%)}
+ .hero-essay__portrait{bottom:0}
+}
+@media(max-width:374px){.hero-essay{--essay-portrait-width:228px;--essay-shape-width:119px;--essay-height:490px}.hero-essay__shape-left,.hero-essay__shape-right{height:460px}}
+@media(prefers-reduced-motion:reduce){.hero-essay *{animation:none!important;transition:none!important}}
