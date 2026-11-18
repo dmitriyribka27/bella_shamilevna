@@ -133,6 +133,8 @@ export async function onRequestGet({request,env}:Context):Promise<Response>{
  const rows=isNew?{results:[{id:'',slug:'',cover_alt:'',cover_key:null,lang:null,title:null,excerpt:null,body_json:null,seo_title:null,seo_description:null,published_at:null,status:null} as Row]}:await env.DB.prepare('SELECT a.id,a.slug,a.cover_alt,a.cover_key,t.lang,t.title,t.excerpt,t.body_json,t.seo_title,t.seo_description,t.published_at,t.status FROM articles a LEFT JOIN article_translations t ON a.id=t.article_id WHERE a.id=?').bind(id).all<Row>();
  if(!rows.results?.length)return page('<p>Статья не найдена.</p>',404);
  await env.DB.prepare("CREATE TABLE IF NOT EXISTS article_working_versions (article_id TEXT NOT NULL,lang TEXT NOT NULL,title TEXT NOT NULL DEFAULT '',body_json TEXT NOT NULL DEFAULT '',excerpt TEXT NOT NULL DEFAULT '',seo_title TEXT NOT NULL DEFAULT '',seo_description TEXT NOT NULL DEFAULT '',seo_title_manual INTEGER NOT NULL DEFAULT 0,seo_description_manual INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(article_id,lang))").run();
+ const workingCols=(await env.DB.prepare('PRAGMA table_info(article_working_versions)').all<{name:string}>()).results||[];
+ if(!workingCols.some(c=>c.name==='published_at'))await env.DB.prepare('ALTER TABLE article_working_versions ADD COLUMN published_at TEXT').run();
  const r=rows.results[0],published=rows.results.find(x=>x.lang===lang);
  const working=isNew?null:await env.DB.prepare('SELECT * FROM article_working_versions WHERE article_id=? AND lang=?').bind(id,lang).first<any>();
  const t=working?{...published,...working,status:published?.status||'draft'}:published;
