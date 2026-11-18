@@ -6,6 +6,11 @@
  if(!editor||!form)return;
  const $=id=>document.getElementById(id);
  const status=$('editor-save-status'),counter=$('editor-statistics'),outline=$('editor-outline');
+ const unsavedBadge=$('unsaved-publication-status');
+ function syncPublicationStatus(){
+  if(unsavedBadge)unsavedBadge.hidden=form.dataset.dirty!=='1';
+ }
+
  const id=form.querySelector('[name=id]')?.value||'new';
  const lang=form.querySelector('[name=lang]')?.value||'ru';
  const draftKey='bella-editor-draft-v2:'+id+':'+lang;
@@ -196,20 +201,20 @@
  // Status, emergency local copy, and outline only; server remains the source of truth.
  let statisticsTimer=null;
  function scheduleStatistics(){clearTimeout(statisticsTimer);statisticsTimer=setTimeout(updateStatistics,160)}
- editor.addEventListener('input',()=>{scheduleBackup();scheduleStatistics();updateToolbar()});
- form.addEventListener('input',()=>{scheduleBackup();scheduleStatistics()},false);
- form.addEventListener('change',scheduleBackup);
+ editor.addEventListener('input',()=>{scheduleBackup();scheduleStatistics();updateToolbar();syncPublicationStatus()});
+ form.addEventListener('input',()=>{scheduleBackup();scheduleStatistics();syncPublicationStatus()},false);
+ form.addEventListener('change',()=>{form.dataset.dirty='1';scheduleBackup();syncPublicationStatus()});
  document.addEventListener('selectionchange',()=>{if(document.activeElement===editor)updateToolbar()});
  editor.addEventListener('keyup',updateToolbar);
  form.addEventListener('submit',event=>{
   if(event.defaultPrevented)return;
   clearTimeout(timer);saveBackup();saving=true;
-  form.dataset.dirty='0';setStatus('Отправка на сервер…');
+  form.dataset.dirty='0';syncPublicationStatus();setStatus('Отправка на сервер…');
  });
  // When redirect from a successful Save/Publish completes, safely discard the backup.
  if(new URLSearchParams(location.search).get('saved')==='1'){
   try{localStorage.removeItem(draftKey);localStorage.removeItem('bella-editor-draft-v2:new:'+lang)}catch{}
  }
  try{recover()}catch{setStatus('Локальная копия недоступна в этом браузере')}
- updateStatistics();updateToolbar();
+ updateStatistics();updateToolbar();syncPublicationStatus();
 })();
