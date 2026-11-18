@@ -55,7 +55,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   const workingCols=(await env.DB.prepare('PRAGMA table_info(article_working_versions)').all<{name:string}>()).results||[];
   if(!workingCols.some(c=>c.name==='published_at'))await env.DB.prepare('ALTER TABLE article_working_versions ADD COLUMN published_at TEXT').run();
   const old=await env.DB.prepare('SELECT status FROM article_translations WHERE article_id=? AND lang=?').bind(articleId,lang).first<{status:string}>();
-  const plain=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  const plain=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/&(?:nbsp|amp|lt|gt|quot|#39);/g,m=>({'&nbsp;':' ','&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'" }[m]||m)).replace(/\s+/g,' ').trim();
   const autoTitle=title.trim()+' — Белла Рыбка';
   const autoDescription=plain.slice(0,160);
   const manualTitle=get('seo_title_manual')==='1',manualDescription=get('seo_description_manual')==='1';
