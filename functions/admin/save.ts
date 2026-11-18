@@ -1,4 +1,5 @@
 import {authenticated,redirect,securityHeaders} from '../_lib/auth';
+import {ensureArchiveNumbers} from '../_lib/archive-number';
 import type {Env} from '../_lib/auth';
 interface Context {request:Request;env:Env}
 export async function onRequestPost({request,env}:Context):Promise<Response>{
@@ -13,12 +14,14 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
  const f=await request.formData().catch(()=>null);
  if(!f)return new Response('Invalid form',{status:400,headers});
  const get=(key:string)=>f.get(key);
- const id=get('id'),lang=get('lang'),title=get('title'),body=get('body_json'),excerpt=get('excerpt')??'',seoTitle=get('seo_title'),seoDescription=get('seo_description'),action=get('action'),publishedAt=get('published_at');
+ const id=get('id'),lang=get('lang'),title=get('title'),body=get('body_json'),excerpt=get('excerpt')??'',seoTitle=get('seo_title'),seoDescription=get('seo_description'),action=get('action'),publishedAt=get('published_at'),rawArchiveNumber=get('archive_number');
  if(typeof id!=='string'||id.length>100||!['ru','en','fr'].includes(String(lang))||typeof title!=='string'||title.length>50||typeof body!=='string'||body.length>100000||typeof excerpt!=='string'||excerpt.length>1000||typeof seoTitle!=='string'||seoTitle.length>200||typeof seoDescription!=='string'||seoDescription.length>320||!['draft','publish','unpublish'].includes(String(action)))return new Response('Invalid article fields',{status:400,headers});
  let doc:unknown;try{doc=JSON.parse(body)}catch{return new Response('Invalid article document',{status:400,headers})}
  if(!doc||typeof doc!=='object'||(doc as any).type!=='doc'||typeof (doc as any).html!=='string'||(doc as any).html.length>100000)return new Response('Invalid article document',{status:400,headers});
  if(typeof publishedAt!=='string'||(publishedAt!==''&&!/^\d{4}-\d{2}-\d{2}$/.test(publishedAt)))return new Response('Invalid publication date',{status:400,headers});
- const isNew=id==='';
+ const archiveNumber=typeof rawArchiveNumber==='string'&&/^[1-9]\\d{0,5}$/.test(rawArchiveNumber)?Number(rawArchiveNumber):NaN;
+ if(!Number.isSafeInteger(archiveNumber)||archiveNumber<1||archiveNumber>999999)return new Response('Укажите архивный номер от 1 до 999999',{status:400,headers});
+  const isNew=id==='';
  if(isNew&&action==='unpublish')return new Response('Cannot unpublish unsaved article',{status:400,headers});
  const existing=isNew?null:await env.DB.prepare('SELECT id FROM articles WHERE id=?').bind(id).first();
  if(!isNew&&!existing)return new Response('Article not found',{status:404,headers});
@@ -31,6 +34,11 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    seo_title_manual INTEGER NOT NULL DEFAULT 0,seo_description_manual INTEGER NOT NULL DEFAULT 0,
    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY(article_id,lang))`).run();
+  await ensureArchiveNumbers(env.DB);
+  const archived=!isNew?await env.DB.prepare('SELECT article_id FROM admin_archived_articles WHERE article_id=?').bind(id).first():null;
+  if(archived)return new Response('Восстановите статью из корзины перед редактированием',{status:409,headers});
+  const conflict=await env.DB.prepare('SELECT article_id FROM admin_article_numbers WHERE number=? AND article_id<>?').bind(archiveNumber,id).first();
+  if(conflict)return new Response('Архивный номер уже занят. Выберите другой номер.',{status:409,headers});
   if(isNew){
    const plainNew=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
    if(!title.trim()||!plainNew)return new Response('Для первого сохранения заполните название и текст',{status:400,headers});
@@ -40,7 +48,8 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    const slug=base+'-'+articleId.slice(0,8);
    await env.DB.batch([
     env.DB.prepare('INSERT INTO articles(id,slug) VALUES (?,?)').bind(articleId,slug),
-    env.DB.prepare("INSERT INTO article_translations(article_id,lang,title,status) VALUES (?,?,?,'draft')").bind(articleId,lang,title.trim())
+    env.DB.prepare("INSERT INTO article_translations(article_id,lang,title,status) VALUES (?,?,?,'draft')").bind(articleId,lang,title.trim()),
+    env.DB.prepare('INSERT INTO admin_article_numbers(number,article_id) VALUES (?,?)').bind(archiveNumber,articleId)
    ]);
   }
   const workingCols=(await env.DB.prepare('PRAGMA table_info(article_working_versions)').all<{name:string}>()).results||[];
@@ -73,7 +82,17 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
    await env.DB.prepare(`INSERT INTO article_translations(article_id,lang,title,status) VALUES (?,?,?,'draft')
     ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title`).bind(articleId,lang,title.trim()).run();
   }
+  if(!isNew){
+   // Unique PK prevents concurrent editors from assigning the same archive number.
+   await env.DB.prepare(`INSERT INTO admin_article_numbers(number,article_id) VALUES (?,?)
+    ON CONFLICT(article_id) DO UPDATE SET number=excluded.number`).bind(archiveNumber,articleId).run();
+  }
   await env.DB.prepare("UPDATE articles SET updated_at=datetime('now') WHERE id=?").bind(articleId).run();
- }catch(e){console.error('Article save failed',e);return new Response('Could not save article',{status:500,headers})}
+ }catch(e){
+  console.error('Article save failed',e);
+  const msg=String(e);
+  if(/UNIQUE constraint failed: admin_article_numbers.number/i.test(msg))return new Response('Архивный номер уже занят. Выберите другой номер.',{status:409,headers});
+  return new Response('Could not save article',{status:500,headers});
+ }
  return redirect(request,'/admin/edit?id='+encodeURIComponent(articleId)+'&lang='+encodeURIComponent(String(lang))+'&saved=1');
 }
