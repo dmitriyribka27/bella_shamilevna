@@ -1,5 +1,5 @@
 import {adminSidebar,adminSidebarCss} from '../_lib/admin-sidebar';
-import {ensureArchiveNumbers,nextArchiveNumber,assignedArchiveNumber} from '../_lib/archive-number';
+import {ensureArchiveNumbers,backfillArchiveNumbers,nextArchiveNumber,assignedArchiveNumber} from '../_lib/archive-number';
 import {authenticated,securityHeaders} from '../_lib/auth';
 import type {Env} from '../_lib/auth';
 interface Context {request:Request;env:Env}
@@ -251,6 +251,7 @@ export async function onRequestGet({request,env}:Context):Promise<Response>{
  const workingCols=(await env.DB.prepare('PRAGMA table_info(article_working_versions)').all<{name:string}>()).results||[];
  if(!workingCols.some(c=>c.name==='published_at'))await env.DB.prepare('ALTER TABLE article_working_versions ADD COLUMN published_at TEXT').run();
  await ensureArchiveNumbers(env.DB);
+ await backfillArchiveNumbers(env.DB);
  const currentArchiveNumber=isNew?null:await assignedArchiveNumber(env.DB,id as string);
  const suggestedArchiveNumber=currentArchiveNumber??await nextArchiveNumber(env.DB);
  const r=rows.results[0],published=rows.results.find(x=>x.lang===lang);
