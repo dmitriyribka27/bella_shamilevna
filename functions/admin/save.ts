@@ -1,5 +1,6 @@
 import {authenticated,redirect,securityHeaders} from '../_lib/auth';
 import {ensureArchiveNumbers} from '../_lib/archive-number';
+import {seoDescriptionFromHtml} from '../_lib/seo-description';
 import type {Env} from '../_lib/auth';
 interface Context {request:Request;env:Env}
 export async function onRequestPost({request,env}:Context):Promise<Response>{
@@ -57,7 +58,7 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   const old=await env.DB.prepare('SELECT status FROM article_translations WHERE article_id=? AND lang=?').bind(articleId,lang).first<{status:string}>();
   const plain=(doc as {html:string}).html.replace(/<[^>]*>/g,' ').replace(/&(?:nbsp|amp|lt|gt|quot|#39);/g,m=>({'&nbsp;':' ','&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'" }[m]||m)).replace(/\s+/g,' ').trim();
   const autoTitle=title.trim()+' — Белла Рыбка';
-  const autoDescription=plain.slice(0,160);
+  const autoDescription=seoDescriptionFromHtml((doc as {html:string}).html,title.trim());
   const manualTitle=get('seo_title_manual')==='1',manualDescription=get('seo_description_manual')==='1';
   const finalTitle=manualTitle?seoTitle:autoTitle,finalDescription=manualDescription?seoDescription:autoDescription;
   // Explicit manual markers are authoritative. Automatically generated SEO must never be frozen
