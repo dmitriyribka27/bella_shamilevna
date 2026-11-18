@@ -1,0 +1,73 @@
+/*
+ * BELLA SITE — public typography system, 19 Nov 2026.
+ * Admin panel lives under /admin and never imports BaseLayout.
+ * Article-body bold remains available for author-created rich text.
+ */
+:root{
+  --ink:#172C25;
+  --font-sans:'Manrope',Arial,Helvetica,sans-serif;
+  --font-display:'Forum',Georgia,'Times New Roman',serif;
+  --font-editorial:'Oranienbaum',Georgia,'Times New Roman',serif;
+}
+html,body{color:var(--ink)}
+body{font-family:var(--font-sans);font-weight:300}
+main,.site-header,.site-footer{color:var(--ink)}
+.site-header.site-header--nav-only > nav:first-child a,
+.site-header.site-header--nav-only .desktop-languages a{
+  font-family:var(--font-sans);font-weight:300;
+}
+.site-header .header-right,.site-header .header-socials,
+.site-footer,.footer-contacts,.footer-policies,.footer-bottom,
+.footer-adyghe,.footer-contacts strong,.footer-top>span{
+  font-family:var(--font-sans);font-weight:300;
+}
+.home-lower h2,.archive-intro h1,.about-title-block h1,
+.about-biography h2,.about-education h2,
+.article-heading h1,.article-body h2,.article-body h3,
+.legal-heading h1,.legal-content h2{
+  font-family:var(--font-editorial);font-weight:400;
+  letter-spacing:0;
+}
+.home-lower h2{font-size:clamp(42px,3.35vw,52px);line-height:1.05}
+.home-about p,.home-about>a,.section-heading>a,
+.about-paragraphs,.about-subtitle,.about-education-item,
+.about-education-name,.about-kicker,.archive-kicker,
+.archive-intro-text,.article-heading time,
+.article-copy-link,.article-language-note,
+.legal-page,.legal-author,.legal-date,.legal-content,
+.legal-translations,.legal-translations a{
+  font-family:var(--font-sans);font-weight:300;
+}
+.home-about p{font-size:18px;line-height:1.55}
+.home-about>a,.section-heading>a{font-size:16px}
+.archive-card-title,.publication-card span,.article-neighbor strong{
+  font-family:var(--font-editorial);font-weight:400;letter-spacing:0;
+}
+.archive-card-title,.publication-card span{font-size:clamp(29px,2.25vw,36px);line-height:1.13}
+.article-heading h1{font-size:clamp(37px,3.1vw,52px);line-height:1.14}
+.article-body{font:300 18px/1.7 var(--font-sans)}
+.article-body h2{font-size:36px;line-height:1.2}
+.article-body h3{font-size:30px;line-height:1.2}
+.article-body strong,.article-body b{
+  font-family:var(--font-sans);font-weight:700;
+}
+.article-body em,.article-body i{font-family:var(--font-sans)}
+.legal-page{color:var(--ink)}
+.legal-content{font-size:18px;line-height:1.7}
+.legal-content h2{font-size:30px}
+.footer-contacts strong{font-weight:400}
+.hero-essay__left,.hero-essay__right,
+.hero-essay-mobile__text{font-family:var(--font-sans);font-weight:300;color:var(--ink)}
+.publications-coming-soon,.archive-page .publications-coming-soon{
+  font-family:var(--font-editorial);font-weight:400;
+}
+.bm-mobile-home{color:var(--ink);font-family:var(--font-sans)}
+.bm-mobile-home a,.bm-mobile-home button{
+  font-family:var(--font-sans);font-weight:300;
+}
+@media(max-width:700px){
+ .hero-essay-mobile__text{font-size:16px}
+ .bm-mobile-home :is(.bm-mobile-about,.bm-mobile-publications,.bm-mobile-footer){
+   font-family:var(--font-sans);
+ }
+}

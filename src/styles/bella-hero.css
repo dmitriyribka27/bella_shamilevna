@@ -1,0 +1,100 @@
+/*
+ * BELLA SITE — redesigned desktop homepage hero
+ * Scopes all geometry to .bella-hero; old mobile homepage is intentionally
+ * unchanged until its separate design is approved.
+ */
+@media (min-width:701px){
+  .bella-hero{color:var(--ink);margin:0 auto;width:100%;max-width:1536px}
+  .bella-hero__stage{
+    position:relative;isolation:isolate;container-type:inline-size;
+    width:100%;height:clamp(530px,40.5vw,650px);
+    overflow:hidden;
+  }
+  .bella-hero__rays,.bella-hero__mountains{
+    position:absolute;pointer-events:none;user-select:none;
+    max-width:none;height:auto;object-fit:contain;
+  }
+  .bella-hero__rays{z-index:0;width:58%;left:-15%;top:-20%;opacity:.48}
+  .bella-hero__mountains{z-index:1;width:112%;left:-6%;top:3%;opacity:.25}
+  .bella-hero__heading{
+    position:absolute;z-index:3;left:4.1%;top:15%;
+    width:64%;min-width:0;pointer-events:none;
+  }
+  .bella-hero__heading h1{
+    display:flex;flex-direction:column;align-items:flex-start;
+    margin:0;font:400 clamp(78px,7.0vw,108px)/.91 var(--font-display);
+    letter-spacing:-.025em;text-transform:none;
+    white-space:nowrap;
+  }
+  .bella-hero__surname{
+    display:flex;align-items:center;gap:22px;
+    margin-top:24px;max-width:440px;
+    font:300 clamp(18px,1.65vw,26px)/1.2 var(--font-sans);
+    letter-spacing:.24em;
+  }
+  .bella-hero__surname i{display:block;flex:1;border-top:1px solid currentColor;opacity:.65}
+  .bella-hero__tagline{
+    margin:38px 0 0;
+    font:300 clamp(15px,1.12vw,18px)/1.4 var(--font-sans);
+    letter-spacing:.13em;
+    white-space:nowrap;
+  }
+  .bella-hero__portrait-layer{
+    position:absolute;inset:0;z-index:4;pointer-events:none;
+    /* Geometry of the actual supplied river, sampled at 17 points.
+       Identical clipping is applied to the portrait only. */
+    clip-path:polygon(
+      0 0,100% 0,
+      100% calc(100% - 2.71cqw),
+      93.75% calc(100% - 3.15cqw),
+      87.5% calc(100% - 2.75cqw),
+      81.25% calc(100% - 2.40cqw),
+      75% calc(100% - 2.62cqw),
+      68.75% calc(100% - 2.20cqw),
+      62.5% calc(100% - 1.73cqw),
+      56.25% calc(100% - 1.81cqw),
+      50% calc(100% - 1.55cqw),
+      43.75% calc(100% - 2.27cqw),
+      37.5% calc(100% - 2.02cqw),
+      31.25% calc(100% - 2.57cqw),
+      25% calc(100% - 3.18cqw),
+      18.75% calc(100% - 3.03cqw),
+      12.5% calc(100% - 2.57cqw),
+      6.25% calc(100% - 2.57cqw),
+      0 calc(100% - 2.92cqw)
+    );
+  }
+  .bella-hero__portrait{
+    position:absolute;right:13%;bottom:0;
+    height:99%;width:auto;max-width:none;
+    object-fit:contain;object-position:bottom center;
+  }
+  .bella-hero__side{
+    position:absolute;right:4%;top:37%;z-index:4;
+    display:flex;flex-direction:column;align-items:center;gap:17px;
+    font:300 18px/1.2 var(--font-sans);letter-spacing:.02em;
+    pointer-events:none;
+  }
+  .bella-hero__side i{height:60px;border-left:1px solid currentColor}
+  .bella-hero__river{
+    position:absolute;left:0;bottom:0;z-index:5;
+    display:block;width:100%;pointer-events:none;
+  }
+  .bella-hero__river img{
+    display:block;width:100%;height:auto;object-fit:contain;
+  }
+  .bella-hero__river-caption{
+    position:absolute;z-index:6;right:3.8%;bottom:4.6%;
+    font:300 12px/1 var(--font-sans);
+    letter-spacing:.02em;pointer-events:none;
+    transform:rotate(-8deg);
+  }
+}
+@media (min-width:701px) and (max-width:1100px){
+  .bella-hero__heading h1{font-size:76px}
+  .bella-hero__heading{top:18%}
+  .bella-hero__tagline{font-size:14px;letter-spacing:.08em}
+  .bella-hero__portrait{right:10%;height:92%}
+}
+/* The existing approved mobile composition is independent and not redesigned here. */
+@media (max-width:700px){.bella-hero{display:none!important}}
