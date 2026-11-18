@@ -115,12 +115,21 @@
  window.addEventListener('beforeunload',e=>{if(form.dataset.dirty==='1'){e.preventDefault();e.returnValue=''}});
  refreshSeo();
  function serialize(){return JSON.stringify({type:'doc',html:safeHtml(editor.innerHTML)})}
- form.addEventListener('submit',event=>{if(error.textContent){event.preventDefault();return}hidden.value=serialize();form.dataset.dirty='0';if(hidden.value.length>100000){event.preventDefault();error.textContent='Статья слишком длинная для этой версии редактора.'}});
- document.getElementById('preview-button').addEventListener('click',()=>{
-  preview.hidden=false;
+ form.addEventListener('submit',event=>{if(error.textContent){event.preventDefault();return}hidden.value=serialize();if(hidden.value.length>100000){event.preventDefault();error.textContent='Статья слишком длинная для этой версии редактора.'}});
+ const previewDetails=document.getElementById('preview-details');
+ function renderPreview(){
   preview.replaceChildren();
-  const h=document.createElement('h2');h.textContent=document.getElementById('title').value||'Без названия';preview.appendChild(h);
+  const hero=document.createElement('div');hero.className='preview-hero';
+  const text=document.createElement('div');
+  const h=document.createElement('h2');h.textContent=titleField.value||'Без названия';text.appendChild(h);
+  const date=document.getElementById('published-at')?.value;
+  if(date){const p=document.createElement('p');p.className='preview-date';const parts=date.split('-');p.textContent=parts.length===3?parts.reverse().join('.'):date;text.appendChild(p)}
+  hero.appendChild(text);
+  const cover=document.querySelector('.top-cover .cover-image');
+  if(cover){const img=document.createElement('img');img.src=cover.src;img.alt='Обложка статьи';hero.appendChild(img)}
+  preview.appendChild(hero);
   const article=document.createElement('article');article.innerHTML=safeHtml(editor.innerHTML);preview.appendChild(article);
-  preview.scrollIntoView({behavior:'smooth',block:'start'});
- });
+ }
+ previewDetails?.addEventListener('toggle',()=>{if(previewDetails.open)renderPreview()});
+ [editor,titleField,document.getElementById('published-at')].forEach(el=>el?.addEventListener('input',()=>{if(previewDetails?.open)renderPreview()}));
 })();
