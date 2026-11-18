@@ -108,6 +108,12 @@
   if(node.nodeType!==Node.ELEMENT_NODE)return null;
   const raw=node.tagName;
   if(['SCRIPT','STYLE','META','LINK','HEAD','IFRAME','OBJECT','EMBED','SVG','IMG','FORM','INPUT','BUTTON','NOSCRIPT'].includes(raw))return null;
+  // Wrapper DIVs from Word/ChatGPT must not create invalid nested paragraphs.
+  if(raw==='DIV'&&Array.from(node.children).some(child=>['P','DIV','H1','H2','H3','UL','OL','BLOCKQUOTE'].includes(child.tagName))){
+   const group=document.createDocumentFragment();
+   for(const child of Array.from(node.childNodes)){const safe=cleanNode(child,depth+1);if(safe)group.append(safe)}
+   return group;
+  }
   const tag=normalizeTag(node);
   const base=document.createElement(tag==='SPAN'?'span':tag.toLowerCase());
   if(tag==='A'){
