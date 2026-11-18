@@ -234,7 +234,7 @@
  });
  const titleField=document.getElementById('title'),counter=document.getElementById('title-counter'),seoTitle=document.getElementById('seo-title'),seoDescription=document.getElementById('seo-description');
  const titleManual=document.getElementById('seo-title-manual'),descriptionManual=document.getElementById('seo-description-manual');
- const plainText=()=>editor.textContent.replace(/\s+/g,' ').trim();
+ const plainText=()=>editor.innerHTML.replace(/<[^>]*>/g,' ').replace(/&(?:nbsp|amp|lt|gt|quot|#39);/g,m=>({'&nbsp;':' ','&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'" }[m]||m)).replace(/\s+/g,' ').trim();
  function updateSeoModes(){
   const titleMode=document.getElementById('seo-title-mode');
   const descriptionMode=document.getElementById('seo-description-mode');
