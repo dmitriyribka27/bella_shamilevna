@@ -1,69 +1,34 @@
 ---
 import {sitePrefix,type SiteLanguage} from '../i18n/site';
-interface Props { lang: SiteLanguage; }
-const {lang} = Astro.props;
+interface Props {lang:SiteLanguage}
+const {lang}=Astro.props;
 const prefix=sitePrefix(lang);
-const strings={
- ru:{home:'ГЛАВНАЯ',publications:'ПУБЛИКАЦИИ',about:'ОБО МНЕ',menu:'Открыть меню',close:'Закрыть меню',language:'Выбрать язык',nav:'Мобильная навигация',languageNav:'Выбор языка'},
- en:{home:'HOME',publications:'PUBLICATIONS',about:'ABOUT ME',menu:'Open menu',close:'Close menu',language:'Choose language',nav:'Mobile navigation',languageNav:'Language selection'},
- fr:{home:'ACCUEIL',publications:'PUBLICATIONS',about:'À PROPOS',menu:'Ouvrir le menu',close:'Fermer le menu',language:'Choisir la langue',nav:'Navigation mobile',languageNav:'Choix de la langue'}
-};
-const t=strings[lang]||strings.ru;
-const navigation=[
- {label:t.home,url:`${prefix}/`,current:true},
- {label:t.publications,url:`${prefix}/publications/`,current:false},
- {label:t.about,url:`${prefix}/about/`,current:false}
-];
-const languages=[
- {id:'ru',label:'Русский',url:'/'},
- {id:'en',label:'English',url:'/en/'},
- {id:'fr',label:'Français',url:'/fr/'}
-];
+const t={ru:{menu:'Меню',choose:'Выбор языка',home:'ГЛАВНАЯ',publications:'ПУБЛИКАЦИИ',about:'ОБО МНЕ'},en:{menu:'Menu',choose:'Choose language',home:'HOME',publications:'PUBLICATIONS',about:'ABOUT ME'},fr:{menu:'Menu',choose:'Choisir la langue',home:'ACCUEIL',publications:'PUBLICATIONS',about:'À PROPOS'}}[lang];
 ---
 <header class="bm-mobile-header" data-bm-mobile-header>
  <div class="bm-mobile-header-line">
   <a class="bm-mobile-brand" href={`${prefix}/`}>{lang==='ru'?'БЕЛЛА ШАМИЛЕВНА':'BELLA SHAMILEVNA'}</a>
   <div class="bm-mobile-header-actions">
-   <button type="button" class="bm-mobile-menu-trigger" aria-label={t.menu} aria-expanded="false" aria-controls="bm-mobile-nav" data-bm-open="nav">
-    <span class="bm-mobile-hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
-   </button>
-   <button type="button" class="bm-mobile-language-trigger" aria-label={t.language} aria-expanded="false" aria-controls="bm-mobile-languages" data-bm-open="languages">{lang.toUpperCase()}</button>
+   <button class="bm-mobile-menu-trigger" type="button" aria-controls="bm-mobile-nav" aria-expanded="false" aria-label={t.menu} data-bm-open="nav"><span class="bm-mobile-hamburger" aria-hidden="true"><i></i><i></i><i></i></span></button>
+   <button class="bm-mobile-language-trigger" type="button" aria-controls="bm-mobile-languages" aria-expanded="false" aria-label={t.choose} data-bm-open="languages">{lang.toUpperCase()}</button>
   </div>
  </div>
- <nav id="bm-mobile-nav" class="bm-mobile-popover bm-mobile-nav" aria-label={t.nav} hidden>
-  {navigation.map(item=><a href={item.url} aria-current={item.current?'page':undefined}>{item.label}</a>)}
+ <nav class="bm-mobile-popover bm-mobile-nav" id="bm-mobile-nav" aria-label={t.menu} hidden>
+  <a href={`${prefix}/` } aria-current="page">{t.home}</a><a href={`${prefix}/publications/`}>{t.publications}</a><a href={`${prefix}/about/`}>{t.about}</a>
  </nav>
- <div id="bm-mobile-languages" class="bm-mobile-popover bm-mobile-languages" role="group" aria-label={t.languageNav} hidden>
-  {languages.map(item=><a href={item.url} aria-current={lang===item.id?'page':undefined}>
-   <strong>{item.id.toUpperCase()}</strong><span>{item.label}</span>
-  </a>)}
- </div>
+ <nav class="bm-mobile-popover bm-mobile-languages" id="bm-mobile-languages" aria-label={t.choose} hidden>
+  <a href="/" aria-current={lang==='ru'?'page':undefined}><b>RU</b>Русский</a><a href="/en/" aria-current={lang==='en'?'page':undefined}><b>EN</b>English</a><a href="/fr/" aria-current={lang==='fr'?'page':undefined}><b>FR</b>Français</a>
+ </nav>
 </header>
 <script>
- const header=document.querySelector<HTMLElement>('[data-bm-mobile-header]');
- if(header){
-  const menu=header.querySelector<HTMLButtonElement>('[data-bm-open="nav"]')!;
-  const lang=header.querySelector<HTMLButtonElement>('[data-bm-open="languages"]')!;
-  const nav=header.querySelector<HTMLElement>('#bm-mobile-nav')!;
-  const langs=header.querySelector<HTMLElement>('#bm-mobile-languages')!;
-  const panels=[{button:menu,panel:nav},{button:lang,panel:langs}];
-  function closeAll(returnFocus=false){
-   const focused=panels.find(({panel})=>!panel.hidden);
-   panels.forEach(({button,panel})=>{button.setAttribute('aria-expanded','false');panel.hidden=true});
-   header.classList.remove('bm-nav-open');
-   if(returnFocus)focused?.button.focus();
-  }
-  function toggle(button:HTMLButtonElement,panel:HTMLElement){
-   const next=panel.hidden;
-   closeAll();
-   if(next){panel.hidden=false;button.setAttribute('aria-expanded','true');if(panel===nav)header.classList.add('bm-nav-open')}
-  }
-  menu.addEventListener('click',()=>toggle(menu,nav));
-  lang.addEventListener('click',()=>toggle(lang,langs));
-  document.addEventListener('click',event=>{if(!header.contains(event.target as Node))closeAll()});
-  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&panels.some(({panel})=>!panel.hidden)){event.preventDefault();closeAll(true)}});
-  panels.forEach(({panel})=>panel.addEventListener('click',event=>{if((event.target as HTMLElement).closest('a'))closeAll()}));
-  const desktop=window.matchMedia('(min-width: 701px)');
-  desktop.addEventListener('change',event=>{if(event.matches)closeAll()});
+ const h=document.querySelector<HTMLElement>('[data-bm-mobile-header]');
+ if(h){
+  const buttons=Array.from(h.querySelectorAll<HTMLButtonElement>('[data-bm-open]'));
+  const getPanel=(b:HTMLButtonElement)=>h.querySelector<HTMLElement>('#bm-mobile-'+(b.dataset.bmOpen==='nav'?'nav':'languages'))!;
+  const close=(focus=false)=>{const active=buttons.find(b=>b.getAttribute('aria-expanded')==='true');buttons.forEach(b=>{b.setAttribute('aria-expanded','false');getPanel(b).hidden=true});h.classList.remove('bm-nav-open');if(focus)active?.focus()};
+  buttons.forEach(b=>b.addEventListener('click',()=>{const open=b.getAttribute('aria-expanded')!=='true';close();if(open){getPanel(b).hidden=false;b.setAttribute('aria-expanded','true');if(b.dataset.bmOpen==='nav')h.classList.add('bm-nav-open')}}));
+  document.addEventListener('click',e=>{if(!h.contains(e.target as Node))close()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close(true)});
+  window.matchMedia('(min-width:701px)').addEventListener('change',e=>{if(e.matches)close()});
  }
 </script>

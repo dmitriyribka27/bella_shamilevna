@@ -38,7 +38,7 @@ export async function onRequest(context:Context):Promise<Response>{
  if(!info&&!homeLang)return context.next();
  if(homeLang&&env.DB){
   try{
-   const results=(await env.DB.prepare(`SELECT a.slug,a.cover_key,t.title,t.published_at FROM articles a JOIN article_translations t ON t.article_id=a.id LEFT JOIN admin_archived_articles ar ON ar.article_id=a.id WHERE t.lang=? AND t.status='published' AND ar.article_id IS NULL ORDER BY COALESCE(t.published_at,a.created_at) DESC LIMIT 3`).bind(homeLang).all<{slug:string;cover_key:string|null;title:string;published_at:string|null}>()).results||[];
+   const results=(await env.DB.prepare(`SELECT a.slug,a.cover_key,t.title,t.published_at,n.number AS archive_number FROM articles a JOIN article_translations t ON t.article_id=a.id LEFT JOIN admin_archived_articles ar ON ar.article_id=a.id LEFT JOIN admin_article_numbers n ON n.article_id=a.id WHERE t.lang=? AND t.status='published' AND ar.article_id IS NULL ORDER BY COALESCE(t.published_at,a.created_at) DESC LIMIT 3`).bind(homeLang).all<{slug:string;cover_key:string|null;title:string;published_at:string|null;archive_number:number|null}>()).results||[];
    if(results.length){
     const base=await context.next();
     if(!base.ok)return base;
@@ -46,6 +46,8 @@ export async function onRequest(context:Context):Promise<Response>{
     const prefix=homeLang==='ru'?'':'/'+homeLang;
     const list=results.map(x=>`<a class="publication-card" href="${prefix}/publications/${encodeURIComponent(x.slug)}/">${x.cover_key?`<img src="/publication-images/${encodeURIComponent(x.cover_key)}" alt="" loading="lazy" width="320" height="240">`:''}<span>${esc(x.title)}</span><time class="home-publication-date" datetime="${esc(x.published_at?.slice(0,10)||'')}">${esc(date(x.published_at))}</time></a>`).join('');
     html=html.replace(/<p class="publications-coming-soon">[\s\S]*?<\/p>/,`<div class="publication-grid">${list}</div>`);
+    const mobileList=results.map(x=>`<a class="bm-mobile-publication" href="${prefix}/publications/${encodeURIComponent(x.slug)}/"><span class="bm-mobile-publication-info"><span class="bm-mobile-publication-title">${esc(x.title)}</span><span class="bm-mobile-publication-meta"><strong class="bm-mobile-publication-number">${x.archive_number===null?'':esc(String(x.archive_number).padStart(3,'0'))}</strong><time class="bm-mobile-publication-time" datetime="${esc(x.published_at?.slice(0,10)||'')}">${esc(date(x.published_at))}</time></span></span>${x.cover_key?`<img class="bm-mobile-publication-cover" src="/publication-images/${encodeURIComponent(x.cover_key)}" alt="" loading="lazy" width="320" height="240">`:'<span class="bm-mobile-publication-cover-placeholder" aria-hidden="true"></span>'}</a>`).join('');
+     html=html.replace(/<div class="bm-mobile-publications-list">[\s\S]*?<\/div>/,`<div class="bm-mobile-publications-list">${mobileList}</div>`);
     html=html.replace('</head>','<style>.home-publication-date{display:block;margin-top:7px;font-size:13px;color:#718198}.publication-grid .publication-card{min-width:0}.publication-grid .publication-card span{overflow-wrap:anywhere}</style></head>');
     return new Response(html,{status:base.status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public,max-age=0,must-revalidate'}});
    }

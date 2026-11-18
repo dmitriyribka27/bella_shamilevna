@@ -1,0 +1,55 @@
+---
+import MobileHeader from './MobileHeader.astro';
+import {siteText,sitePrefix,type SiteLanguage} from '../i18n/site';
+interface Props {lang:SiteLanguage}
+const {lang}=Astro.props;
+const t=siteText[lang];
+const prefix=sitePrefix(lang);
+const legalPrefix=prefix;
+const contacts=[
+ {name:'Telegram',url:'https://t.me/skot4os',icon:'telegram'},
+ {name:'Instagram',url:'https://www.instagram.com/cognitioverum/',icon:'instagram'},
+ {name:'Email',url:'https://mail.google.com/mail/?view=cm&fs=1&to=skot4os%40bk.ru',icon:'email'}
+];
+---
+<div class="bm-mobile-home" data-bm-mobile-home>
+ <MobileHeader lang={lang}/>
+ <section class="bm-mobile-hero" aria-label={t.heroFirst+' '+t.heroSecond}>
+  <img class="bm-mobile-dots" src="/assets/mobile/home/tochki_mobile.svg" width="271" height="108" alt="" aria-hidden="true"/>
+  <img class="bm-mobile-lines" src="/assets/mobile/home/linii_mobile.svg" width="167" height="105" alt="" aria-hidden="true"/>
+  <img class="bm-mobile-oval" src="/assets/mobile/home/green_oval_mobile.svg" width="230" height="148" alt="" aria-hidden="true"/>
+  <h1 class="bm-mobile-name"><span>{t.heroFirst}</span><span>{t.heroSecond}</span></h1>
+  <p class="bm-mobile-tagline">{t.heroTagline}</p>
+  <img class="bm-mobile-portrait" src="/assets/mobile/home/bella_pirtrait_mobile.png" alt={t.portraitAlt} width="235" height="352" fetchpriority="high"/>
+  <div class="bm-mobile-hero-side"><strong>ПСЭ</strong><span></span><small>{t.soul}</small></div>
+  <img class="bm-mobile-river" src="/assets/mobile/home/river_mobile.png" width="449" height="61" alt="" aria-hidden="true"/>
+ </section>
+ <section class="bm-mobile-about" aria-labelledby="bm-about-title">
+  <h2 id="bm-about-title">{t.aboutHeading}</h2>
+  <p>{t.homeAbout}</p>
+  <a href={`${prefix}/about/`}>{t.readMore}</a>
+ </section>
+ <section class="bm-mobile-publications" aria-labelledby="bm-publications-title">
+  <h2 id="bm-publications-title">{t.publications}</h2>
+  <div class="bm-mobile-publications-list"><p class="bm-mobile-publications-empty">{t.soon}</p></div>
+  <a class="bm-mobile-all" href={`${prefix}/publications/`}>{t.viewAll}</a>
+ </section>
+ <footer class="bm-mobile-footer">
+  <div class="bm-mobile-footer-top">
+   <p class="bm-mobile-adyghe" lang="ady">Псэр ети<br/>напэр къащтэ.</p>
+   <div class="bm-mobile-contact-group">
+    <strong>{lang==='ru'?'КОНТАКТЫ':lang==='fr'?'CONTACTS':'CONTACTS'}</strong>
+    <div class="bm-mobile-contact-icons">
+     {contacts.map(c=><a href={c.url} aria-label={c.name} target="_blank" rel="noopener noreferrer">
+      {c.icon==='telegram'?<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>:c.icon==='instagram'?<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.3" y="2.3" width="19.4" height="19.4" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle class="insta-dot" cx="17.7" cy="6.5" r="1"/></svg>:<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4.5" width="20" height="15" rx="1.5"/><path d="m2.7 5.4 9.3 7.4 9.3-7.4"/></svg>}
+     </a>)}
+    </div>
+   </div>
+  </div>
+  <nav class="bm-mobile-legal" aria-label={lang==='en'?'Legal documents':lang==='fr'?'Documents juridiques':'Правовые документы'}>
+   <a href={`${legalPrefix}/privacy-policy/`}>{lang==='ru'?'Политика конфиденциальности':lang==='en'?'Privacy Policy':'Politique de confidentialité'}</a>
+   <a href={`${legalPrefix}/personal-data-policy/`}>{lang==='ru'?'Политика обработки персональных данных':lang==='en'?'Personal Data Processing Policy':'Politique de traitement des données personnelles'}</a>
+  </nav>
+  <div class="bm-mobile-copyright"><small>© {lang==='ru'?'Рыбка Белла Шамилевна':'Rybka Bella Shamilevna'}</small><small>{lang==='ru'?'Все права защищены':lang==='en'?'All rights reserved':'Tous droits réservés'}</small></div>
+ </footer>
+</div>
