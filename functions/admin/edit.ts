@@ -233,7 +233,14 @@ input,textarea,.languages a{border-radius:14px}
 .preview .preview-article strong{font-weight:700}
 .preview .preview-article em{font-style:italic}
 
-.archive-field{max-width:360px;width:100%}.archive-field label{margin:0 0 8px}.archive-field input{max-width:160px;font-variant-numeric:tabular-nums}.archive-field small{display:block;margin:6px 0 0;font-size:12px;color:#748296;line-height:1.4}
+.archive-field{max-width:360px;width:100%}.archive-field label{margin:0 0 7px}.archive-field input{max-width:160px;font-variant-numeric:tabular-nums}
+
+/* Compact article metadata under the title */
+.top-left{gap:11px!important}
+.top-title{margin-bottom:0!important}
+.archive-field,.top-date{margin:0!important;padding:0!important}
+.archive-field label,.top-date label{margin:0 0 6px!important}
+.archive-field input,.top-date input{min-height:48px!important}
 
 `;
 // Delete choices are rendered from existing published and working languages.
@@ -269,7 +276,7 @@ export async function onRequestGet({request,env}:Context):Promise<Response>{
  const body=`<div class="shell">${adminSidebar(isNew?'new':'all')}<main class="main"><p class="breadcrumb"><a href="/admin/">Публикации</a> / Редактирование</p><header class="heading"><div><h1>${isNew?'Новая публикация':'Редактор статьи'}</h1></div><span class="status-pill">${esc(t?.status==='published'?'Опубликовано':t?.status==='draft'?'Черновик':'Новая версия')}</span></header>${saved}<div class="mobile-editor-message">Редактор доступен только с вашего MacBook.</div><form id="article-form" method="post" action="/admin/save"><input type="hidden" name="id" value="${esc(id)}"><input type="hidden" name="lang" value="${esc(lang)}"><input type="hidden" name="body_json" id="body-json"><input type="hidden" name="excerpt" value=""><div class="workspace"><div class="writing"><section class="card"><div class="editor-language-top"><span>Язык публикации</span><div class="languages">${tabs}</div></div><div class="top-fields">
 <div class="top-left">
 <div class="top-title"><label for="title">Заголовок</label><textarea id="title" name="title" rows="2" maxlength="50" placeholder="Название статьи">${esc(t?.title)}</textarea><div class="title-count"><span id="title-counter">0 / 50</span></div></div>
-<div class="archive-field"><label for="archive-number">Архивный номер</label><input id="archive-number" type="number" name="archive_number" min="1" max="999999" step="1" required value="${suggestedArchiveNumber}" aria-describedby="archive-number-hint"><small id="archive-number-hint">Следующий свободный номер · можно изменить вручную. В архиве: № ${String(suggestedArchiveNumber).padStart(3,'0')}</small></div>
+<div class="archive-field"><label for="archive-number">Архивный номер</label><input id="archive-number" type="text" inputmode="numeric" pattern="[0-9]{1,6}" name="archive_number" maxlength="6" required value="${String(suggestedArchiveNumber).padStart(3,'0')}" aria-label="Архивный номер статьи"></div>
 <div class="top-date"><label for="published-at">Дата публикации</label><input id="published-at" type="date" name="published_at" value="${esc(working?.published_at??t?.published_at?.slice(0,10)??'')}"></div>
 </div>
 <div class="top-right">
