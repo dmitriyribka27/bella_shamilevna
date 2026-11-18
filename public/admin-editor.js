@@ -235,12 +235,19 @@
  const titleField=document.getElementById('title'),counter=document.getElementById('title-counter'),seoTitle=document.getElementById('seo-title'),seoDescription=document.getElementById('seo-description');
  const titleManual=document.getElementById('seo-title-manual'),descriptionManual=document.getElementById('seo-description-manual');
  const plainText=()=>editor.textContent.replace(/\s+/g,' ').trim();
+ function updateSeoModes(){
+  const titleMode=document.getElementById('seo-title-mode');
+  const descriptionMode=document.getElementById('seo-description-mode');
+  if(titleMode)titleMode.textContent=titleManual?.value==='1'?'Задано вручную':'Обновляется автоматически';
+  if(descriptionMode)descriptionMode.textContent=descriptionManual?.value==='1'?'Задано вручную':'Обновляется автоматически';
+ }
  function refreshSeo(){
   if(seoTitle&&titleManual?.value!=='1')seoTitle.value=(titleField.value.trim()?titleField.value.trim()+' — Белла Рыбка':'');
   if(seoDescription&&descriptionManual?.value!=='1')seoDescription.value=plainText().slice(0,160);
+  updateSeoModes();
  }
- seoTitle?.addEventListener('input',()=>{titleManual.value='1'});
- seoDescription?.addEventListener('input',()=>{descriptionManual.value='1'});
+ seoTitle?.addEventListener('input',()=>{if(titleManual)titleManual.value='1';updateSeoModes()});
+ seoDescription?.addEventListener('input',()=>{if(descriptionManual)descriptionManual.value='1';updateSeoModes()});
  function refreshCount(){if(counter)counter.textContent=String(titleField.value.length)+' / 50'}
  titleField?.addEventListener('input',()=>{refreshCount();refreshSeo()});
  refreshCount();
