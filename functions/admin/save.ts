@@ -60,12 +60,12 @@ export async function onRequestPost({request,env}:Context):Promise<Response>{
   const autoDescription=plain.slice(0,160);
   const manualTitle=get('seo_title_manual')==='1',manualDescription=get('seo_description_manual')==='1';
   const finalTitle=manualTitle?seoTitle:autoTitle,finalDescription=manualDescription?seoDescription:autoDescription;
-  const existingWorking=await env.DB.prepare('SELECT seo_title,seo_description,seo_title_manual,seo_description_manual FROM article_working_versions WHERE article_id=? AND lang=?').bind(articleId,lang).first<{seo_title:string;seo_description:string;seo_title_manual:number;seo_description_manual:number}>();
-  const existingPublished=await env.DB.prepare('SELECT seo_title,seo_description FROM article_translations WHERE article_id=? AND lang=?').bind(articleId,lang).first<{seo_title:string;seo_description:string}>();
-  const safeTitle=manualTitle?finalTitle:(existingWorking?.seo_title_manual?existingWorking.seo_title:(!existingWorking&&existingPublished?.seo_title&&existingPublished.seo_title!==autoTitle?existingPublished.seo_title:finalTitle));
-  const safeDescription=manualDescription?finalDescription:(existingWorking?.seo_description_manual?existingWorking.seo_description:(!existingWorking&&existingPublished?.seo_description&&existingPublished.seo_description!==autoDescription?existingPublished.seo_description:finalDescription));
-  const keepTitleManual=manualTitle||Boolean(existingWorking?.seo_title_manual)||Boolean(!existingWorking&&existingPublished?.seo_title&&existingPublished.seo_title!==autoTitle);
-  const keepDescriptionManual=manualDescription||Boolean(existingWorking?.seo_description_manual)||Boolean(!existingWorking&&existingPublished?.seo_description&&existingPublished.seo_description!==autoDescription);
+  // Explicit manual markers are authoritative. Automatically generated SEO must never be frozen
+  // just because a previously published value was present in the database.
+  const safeTitle=finalTitle;
+  const safeDescription=finalDescription;
+  const keepTitleManual=manualTitle;
+  const keepDescriptionManual=manualDescription;
   await env.DB.prepare(`INSERT INTO article_working_versions(article_id,lang,title,body_json,excerpt,seo_title,seo_description,seo_title_manual,seo_description_manual,published_at,updated_at)
    VALUES(?,?,?,?,?,?,?,?,?,?,datetime('now'))
    ON CONFLICT(article_id,lang) DO UPDATE SET title=excluded.title,body_json=excluded.body_json,excerpt=excluded.excerpt,seo_title=excluded.seo_title,seo_description=excluded.seo_description,seo_title_manual=excluded.seo_title_manual,seo_description_manual=excluded.seo_description_manual,published_at=excluded.published_at,updated_at=datetime('now')`).bind(articleId,lang,title.trim(),body,excerpt,safeTitle,safeDescription,Number(keepTitleManual),Number(keepDescriptionManual),publishedAt||null).run();
