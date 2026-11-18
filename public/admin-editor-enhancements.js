@@ -186,8 +186,10 @@
  $('editor-link-remove')?.addEventListener('click',()=>{const link=activeAnchor;if(link&&editor.contains(link)){link.replaceWith(document.createTextNode(link.textContent||''));editor.dispatchEvent(new Event('input',{bubbles:true}))}modal?.close()});
  editor.addEventListener('click',event=>{if(event.target.closest('a[href]')&&event.metaKey){event.preventDefault();openLink(event)}},true);
  // Status, emergency local copy, and outline only; server remains the source of truth.
- editor.addEventListener('input',()=>{scheduleBackup();updateStatistics();updateToolbar()});
- form.addEventListener('input',()=>{scheduleBackup();updateStatistics()},false);
+ let statisticsTimer=null;
+ function scheduleStatistics(){clearTimeout(statisticsTimer);statisticsTimer=setTimeout(updateStatistics,160)}
+ editor.addEventListener('input',()=>{scheduleBackup();scheduleStatistics();updateToolbar()});
+ form.addEventListener('input',()=>{scheduleBackup();scheduleStatistics()},false);
  form.addEventListener('change',scheduleBackup);
  document.addEventListener('selectionchange',()=>{if(document.activeElement===editor)updateToolbar()});
  editor.addEventListener('keyup',updateToolbar);
