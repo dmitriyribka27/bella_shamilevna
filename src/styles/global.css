@@ -601,3 +601,39 @@ html[lang="fr"] .section-heading>a{white-space:normal;text-align:right;max-width
     gap:40px;
   }
 }
+
+/* Stable desktop header placement independent of Grid track sizing and browser zoom.
+   Main navigation is anchored to the true horizontal midpoint; right tools
+   have their own alignment and cannot push the navigation off centre. */
+@media (min-width:701px){
+  .site-header.site-header--nav-only{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    position:sticky;
+  }
+  .site-header.site-header--nav-only > nav:first-child{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:max-content;
+    max-width:none;
+    gap:58px;
+    margin:0;
+  }
+  .site-header.site-header--nav-only .header-right{
+    margin-left:auto;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    flex:none;
+    gap:40px;
+  }
+  .site-header.site-header--nav-only .desktop-languages{
+    gap:18px;
+  }
+}
