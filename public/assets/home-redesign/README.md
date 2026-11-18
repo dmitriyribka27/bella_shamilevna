@@ -9,7 +9,7 @@ The new public homepage hero is staged in this feature branch. Four original tra
 | `public/assets/home-redesign/river-desktop.png` | `home_update/desktop_river_line.png` | 2400×120 |
 | `public/assets/home-redesign/river-mobile.png` | `home_update/mobile_river_line.png` | 900×120 |
 
-**Do not merge this branch into `main` until these assets exist.** The previous source images remain unchanged in `main`. The portrait is reused from `public/assets/images/home-portrait.png`; no generated face or modified photograph is introduced.
+**All four original assets have now been added to this branch and their Git blob SHAs match the source ZIP. Do not merge into `main` until the complete Astro build and visual/Safari approval are performed.** The previous source images remain unchanged in `main`. The portrait is reused from `public/assets/images/home-portrait.png`; no generated face or modified photograph is introduced.
 
 The supplied ZIP README mentions separate portrait masks, but they are not present in the ZIP. This iteration implements a sampled polygon `clip-path` on the portrait layer using the supplied desktop river shape. The exact match and Safari quality must be visually confirmed before publication.
 
