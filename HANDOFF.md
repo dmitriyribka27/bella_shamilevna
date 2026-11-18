@@ -120,3 +120,14 @@ Implemented /publications/ desktop archive layout from approved 1536px reference
 - **QA NOT PERFORMED:** no local Astro build, TypeScript compile, Cloudflare deployment verification, D1 migration test, image upload test, browser test or iPhone/Safari test has been run. Treat this as an implementation requiring integration QA, not a verified release.
 - Known limitations: cover upload requires a saved article; image optimization/resizing not yet implemented; orphan R2 objects from replaced covers are retained; homepage/archives use HTML substitution from existing Astro-generated static pages; dynamic publication URLs and SEO/sitemap need end-to-end verification. The public article template is provisional and must be approved against design.
 - Check: new draft must not appear publicly; publish RU and confirm archive/home/article URL; save changes to published RU without publishing and verify unchanged public HTML; publish again and verify new HTML; hide RU and verify 404; publish EN independently; upload shared cover and verify on RU and EN; manually change date; archive/restore; check missing/unsafe markup and image handling; test Safari/iPhone.
+
+
+## Редактор: утверждённая компоновка (18.11.2026)
+
+- Перестроен desktop UI: RU/EN/FR, заголовок (50 символов), общая обложка 4:3 и дата — в верхней карточке слева; редактор текста ниже; раскрываемый предпросмотр под ним.
+- Правая колонка: управление и удаление, отдельная SEO-карточка. Кнопка предпросмотра из управления удалена; предпросмотр строится в браузере из текущих полей, без дополнительных запросов к R2 при открытии.
+- Дата публикации сохраняется в `article_working_versions.published_at` при обычном сохранении и применяется к публичной версии только при публикации. Колонка добавляется при первом обращении к редактору/сохранению.
+- На узких экранах редактор скрыт с сообщением о доступности с MacBook; другие разделы админки не блокируются.
+- Защита от потери изменений остаётся активной при отправке формы (не снимается преждевременно).
+- Файлы: `functions/admin/edit.ts`, `functions/admin/save.ts`, `public/admin-editor.js`.
+- Проверка: изменения записаны в GitHub; локальная сборка и реальное тестирование в Safari/iPhone в этой итерации **не выполнялись**. После деплоя проверить сохранение даты, предпросмотр, обложку, языки, SEO и действия управления.
