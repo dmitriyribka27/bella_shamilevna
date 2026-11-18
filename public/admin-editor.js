@@ -79,7 +79,9 @@
  }
  function plainContent(text){
   const fragment=document.createDocumentFragment();
-  String(text||'').replace(/\r\n?/g,'\n').split(/\n\n+/).forEach(section=>{
+  const normalized=String(text||'').replace(/\r\n?/g,'\n');
+  if(!normalized.includes('\n')){fragment.append(document.createTextNode(normalized));return fragment}
+  normalized.split(/\n\n+/).forEach(section=>{
    const p=document.createElement('p');
    section.split('\n').forEach((line,i)=>{if(i)p.append(document.createElement('br'));p.append(document.createTextNode(line))});
    fragment.append(p);
@@ -123,6 +125,13 @@
    const underline=/text-decoration(?:-line)?\s*:[^;]*underline/.test(style);
    const strike=/text-decoration(?:-line)?\s*:[^;]*line-through/.test(style);
    let result=base;
+   // Inline marks must live INSIDE block nodes; wrapping a <p> in <strong> produces invalid HTML.
+   if(tag==='P'){
+    for(const [active,t] of [[bold,'strong'],[italic,'em'],[underline,'u'],[strike,'s']]){
+     if(active){const wrapper=document.createElement(t);while(base.firstChild)wrapper.append(base.firstChild);base.append(wrapper)}
+    }
+    return base;
+   }
    for(const [active,t] of [[bold,'strong'],[italic,'em'],[underline,'u'],[strike,'s']]){
     if(active){const wrapper=document.createElement(t);wrapper.appendChild(result);result=wrapper}
    }
@@ -166,7 +175,17 @@
   event.preventDefault();
   const html=clipboard.getData('text/html');
   const text=clipboard.getData('text/plain');
-  insertFragment(html?sanitizedFragment(html):plainContent(text));
+  if(html){
+   const clean=safeHtml(html);
+   // Native insertion preserves Safari's undo/redo stack when available.
+   if(!document.execCommand('insertHTML',false,clean))insertFragment(sanitizedFragment(html));
+  }else if(!text.includes('\n')){
+   if(!document.execCommand('insertText',false,text))insertFragment(plainContent(text));
+  }else{
+   const holder=document.createElement('div');holder.append(plainContent(text));
+   if(!document.execCommand('insertHTML',false,holder.innerHTML))insertFragment(plainContent(text));
+  }
+  editor.dispatchEvent(new Event('input',{bubbles:true}));
  });
  // Drop must never inject unsupported browser HTML, remote assets, or files.
  editor.addEventListener('drop',event=>{
