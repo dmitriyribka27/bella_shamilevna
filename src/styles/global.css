@@ -512,3 +512,66 @@ html[lang="fr"] .section-heading>a{white-space:normal;text-align:right;max-width
     zoom: var(--bella-desktop-fit, 1);
   }
 }
+
+/* Desktop navigation redesign (18 Nov 2026). Mobile header remains independent. */
+@media (min-width:701px){
+  .site-header.site-header--nav-only{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    column-gap:32px;
+  }
+  .site-header.site-header--nav-only > nav:first-child{
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    gap:clamp(30px,3.8vw,66px);
+    min-width:0;
+  }
+  .site-header.site-header--nav-only > nav:first-child a{
+    white-space:nowrap;
+  }
+  .site-header.site-header--nav-only .header-right{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:48px;
+    min-width:0;
+  }
+  .site-header.site-header--nav-only .desktop-languages{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:18px;
+    flex:0 0 auto;
+  }
+  .site-header.site-header--nav-only .desktop-languages a{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:31px;
+    min-height:42px;
+    padding:1px 0 3px;
+    font:400 18px/1 Arial,Helvetica,sans-serif;
+    letter-spacing:0;
+    text-decoration:none;
+  }
+  .site-header.site-header--nav-only .desktop-languages a[aria-current="page"]::after{
+    content:"";
+    position:absolute;
+    bottom:3px;
+    left:0;
+    right:0;
+    height:3px;
+    background:#147b45;
+  }
+  .site-header.site-header--nav-only .desktop-languages a:hover{
+    text-decoration:none;
+    color:#147b45;
+  }
+  .site-header.site-header--nav-only .desktop-languages a:focus-visible{
+    outline:2px solid #147b45;
+    outline-offset:2px;
+  }
+}
