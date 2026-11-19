@@ -88,6 +88,6 @@
   .bm-mobile-home a{color:inherit}
   .bm-mobile-name{font-size:clamp(42px,13.6vw,56px);letter-spacing:-.047em}
   .bm-mobile-portrait{top:207px;width:62%}
-  .bm-mobile-river{bottom:-27px}
+  .bm-mobile-river{bottom:-3px}
   .bm-mobile-about p{max-width:300px}
 }
